@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datawedgeflutter/dataloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -39,6 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
       EventChannel('com.darryncampbell.datawedgeflutter/scan');
 
   String _scanBarcode = 'Unknown';
+  List<String> _addedBarcodes = [];
+  Good goodInfo = Good();
 
   //  This example implementation is based on the sample implementation at
   //  https://github.com/flutter/flutter/blob/master/examples/platform_channel/lib/main.dart
@@ -81,6 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _barcodeString = "Barcode: " + barcodeScan['scanData'];
       _barcodeSymbology = "Symbology: " + barcodeScan['symbology'];
       _scanTime = "At: " + barcodeScan['dateTime'];
+      loadData(barcodeScan['scanData']);
+      //_addedBarcodes.add(barcodeScan['scanData']);
     });
   }
 
@@ -121,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
       print(barcodeScanRes);
+      loadData(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -136,6 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _barcodeSymbology = "Symbology: " + "Photo Scan";
       String dateTime = DateTime.now().toLocal().toString();
       _scanTime = "At: " + dateTime; //"Now...";
+      loadData(barcodeScanRes);
+      //_addedBarcodes.add(barcodeScanRes);
     });
   }
 
@@ -145,6 +153,21 @@ class _MyHomePageState extends State<MyHomePage> {
       _barcodeSymbology = "Symbology: manual input";
       String dateTime = DateTime.now().toLocal().toString();
       _scanTime = "At: " + dateTime;
+      _addedBarcodes.clear();
+      _addedBarcodes.add(goodInfo.name);
+      _addedBarcodes.add("Поставщик: " + goodInfo.producer);
+      _addedBarcodes.add("Дата поставки: " + goodInfo.indate);
+      _addedBarcodes.add("Закупочная цена: " + goodInfo.pricein);
+      _addedBarcodes.add("Розничная цена: " + goodInfo.priceout);
+    });
+  }
+
+  void loadData(text) async {
+    var receivedGoodInfo = await loadGoods(text);
+
+    setState(() {
+      goodInfo = receivedGoodInfo;
+      _onManualInputBarcode(text);
     });
   }
 
@@ -152,92 +175,92 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("DataWedge Flutter"),
+        title: new Text("DCT: 2 PRO"),
       ),
       body: Container(
-          child: Row(children: [
-        Expanded(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(32),
-                child: Row(
-                  children: [
-                    Expanded(
-                      /*1*/
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*2*/
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              '$_barcodeString',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+        child: Row(children: [
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(22),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        /*1*/
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            /*2*/
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                '$_barcodeString',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              '$_barcodeSymbology',
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '$_scanTime',
-                            style: TextStyle(
-                              color: Colors.deepPurple,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                // When the child is tapped, show a snackbar.
-                onTapDown: (TapDownDetails) {
-                  //startScan();
-                  startScan();
-                },
-                onTapUp: (TapUpDetails) {
-                  stopScan();
-                },
-                // The custom button
-                child: Container(
-                    margin: EdgeInsets.all(8.0),
-                    padding: EdgeInsets.all(22.0),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "SCAN",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                            // Container(
+                            //   padding: const EdgeInsets.only(bottom: 8),
+                            //   child: Text(
+                            //     '$_barcodeSymbology',
+                            //     style: TextStyle(
+                            //       color: Colors.grey[500],
+                            //     ),
+                            //   ),
+                            // ),
+                            // Text(
+                            //   '$_scanTime',
+                            //   style: TextStyle(
+                            //     color: Colors.deepPurple,
+                            //   ),
+                            // ),
+                          ],
                         ),
                       ),
-                    )),
-              ),
-              GestureDetector(
-                // When the child is tapped, show a snackbar.
-                onTapDown: (TapDownDetails) {
-                  //startScan();
-                  scanBarcodeNormal();
-                },
-                onTapUp: (TapUpDetails) {
-                  // stopScan();
-                },
-                // The custom button
-                child: Container(
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  // When the child is tapped, show a snackbar.
+                  onTapDown: (TapDownDetails) {
+                    //startScan();
+                    startScan();
+                  },
+                  onTapUp: (TapUpDetails) {
+                    stopScan();
+                  },
+                  // The custom button
+                  child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "SCAN",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )),
+                ),
+                GestureDetector(
+                  // When the child is tapped, show a snackbar.
+                  onTapDown: (TapDownDetails) {
+                    //startScan();
+                    scanBarcodeNormal();
+                  },
+                  onTapUp: (TapUpDetails) {
+                    // stopScan();
+                  },
+                  // The custom button
+                  child: Container(
                     margin: EdgeInsets.all(8.0),
-                    padding: EdgeInsets.all(22.0),
+                    padding: EdgeInsets.all(20.0),
                     decoration: BoxDecoration(
                       color: Colors.lightBlueAccent,
                       borderRadius: BorderRadius.circular(8.0),
@@ -251,51 +274,76 @@ class _MyHomePageState extends State<MyHomePage> {
                           letterSpacing: 3,
                         ),
                       ),
-                    )),
-              ),
-              // Text('Scan result : $_scanBarcode\n',
-              //   style: TextStyle(fontSize: 20))
-
-              Container(
-                margin: EdgeInsets.all(8.0),
-                padding: EdgeInsets.all(22.0),
-                decoration: BoxDecoration(
-                  color: Colors.cyan[200],
-                  borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
                 ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "ADD BARCODE:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          //fontSize: 20,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      TextField(
-                          cursorColor: Colors.pinkAccent,
-                          maxLength: 13,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.add_to_photos_rounded),
-                          ),
-                          onSubmitted: (text) {
-                            _onManualInputBarcode(text);
-                            print(text);
-                          }),
-                    ]),
-              ),
+                // Text('Scan result : $_scanBarcode\n',
+                //   style: TextStyle(fontSize: 20))
 
-              // TextField(
-              //   margin: EdgeInsets.all(8.0),
-              //   decoration: InputDecoration(icon: Icon(Icons.access_alarms)),
-              // )
-            ],
+                Container(
+                  margin: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan[200],
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Text(
+                        //   "ADD BARCODE:",
+                        //   style: TextStyle(
+                        //     fontWeight: FontWeight.bold,
+                        //     //fontSize: 20,
+                        //     letterSpacing: 2,
+                        //   ),
+                        // ),
+                        TextField(
+                            cursorColor: Colors.pinkAccent,
+                            maxLength: 13,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              icon: Icon(Icons.add_to_photos_rounded),
+                            ),
+                            onSubmitted: (text) {
+                              loadData(text);
+                              //_onManualInputBarcode(text);
+                              //print(text);
+                            }),
+                      ]),
+                ),
+                addedBarcodesList(context, _addedBarcodes),
+                // TextField(
+                //   margin: EdgeInsets.all(8.0),
+                //   decoration: InputDecoration(icon: Icon(Icons.access_alarms)),
+                // )
+              ],
+            ),
           ),
-        ),
-      ])),
+        ]),
+      ),
     );
   }
+}
+
+Widget addedBarcodesList(BuildContext context, List addedBarcodes) {
+  Widget widget = Flexible(
+      child: ListView(
+    children: <Widget>[
+      for (var i in addedBarcodes)
+        Card(
+          child: Padding(
+            padding: EdgeInsets.only(left: 5.0),
+            child: Text(
+              i.toString(),
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+              maxLines: 1,
+            ),
+          ),
+        )
+    ],
+  ));
+
+  return widget;
 }
