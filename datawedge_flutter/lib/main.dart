@@ -233,20 +233,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   // The custom button
                   child: Container(
-                      margin: EdgeInsets.all(8.0),
-                      padding: EdgeInsets.all(20.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "SCAN",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    margin: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "ZEBRA SCAN",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
                 GestureDetector(
                   // When the child is tapped, show a snackbar.
@@ -303,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             maxLength: 13,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              icon: Icon(Icons.add_to_photos_rounded),
+                              icon: const Icon(Icons.add_to_photos_rounded),
                             ),
                             onSubmitted: (text) {
                               loadData(text);
