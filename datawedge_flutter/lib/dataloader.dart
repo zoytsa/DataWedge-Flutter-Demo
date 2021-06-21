@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
+import 'dart:convert';
 
 class Good {
   int id = 0;
@@ -24,7 +24,7 @@ Future<Good> loadGoods(String barcode) async {
   //var databody;
   //var json = await convert.jsonDecode(convert.jsonEncode(response.bodyBytes));
   //Utf8Codec utf8;
-  var json = convert.jsonDecode(utf8.decode(response.bodyBytes));
+  var json = jsonDecode(utf8.decode(response.bodyBytes));
   var jsonGood = json["data"];
   Good results = Good();
   try {
