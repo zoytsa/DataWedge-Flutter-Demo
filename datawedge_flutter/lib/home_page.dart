@@ -58,10 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // String _barcodeString = "Barcode will be shown here";
-  // String _barcodeSymbology = "Symbology will be shown here";
-  // String _scanTime = "Scan Time will be shown here";
-
   @override
   void initState() {
     super.initState();
@@ -215,19 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void saveData() async {
-    // var currentDocumentInfo = await createDocumentOrder(goodItems);
-    // currentDocument = currentDocumentInfo;
-
-    createDocumentOrder(goodItems).then((value) {
-      currentDocument = value;
-      print(currentDocument!.goodItems.length);
-      print("Hi");
-    });
-
-    setState(() {});
-  }
-
 // *** WIDGETS *** //
 // *** WIDGETS *** //
 // *** WIDGETS *** //
@@ -330,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Center(
           child: Text(
-            "PHOTO SCANY",
+            "PHOTO SCAN",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               //fontSize: 20,
@@ -384,10 +367,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget mainScanPage(BuildContext context) {
     Widget widget = Column(children: <Widget>[
       Flexible(flex: 4, child: addTextHeaderBarcode(context)),
-      Flexible(flex: 3, child: addZebraScanButton(context)),
-      Flexible(flex: 4, child: addPhotoScanButton(context)),
-      Flexible(flex: 4, child: addEnterBarcodeField(context)),
-      Flexible(flex: 15, child: addedResultDataList(context, _resultDataList))
+      Flexible(flex: 4, child: addZebraScanButton(context)),
+      Flexible(flex: 5, child: addPhotoScanButton(context)),
+      Flexible(flex: 5, child: addEnterBarcodeField(context)),
+      Flexible(flex: 17, child: addedResultDataList(context, _resultDataList))
     ]);
     return widget;
   }
@@ -428,8 +411,7 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 20,
             titleSpacing: 20,
           ),
-          //body: mainScanPage(context)
-          //body: TabBarView(children: children)
+
           body: TabBarView(
             children: [
               mainScanPage(context),
@@ -480,8 +462,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget widgetTextHeaderGoodItems(BuildContext context, String producer,
-      List goodItems, currentDocument, docNumberAndDate) {
+  Widget widgetTextHeaderGoodItems(
+      BuildContext context, String producer, List goodItems, docNumber) {
     Widget widget = Container(
         padding: const EdgeInsets.all(22),
         child: Row(children: [
@@ -494,7 +476,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(producer,
                         style: TextStyle(fontWeight: FontWeight.bold))),
                 Container(
-                    child: Text(docNumberAndDate,
+                    child: Text(docNumber,
                         style: TextStyle(fontWeight: FontWeight.bold))),
                 addSaveGoodItemButton(context, goodItems)
               ]))
@@ -504,11 +486,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget addSaveGoodItemButton(BuildContext context, List goodItems) {
     Widget widget = GestureDetector(
-      onTapDown: (TapDownDetails) {
+      onTapDown: (TapDownDetails) async {
         // saveDocumentGoodItems(goodItems);
-        var currentDocumentInfo = createDocumentOrder(goodItems);
-        print(currentDocumentInfo);
-        // setState(() {});
+        var currentDocumentInfo = await createDocumentOrder(goodItems);
+        currentDocument = currentDocumentInfo;
+        setState(() {});
         //saveData();
       },
       onTapUp: (TapUpDetails) {
@@ -536,17 +518,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget goodsListWidget(BuildContext context, List goodItemsList) {
     String producer = "Контрагент";
-    String docNumberAndDate = "***";
+    String docNumber = "***";
+
     if (goodItemsList.length != 0) {
       producer = goodItemsList[0].producer;
-      if (goodItemsList[0].number != "") {
-        docNumberAndDate =
-            goodItemsList[0].number + " от " + goodItemsList[0].date;
+    }
+
+    if (currentDocument != null) {
+      if (currentDocument!.goodItems.length != 0) {
+        docNumber = currentDocument!.goodItems[0].number;
       }
     }
 
-    Widget textHeaderGoodItems = widgetTextHeaderGoodItems(
-        context, producer, goodItemsList, currentDocument, docNumberAndDate);
+    Widget textHeaderGoodItems =
+        widgetTextHeaderGoodItems(context, producer, goodItemsList, docNumber);
 
     List<Widget> listGoodsWithDetails = [];
     listGoodsWithDetails.add(textHeaderGoodItems);

@@ -161,7 +161,7 @@ Future<String> saveDocumentGoodItems(List goodItems) async {
   // return results;
 }
 
-Future<DocumentOrder> createDocumentOrder(List goodItems) async {
+Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   await Future.delayed(Duration(milliseconds: 200));
   DocumentOrder newDocOrder = DocumentOrder(goodItems);
 
@@ -182,10 +182,12 @@ Future<DocumentOrder> createDocumentOrder(List goodItems) async {
   if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
+
     return DocumentOrder.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw Exception(response.toString());
+    //throw Exception(response.toString());
+    return null;
   }
 }
