@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/dataloader.dart';
-import 'package:datawedgeflutter/tabbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -22,13 +21,13 @@ class _MyHomePageState extends State<MyHomePage> {
       EventChannel('com.darryncampbell.datawedgeflutter/scan');
 
   String _scanBarcode = 'Unknown';
+  String _barcodeString = "Barcode will be shown here";
+  String _barcodeSymbology = "Symbology will be shown here";
+  String _scanTime = "Scan Time will be shown here";
   List<String> _resultDataList = [];
   Good goodInfo = Good();
   final List<Tab> tabs = [];
   final List<Widget> children = [];
-  String _barcodeString = "Barcode will be shown here";
-  String _barcodeSymbology = "Symbology will be shown here";
-  String _scanTime = "Scan Time will be shown here";
   int _goodsCount = 0;
   List<GoodItem> goodsList = [];
   String addButtonTitle = "  + ADD*  ";
@@ -211,9 +210,70 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-// *** WIDGETS *** //
-// *** WIDGETS *** //
-// *** WIDGETS *** //
+// *** WIDGETS: MAIN SCAN *** //
+
+  @override
+  Widget build(BuildContext context) {
+    String _goodsHeader = "Goods";
+    if (_goodsCount != 0) {
+      _goodsHeader = "Goods(" + _goodsCount.toString() + ")";
+    } else {}
+    return DefaultTabController(
+        length: 4, //tabs.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("DCT: 2 PRO"),
+            centerTitle: true,
+            flexibleSpace: (Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+              colors: [Colors.purple, Colors.blue],
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+            )))),
+            bottom: TabBar(
+              isScrollable: true,
+              indicatorColor: Colors.white,
+              indicatorWeight: 5,
+              //tabs: tabs,
+
+              tabs: [
+                Tab(icon: Icon(Icons.search_sharp), text: 'Scanner'),
+                //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
+                Tab(icon: Icon(Icons.insert_emoticon), text: _goodsHeader),
+                Tab(icon: Icon(Icons.space_bar), text: 'Documents'),
+                Tab(icon: Icon(Icons.person), text: 'Profile'),
+              ],
+            ),
+            elevation: 20,
+            titleSpacing: 20,
+          ),
+
+          body: TabBarView(
+            children: [
+              mainScanPage(context),
+              //goodsListWidget(context, goodsList),
+              goodsPage(context, goodsList, currentDocument),
+              //addResultDataList(context, _resultDataList),
+              addResultDataList(context, _resultDataList),
+              addResultDataList(context, _resultDataList)
+            ],
+          ),
+
+          //body: mainScanPage(context),
+        ));
+  }
+
+  Widget mainScanPage(BuildContext context) {
+    Widget widget = Column(children: <Widget>[
+      Flexible(flex: 4, child: addTextHeaderBarcode(context)),
+      Flexible(flex: 4, child: addZebraScanButton(context)),
+      Flexible(flex: 5, child: addPhotoScanButton(context)),
+      Flexible(flex: 5, child: addEnterBarcodeField(context)),
+      Flexible(flex: 17, child: addResultDataList(context, _resultDataList))
+    ]);
+    return widget;
+  }
 
   Widget addTextHeaderBarcode(BuildContext context) {
     Widget widget = Container(
@@ -364,70 +424,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget mainScanPage(BuildContext context) {
-    Widget widget = Column(children: <Widget>[
-      Flexible(flex: 4, child: addTextHeaderBarcode(context)),
-      Flexible(flex: 4, child: addZebraScanButton(context)),
-      Flexible(flex: 5, child: addPhotoScanButton(context)),
-      Flexible(flex: 5, child: addEnterBarcodeField(context)),
-      Flexible(flex: 17, child: addedResultDataList(context, _resultDataList))
-    ]);
-    return widget;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String _goodsHeader = "Goods";
-    if (_goodsCount != 0) {
-      _goodsHeader = "Goods(" + _goodsCount.toString() + ")";
-    } else {}
-    return DefaultTabController(
-        length: 4, //tabs.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("DCT: 2 PRO"),
-            centerTitle: true,
-            flexibleSpace: (Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-              colors: [Colors.purple, Colors.blue],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            )))),
-            bottom: TabBar(
-              isScrollable: true,
-              indicatorColor: Colors.white,
-              indicatorWeight: 5,
-              //tabs: tabs,
-
-              tabs: [
-                Tab(icon: Icon(Icons.search_sharp), text: 'Scanner'),
-                //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
-                Tab(icon: Icon(Icons.insert_emoticon), text: _goodsHeader),
-                Tab(icon: Icon(Icons.space_bar), text: 'Documents'),
-                Tab(icon: Icon(Icons.person), text: 'Profile'),
-              ],
-            ),
-            elevation: 20,
-            titleSpacing: 20,
-          ),
-
-          body: TabBarView(
-            children: [
-              mainScanPage(context),
-              //goodsListWidget(context, goodsList),
-              goodsPage(context, goodsList, currentDocument),
-              //addedResultDataList(context, _resultDataList),
-              addedResultDataList(context, _resultDataList),
-              addedResultDataList(context, _resultDataList)
-            ],
-          ),
-
-          //body: mainScanPage(context),
-        ));
-  }
-
-  Widget addedResultDataList(BuildContext context, List dataList) {
+  Widget addResultDataList(BuildContext context, List dataList) {
     // bool isFirst = true;
     Widget widget = Column(children: [
       Expanded(
@@ -459,6 +456,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ))
     ]);
 
+    return widget;
+  }
+
+// *** WIDGETS: GOOD ITEMS AND CURRENT DOCUMENT SAVING ***
+  Widget goodsPage(BuildContext context, List goodsList, currentDocument) {
+    Widget widget = Column(children: <Widget>[
+      Flexible(flex: 2, child: goodsListWidget(context, goodsList)),
+    ]);
     return widget;
   }
 
@@ -587,201 +592,4 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return widget;
   }
-
-  Widget goodsPage(BuildContext context, List goodsList, currentDocument) {
-    Widget widget = Column(children: <Widget>[
-      Flexible(flex: 2, child: goodsListWidget(context, goodsList)),
-    ]);
-    return widget;
-  }
 }
-
-// Widget addedResultDataList(BuildContext context, List dataList) {
-//   Widget widget = Column(children: [
-//     Expanded(
-//         // ex Expanded
-//         child: ListView(
-//       children: <Widget>[
-//         for (var i in dataList)
-//           Card(
-//             child: Padding(
-//               padding: EdgeInsets.only(left: 5.0),
-//               child: Text(
-//                 i.toString(),
-//                 overflow: TextOverflow.ellipsis,
-//                 softWrap: true,
-//                 maxLines: 1,
-//               ),
-//             ),
-//           )
-//       ],
-//     ))
-//   ]);
-
-//   return widget;
-// }
-
-// Widget addedResultDataList(BuildContext context, List dataList) {
-//   // bool isFirst = true;
-//   Widget widget = Column(children: [
-//     Expanded(
-//         child: ListView(
-//       children: <Widget>[
-//         //  for (var i in dataList)
-//         for (int i = 0; i < dataList.length; i++)
-//           Card(
-//             elevation: i == 0 ? 8.0 : null,
-//             margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
-//             child: Container(
-//               decoration:
-//                   i == 0 ? BoxDecoration(color: Colors.blue[100]) : null,
-//               child: Padding(
-//                 padding: EdgeInsets.all(6.0),
-//                 child: Text(
-//                   dataList[i].toString(),
-//                   overflow: TextOverflow.ellipsis,
-//                   softWrap: true,
-//                   maxLines: 1,
-//                   style: i == 0
-//                       ? const TextStyle(fontWeight: FontWeight.bold)
-//                       : null,
-//                 ),
-//               ),
-//             ),
-//           )
-//       ],
-//     ))
-//   ]);
-
-//   return widget;
-// }
-
-// Widget widgetTextHeaderGoodItems(BuildContext context, String producer,
-//     List goodItems, currentDocument, docNumberAndDate) {
-//   Widget widget = Container(
-//       padding: const EdgeInsets.all(22),
-//       child: Row(children: [
-//         Expanded(
-//             child: Row(
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//               Container(
-//                   child: Text(producer,
-//                       style: TextStyle(fontWeight: FontWeight.bold))),
-//               Container(
-//                   child: Text(docNumberAndDate,
-//                       style: TextStyle(fontWeight: FontWeight.bold))),
-//               addSaveGoodItemButton(context, goodItems, currentDocument)
-//             ]))
-//       ]));
-//   return widget;
-// }
-
-// Widget addSaveGoodItemButton(
-//     BuildContext context, List goodItems, currentDocument) {
-//   Widget widget = GestureDetector(
-//     onTapDown: (TapDownDetails) {
-//       //  saveDocumentGoodItems(goodItems);
-//       currentDocument = createDocumentOrder(goodItems);
-//     },
-//     onTapUp: (TapUpDetails) {
-//       //  stopScan();
-//     },
-//     child: Container(
-//       margin: EdgeInsets.all(1.0),
-//       padding: EdgeInsets.all(8.0),
-//       decoration: BoxDecoration(
-//         color: Colors.orange,
-//         borderRadius: BorderRadius.circular(8.0),
-//       ),
-//       child: Center(
-//         child: Text(
-//           "    SAVE    ",
-//           style: TextStyle(
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//       ),
-//     ),
-//   );
-//   return widget;
-// }
-
-// Widget goodsListWidget(
-//     BuildContext context, List goodItemsList, currentDocument) {
-//   String producer = "Контрагент";
-//   String docNumberAndDate = "***";
-//   if (goodItemsList.length != 0) {
-//     producer = goodItemsList[0].producer;
-//     if (goodItemsList[0].number != "") {
-//       docNumberAndDate =
-//           goodItemsList[0].number + " от " + goodItemsList[0].date;
-//     }
-//   }
-
-//   Widget textHeaderGoodItems = widgetTextHeaderGoodItems(
-//       context, producer, goodItemsList, currentDocument, docNumberAndDate);
-
-//   List<Widget> listGoodsWithDetails = [];
-//   listGoodsWithDetails.add(textHeaderGoodItems);
-//   for (GoodItem i in goodItemsList) {
-//     Widget cardGood = Card(
-//       elevation: 8.0,
-//       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
-//       child: Container(
-//         decoration: BoxDecoration(color: Colors.blue[100]),
-//         child: Padding(
-//             padding: EdgeInsets.all(6.0),
-//             child: Text(
-//               i.toString(),
-//               overflow: TextOverflow.ellipsis,
-//               softWrap: true,
-//             )),
-//       ),
-//     );
-
-//     Widget textBarcode = Text(
-//       "     Штрихкод:     " + i.barcode,
-//       overflow: TextOverflow.ellipsis,
-//       softWrap: true,
-//       maxLines: 1,
-//     );
-
-//     Widget textQuantity = Text(
-//       "     Количество:  " + i.quantity.toString(),
-//       overflow: TextOverflow.ellipsis,
-//       softWrap: true,
-//       maxLines: 1,
-//     );
-
-//     Widget textPrice = Text(
-//       "     Цена:               " + i.pricein.toString(),
-//       overflow: TextOverflow.ellipsis,
-//       softWrap: true,
-//       maxLines: 1,
-//     );
-
-//     listGoodsWithDetails.add(cardGood);
-//     listGoodsWithDetails.add(textBarcode);
-//     listGoodsWithDetails.add(textQuantity);
-//     listGoodsWithDetails.add(textPrice);
-//   }
-
-//   Widget widget = Column(children: [
-//     Expanded(
-//         child: ListView(
-//       children: listGoodsWithDetails,
-//     ))
-//   ]);
-
-//   return widget;
-// }
-
-// Widget goodsPage(BuildContext context, List goodsList, currentDocument) {
-//   Widget widget = Column(children: <Widget>[
-//     Flexible(
-//         flex: 2, child: goodsListWidget(context, goodsList, currentDocument)),
-//   ]);
-//   return widget;
-// }
