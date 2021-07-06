@@ -64,15 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
     _createProfile("DataWedgeFlutterDemo");
   }
 
-//void _onEvent(Object event) {
   void _onEvent(event) {
     setState(() {
       Map barcodeScan = jsonDecode(event);
       _barcodeString = "Barcode: " + barcodeScan['scanData'];
       _barcodeSymbology = "Symbology: " + barcodeScan['symbology'];
       _scanTime = "At: " + barcodeScan['dateTime'];
-      loadData(barcodeScan['scanData']);
-      //_resultDataList.add(barcodeScan['scanData']);
+      _loadData(barcodeScan['scanData']);
     });
   }
 
@@ -113,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
       print(barcodeScanRes);
-      //loadData(barcodeScanRes);
+      //_loadData(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -129,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _barcodeSymbology = "Symbology: " + "Photo Scan";
     String dateTime = DateTime.now().toLocal().toString();
     _scanTime = "At: " + dateTime; //"Now...";
-    loadData(barcodeScanRes);
+    _loadData(barcodeScanRes);
     //_resultDataList.add(barcodeScanRes);
     // });
   }
@@ -175,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //setState(() {});
   }
 
-  void loadData(text) async {
+  void _loadData(text) async {
     var receivedGoodInfo = await loadGoods(text);
     goodInfo = receivedGoodInfo;
     _onManualInputBarcode(text);
@@ -187,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // });
   }
 
-  void addNewGood() {
+  void _addNewGood() {
     if (goodInfo.name != "") {
       bool noItem = true;
       addButtonTitle = "  +  ADD (1)";
@@ -211,7 +209,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 // *** WIDGETS: MAIN SCAN *** //
-
   @override
   Widget build(BuildContext context) {
     String _goodsHeader = "Goods";
@@ -252,8 +249,8 @@ class _MyHomePageState extends State<MyHomePage> {
           body: TabBarView(
             children: [
               mainScanPage(context),
-              //goodsListWidget(context, goodsList),
-              goodsPage(context, goodsList, currentDocument),
+              //addGoodItemsList(context, goodsList),
+              goodItemsPage(context, goodsList, currentDocument),
               //addResultDataList(context, _resultDataList),
               addResultDataList(context, _resultDataList),
               addResultDataList(context, _resultDataList)
@@ -297,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget addNewGoodButton(BuildContext context, String addButtonTitle) {
     Widget widget = GestureDetector(
       onTapDown: (TapDownDetails) {
-        addNewGood();
+        _addNewGood();
       },
       onTapUp: (TapUpDetails) {
         //  stopScan();
@@ -413,7 +410,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: const Icon(Icons.add_to_photos_rounded),
                   ),
                   onSubmitted: (text) {
-                    loadData(text);
+                    _loadData(text);
                     //_onManualInputBarcode(text);
                     //print(text);
                   }),
@@ -460,14 +457,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 // *** WIDGETS: GOOD ITEMS AND CURRENT DOCUMENT SAVING ***
-  Widget goodsPage(BuildContext context, List goodsList, currentDocument) {
+  Widget goodItemsPage(BuildContext context, List goodsList, currentDocument) {
     Widget widget = Column(children: <Widget>[
-      Flexible(flex: 2, child: goodsListWidget(context, goodsList)),
+      Flexible(flex: 2, child: addGoodItemsList(context, goodsList)),
     ]);
     return widget;
   }
 
-  Widget widgetTextHeaderGoodItems(
+  Widget addTextHeaderGoodItems(
       BuildContext context, String producer, List goodItems, docNumber) {
     Widget widget = Container(
         padding: const EdgeInsets.all(22),
@@ -521,7 +518,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget goodsListWidget(BuildContext context, List goodItemsList) {
+  Widget addGoodItemsList(BuildContext context, List goodItemsList) {
     String producer = "Контрагент";
     String docNumber = "***";
 
@@ -536,7 +533,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     Widget textHeaderGoodItems =
-        widgetTextHeaderGoodItems(context, producer, goodItemsList, docNumber);
+        addTextHeaderGoodItems(context, producer, goodItemsList, docNumber);
 
     List<Widget> listGoodsWithDetails = [];
     listGoodsWithDetails.add(textHeaderGoodItems);

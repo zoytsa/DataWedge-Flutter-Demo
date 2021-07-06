@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class Good {
   int id = 0;
@@ -108,16 +106,9 @@ class DocumentOrder {
 }
 
 Future<Good> loadGoods(String barcode) async {
-  //http://212.112.116.229:7788/weblink/hs/dct-goods/good/4605246010132
   var response = await http.get(Uri.parse(
       "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
-  //var response = await http.get(Uri.parse(
-  //   "http://212.112.116.229:7788/weblink/hs/dct-goods/good/4605246010132"));
-  //var json = convert.jsonDecode(response.body);
-  //var json = convert.jsonDecode(convert.Utf8Decoder.(response.bodyBytes));
-  //var databody;
-  //var json = await convert.jsonDecode(convert.jsonEncode(response.bodyBytes));
-  //Utf8Codec utf8;
+
   var json = jsonDecode(utf8.decode(response.bodyBytes));
   var jsonGood = json["data"];
   Good results = Good();
@@ -140,36 +131,13 @@ Future<Good> loadGoods(String barcode) async {
   return results;
 }
 
-Future<String> saveDocumentGoodItems(List goodItems) async {
-  return "OK";
-
-  // var response = await http.put(Uri.parse(
-  //     "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + goodItems[0]));
-
-  // var json = jsonDecode(utf8.decode(response.bodyBytes));
-  // var jsonSavingStatus = json["status"];
-  // Map results = Map();
-  // try {
-  //   results.barcode = jsonGood[0]["barcode"];
-  //   results.name = jsonGood[0]["name"];
-  //   results.pricein = jsonGood[0]["pricein"];
-
-  // } catch (error) {
-  //   results.name = error.toString();
-  // }
-
-  // return results;
-}
-
 Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   await Future.delayed(Duration(milliseconds: 200));
   DocumentOrder newDocOrder = DocumentOrder(goodItems);
-
   var myData = newDocOrder.toJson();
-  //encode Map to JSON
   var body = json.encode(myData);
-  //var body = newDocOrder.toJson();
-  print(body);
+  //print(body);
+
   final response = await http.post(
     Uri.parse(
         'http://212.112.116.229:7788/weblink/hs/dct-goods/post_goods_doc'),
@@ -180,13 +148,8 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   );
 
   if (response.statusCode == 200) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-
     return DocumentOrder.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
   } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
     //throw Exception(response.toString());
     return null;
   }
