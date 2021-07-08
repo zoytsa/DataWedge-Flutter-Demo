@@ -1,101 +1,67 @@
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-enum FormatMarket { gipermarket, supermarket, express, gurme }
+import 'dataloader.dart' as dataloader;
+import 'dataloader.dart';
 
-List<User> _users = User.getUsers();
-// List<DropdownMenuItem<User>> _dropdownMenuItemsUser =
-//     buildDropdownMenuItemsUser(_users);
-User _selectedUser = _users[0];
-List<Market> _markets = Market.getMarkets();
-// List<DropdownMenuItem<Market>> _dropdownMenuItemsMarket =
-//     buildDropdownMenuItemsMarket(_markets);
-Market _selectedMarket = _markets[0];
-List<DocumentType> _documentTypes = DocumentType.getDocumentTypes();
-// List<DropdownMenuItem<DocumentType>> _dropdownMenuItemsDocumentType =
-//     buildDropdownMenuItemsDocumentTypes(_documentTypes);
-DocumentType _selectedDocumentType = _documentTypes[0];
+saveSettingsHive(BuildContext context) {
+  print(dataloader.selectedUser.id);
+  print(dataloader.selectedMarket.id);
+  print(dataloader.selectedDocumentType.id);
 
-class User {
-  int id = 0;
-  String name = "";
-  IconData icon = Icons.account_balance_wallet;
-  Market market = _markets[0];
-  User(this.id, this.name, this.market, this.icon);
+  bool noNeedToSave = true;
+  Box<Settings> box = Hive.box<Settings>('settings');
 
-  static List<User> getUsers() {
-    return <User>[
-      User(0, '<не выбран>', _markets[0], Icons.agriculture_rounded),
-      User(1, 'Иванов', _markets[0], Icons.agriculture_rounded),
-      User(2, 'Петров', _markets[0], Icons.agriculture_rounded),
-      User(3, 'Сидоров', _markets[0],
-          Icons.airline_seat_legroom_reduced_outlined),
-      User(
-          4, 'Улановский', _markets[0], Icons.airline_seat_recline_extra_sharp),
-      User(5, 'Путин', _markets[0], Icons.airline_seat_recline_extra_sharp),
-    ];
+  Settings? userIDSettings = box.get("userID");
+  if (userIDSettings != null) {
+    if (dataloader.selectedUser.id != userIDSettings.value) {
+      userIDSettings.value = dataloader.selectedUser.id;
+      userIDSettings.name = dataloader.selectedUser.name;
+      userIDSettings.save();
+      noNeedToSave = false;
+    }
   }
-}
 
-class Market {
-  int id = 0;
-  String name = "";
-  FormatMarket format = FormatMarket.gipermarket;
-  IconData icon = Icons.account_balance_wallet;
-  Market(this.id, this.name, this.format, this.icon);
-
-  static List<Market> getMarkets() {
-    return <Market>[
-      Market(0, '<не выбран>', FormatMarket.gipermarket,
-          Icons.radio_button_unchecked_outlined),
-      Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
-      Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
-      Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),
-      Market(4, 'Ф04', FormatMarket.supermarket, Icons.flip_to_front_outlined),
-      Market(5, 'Ф05', FormatMarket.gipermarket, Icons.account_balance_sharp),
-    ];
+  Settings? documentTypeSettings = box.get("documentTypeID");
+  if (documentTypeSettings != null) {
+    if (dataloader.selectedDocumentType.id != documentTypeSettings.value) {
+      documentTypeSettings.value = dataloader.selectedDocumentType.id;
+      documentTypeSettings.name = dataloader.selectedDocumentType.name;
+      documentTypeSettings.save();
+      noNeedToSave = false;
+    }
   }
-}
 
-class DocumentType {
-  int id = 0;
-  String name = "";
-  IconData icon = Icons.ad_units;
-  DocumentType(this.id, this.name, this.icon);
-
-  static List<DocumentType> getDocumentTypes() {
-    return <DocumentType>[
-      DocumentType(0, '<не выбран>', Icons.radio_button_unchecked_outlined),
-      DocumentType(1, 'Заказ внутренний', Icons.airport_shuttle),
-      DocumentType(2, 'Заказ поставщику', Icons.add_link),
-      DocumentType(3, 'Печать ценников', Icons.add_road_sharp),
-    ];
+  Settings? marketSettings = box.get("marketID");
+  if (marketSettings != null) {
+    if (dataloader.selectedMarket.id != marketSettings.value) {
+      marketSettings.value = dataloader.selectedMarket.id;
+      marketSettings.name = dataloader.selectedMarket.name;
+      marketSettings.save();
+      noNeedToSave = false;
+    }
   }
-}
 
-saveSettingsHive() async {
-  print(_selectedUser.id);
-  print(_selectedMarket.id);
-  print(_selectedDocumentType.id);
-
-  var box = await Hive.openBox<Settings>('settings');
-
-  Settings? mySettings = box.get("userID");
-  print(mySettings!.name);
-  print(mySettings.value); // id
-  print(mySettings.key);
-
-  if (_selectedUser.id == mySettings.value) {
-  } else {}
-  // Settings userID = Settings(_selectedUser.name, _selectedUser.id);
-  // box.put("userID", userID);
-  // Settings marketID = Settings(_selectedMarket.name, _selectedMarket.id);
-  // box.put("marketID", marketID);
-  // Settings documentTypeID =
-  //     Settings(_selectedDocumentType.name, _selectedDocumentType.id);
-  // box.put("documentTypeID", documentTypeID);
-  //notifyListeners();
+  if (noNeedToSave == true) {
+    Fluttertoast.showToast(
+        msg: "No need to save...",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.green[300],
+      duration: Duration(seconds: 1),
+      content: Padding(
+          padding: EdgeInsets.only(top: 3),
+          child: Text("Saved!", textAlign: TextAlign.center)),
+    ));
+  }
 }
 
 List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
@@ -203,7 +169,7 @@ class _profilePageState extends State<profilePage> {
     //  var box = await Hive.openBox<Settings>('settings');
     Settings? userIDSettings = box.get("userID");
     if (userIDSettings != null) {
-      _selectedUser = _users[userIDSettings.value];
+      dataloader.selectedUser = dataloader.users[userIDSettings.value];
     } else {
       print(
           'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
@@ -211,7 +177,8 @@ class _profilePageState extends State<profilePage> {
 
     Settings? documentTypeIDSettings = box.get("documentTypeID");
     if (documentTypeIDSettings != null) {
-      _selectedDocumentType = _documentTypes[documentTypeIDSettings.value];
+      dataloader.selectedDocumentType =
+          dataloader.documentTypes[documentTypeIDSettings.value];
     } else {
       print(
           'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
@@ -219,53 +186,12 @@ class _profilePageState extends State<profilePage> {
 
     Settings? marketIDSettings = box.get("marketID");
     if (marketIDSettings != null) {
-      _selectedMarket = _markets[marketIDSettings.value];
+      dataloader.selectedMarket = dataloader.markets[marketIDSettings.value];
     } else {
       print(
           'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
     }
   }
-  // @override
-  // Future<void> initState() {
-
-  //   super.initState();
-
-  // }
-
-// _loadSavedSettingsHive(){}
-//  Box<Settings> box = Hive.box<Settings>('settings');
-//     //  var box = await Hive.openBox<Settings>('settings');
-//     Settings? userIDSettings = box.get("userID");
-//     if (userIDSettings != null) {
-//       _selectedUser = _users[userIDSettings.value];
-//     } else {
-//       print(
-//           'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
-//     }
-
-//     Settings? documentTypeIDSettings = box.get("documentTypeID");
-//     if (documentTypeIDSettings != null) {
-//       _selectedDocumentType = _documentTypes[documentTypeIDSettings.value];
-//     } else {
-//       print(
-//           'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
-//     }
-
-//     Settings? marketIDSettings = box.get("marketID");
-//     if (marketIDSettings != null) {
-//       _selectedMarket = _markets[marketIDSettings.value];
-//     } else {
-//       print(
-//           'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
-//     }
-
-//   Settings marketID = Settings(_selectedMarket.name, _selectedMarket.id);
-//   box.put("marketID", marketID);
-//   Settings documentTypeID =
-//       Settings(_selectedDocumentType.name, _selectedDocumentType.id);
-//   box.put("documentTypeID", documentTypeID);
-
-// }
 
   Widget addProfileWidget(BuildContext context) {
     Widget widget = Column(children: [
@@ -278,18 +204,17 @@ class _profilePageState extends State<profilePage> {
               SizedBox(
                 height: 5.0,
               ),
-              // First element
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsUser(_users),
+                    items: buildDropdownMenuItemsUser(dataloader.users),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: _selectedUser,
+                    value: dataloader.selectedUser,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        _selectedUser = valueSelectedByUser as User;
+                        dataloader.selectedUser = valueSelectedByUser as User;
                       });
                     }),
               ))
@@ -304,18 +229,18 @@ class _profilePageState extends State<profilePage> {
               SizedBox(
                 height: 5.0,
               ),
-              // First element
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsMarket(_markets),
+                    items: buildDropdownMenuItemsMarket(dataloader.markets),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: _selectedMarket,
+                    value: dataloader.selectedMarket,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        _selectedMarket = valueSelectedByUser as Market;
+                        dataloader.selectedMarket =
+                            valueSelectedByUser as Market;
                       });
                     }),
               ))
@@ -330,18 +255,18 @@ class _profilePageState extends State<profilePage> {
               SizedBox(
                 height: 5.0,
               ),
-              // First element
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsDocumentTypes(_documentTypes),
+                    items: buildDropdownMenuItemsDocumentTypes(
+                        dataloader.documentTypes),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: _selectedDocumentType,
+                    value: dataloader.selectedDocumentType,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        _selectedDocumentType =
+                        dataloader.selectedDocumentType =
                             valueSelectedByUser as DocumentType;
                       });
                       ;
@@ -356,12 +281,9 @@ class _profilePageState extends State<profilePage> {
   Widget addSaveSettingsButton(BuildContext context) {
     Widget widget = GestureDetector(
       onTapDown: (TapDownDetails) async {
-        saveSettingsHive();
-        //setState(() {});
+        saveSettingsHive(context);
       },
-      onTapUp: (TapUpDetails) {
-        //  stopScan();
-      },
+      onTapUp: (TapUpDetails) {},
       child: Container(
         margin: EdgeInsets.only(left: 120.0, right: 120, top: 10, bottom: 60),
         padding: EdgeInsets.all(20.0),

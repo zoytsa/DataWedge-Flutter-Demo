@@ -1,5 +1,137 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+enum FormatMarket { gipermarket, supermarket, express, gurme }
+
+List<User> users = User.getUsers();
+// List<DropdownMenuItem<User>> _dropdownMenuItemsUser =
+//     buildDropdownMenuItemsUser(_users);
+User selectedUser = users[0];
+List<Market> markets = Market.getMarkets();
+// List<DropdownMenuItem<Market>> _dropdownMenuItemsMarket =
+//     buildDropdownMenuItemsMarket(_markets);
+Market selectedMarket = markets[0];
+List<DocumentType> documentTypes = DocumentType.getDocumentTypes();
+// List<DropdownMenuItem<DocumentType>> _dropdownMenuItemsDocumentType =
+//     buildDropdownMenuItemsDocumentTypes(_documentTypes);
+DocumentType selectedDocumentType = documentTypes[0];
+
+class User {
+  int id = 0;
+  String name = "";
+  IconData icon = Icons.account_balance_wallet;
+  Market market = markets[0];
+  User(this.id, this.name, this.market, this.icon);
+
+  static List<User> getUsers() {
+    return <User>[
+      User(0, '<не выбран>', markets[0], Icons.agriculture_rounded),
+      User(1, 'Иванов', markets[0], Icons.agriculture_rounded),
+      User(2, 'Петров', markets[0], Icons.agriculture_rounded),
+      User(3, 'Сидоров', markets[0],
+          Icons.airline_seat_legroom_reduced_outlined),
+      User(4, 'Улановский', markets[0], Icons.airline_seat_recline_extra_sharp),
+      User(5, 'Путин', markets[0], Icons.airline_seat_recline_extra_sharp),
+    ];
+  }
+}
+
+class Market {
+  int id = 0;
+  String name = "";
+  FormatMarket format = FormatMarket.gipermarket;
+  IconData icon = Icons.account_balance_wallet;
+  Market(this.id, this.name, this.format, this.icon);
+
+  static List<Market> getMarkets() {
+    return <Market>[
+      Market(0, '<не выбран>', FormatMarket.gipermarket,
+          Icons.radio_button_unchecked_outlined),
+      Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
+      Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
+      Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),
+      Market(4, 'Ф04', FormatMarket.supermarket, Icons.flip_to_front_outlined),
+      Market(5, 'Ф05', FormatMarket.gipermarket, Icons.account_balance_sharp),
+    ];
+  }
+}
+
+class DocumentType {
+  int id = 0;
+  String name = "";
+  IconData icon = Icons.ad_units;
+  DocumentType(this.id, this.name, this.icon);
+
+  static List<DocumentType> getDocumentTypes() {
+    return <DocumentType>[
+      DocumentType(0, '<не выбран>', Icons.radio_button_unchecked_outlined),
+      DocumentType(1, 'Заказ внутренний', Icons.airport_shuttle),
+      DocumentType(2, 'Заказ поставщику', Icons.add_link),
+      DocumentType(3, 'Печать ценников', Icons.add_road_sharp),
+    ];
+  }
+}
+
+class Profile {
+  int id = 0;
+  String barcode = "";
+  String name = "";
+  String pricein = "";
+  String priceout = "";
+  String producer = "";
+  String indate = "";
+  String country = "";
+  String trademark = "";
+  String status = "";
+  String weight = "";
+  String category = "";
+  String number = "";
+  String date = "";
+  int quantity = 0;
+
+  Profile(Good good) {
+    this.name = good.name;
+    this.id = good.id;
+    this.quantity = 1;
+    this.barcode = good.barcode;
+    this.pricein = good.pricein;
+    this.producer = good.producer;
+  }
+
+  Profile.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    id = json['id'];
+    quantity = json['quantity'];
+    barcode = json['barcode'];
+    pricein = json['pricein'];
+    producer = json['producer'];
+    try {
+      date = json['date'];
+      number = json['number'];
+      print(date);
+      print(number);
+    } catch (e) {}
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['id'] = this.id;
+    data['quantity'] = this.quantity;
+    data['barcode'] = this.barcode;
+    data['pricein'] = this.pricein;
+    data['producer'] = this.producer;
+
+    return data;
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return this.name;
+  }
+}
 
 class Good {
   int id = 0;

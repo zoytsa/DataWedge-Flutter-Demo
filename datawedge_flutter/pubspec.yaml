@@ -32,6 +32,7 @@ dependencies:
   # hive database
   hive: ^2.0.3
   hive_flutter: ^1.0.0
+  fluttertoast: ^8.0.7
 
 dev_dependencies:
   flutter_test:
