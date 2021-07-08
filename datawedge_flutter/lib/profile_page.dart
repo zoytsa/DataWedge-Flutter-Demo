@@ -5,16 +5,16 @@ import 'package:hive/hive.dart';
 enum FormatMarket { gipermarket, supermarket, express, gurme }
 
 List<User> _users = User.getUsers();
-List<DropdownMenuItem<User>> _dropdownMenuItemsUser =
-    buildDropdownMenuItemsUser(_users);
+// List<DropdownMenuItem<User>> _dropdownMenuItemsUser =
+//     buildDropdownMenuItemsUser(_users);
 User _selectedUser = _users[0];
 List<Market> _markets = Market.getMarkets();
-List<DropdownMenuItem<Market>> _dropdownMenuItemsMarket =
-    buildDropdownMenuItemsMarket(_markets);
+// List<DropdownMenuItem<Market>> _dropdownMenuItemsMarket =
+//     buildDropdownMenuItemsMarket(_markets);
 Market _selectedMarket = _markets[0];
 List<DocumentType> _documentTypes = DocumentType.getDocumentTypes();
-List<DropdownMenuItem<DocumentType>> _dropdownMenuItemsDocumentType =
-    buildDropdownMenuItemsDocumentTypes(_documentTypes);
+// List<DropdownMenuItem<DocumentType>> _dropdownMenuItemsDocumentType =
+//     buildDropdownMenuItemsDocumentTypes(_documentTypes);
 DocumentType _selectedDocumentType = _documentTypes[0];
 
 class User {
@@ -26,6 +26,7 @@ class User {
 
   static List<User> getUsers() {
     return <User>[
+      User(0, '<не выбран>', _markets[0], Icons.agriculture_rounded),
       User(1, 'Иванов', _markets[0], Icons.agriculture_rounded),
       User(2, 'Петров', _markets[0], Icons.agriculture_rounded),
       User(3, 'Сидоров', _markets[0],
@@ -46,6 +47,8 @@ class Market {
 
   static List<Market> getMarkets() {
     return <Market>[
+      Market(0, '<не выбран>', FormatMarket.gipermarket,
+          Icons.radio_button_unchecked_outlined),
       Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
       Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
       Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),
@@ -77,13 +80,21 @@ saveSettingsHive() async {
   print(_selectedDocumentType.id);
 
   var box = await Hive.openBox<Settings>('settings');
-  Settings userID = Settings(_selectedUser.name, _selectedUser.id);
-  box.put("userID", userID);
-  Settings marketID = Settings(_selectedMarket.name, _selectedMarket.id);
-  box.put("marketID", marketID);
-  Settings documentTypeID =
-      Settings(_selectedDocumentType.name, _selectedDocumentType.id);
-  box.put("documentTypeID", documentTypeID);
+
+  Settings? mySettings = box.get("userID");
+  print(mySettings!.name);
+  print(mySettings.value); // id
+  print(mySettings.key);
+
+  if (_selectedUser.id == mySettings.value) {
+  } else {}
+  // Settings userID = Settings(_selectedUser.name, _selectedUser.id);
+  // box.put("userID", userID);
+  // Settings marketID = Settings(_selectedMarket.name, _selectedMarket.id);
+  // box.put("marketID", marketID);
+  // Settings documentTypeID =
+  //     Settings(_selectedDocumentType.name, _selectedDocumentType.id);
+  // box.put("documentTypeID", documentTypeID);
   //notifyListeners();
 }
 
@@ -183,6 +194,78 @@ class _profilePageState extends State<profilePage> {
       // Flexible(flex: 5, child: addPhotoScanButton(context)),
     ]);
   }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Box<Settings> box = Hive.box<Settings>('settings');
+    //  var box = await Hive.openBox<Settings>('settings');
+    Settings? userIDSettings = box.get("userID");
+    if (userIDSettings != null) {
+      _selectedUser = _users[userIDSettings.value];
+    } else {
+      print(
+          'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
+    }
+
+    Settings? documentTypeIDSettings = box.get("documentTypeID");
+    if (documentTypeIDSettings != null) {
+      _selectedDocumentType = _documentTypes[documentTypeIDSettings.value];
+    } else {
+      print(
+          'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
+    }
+
+    Settings? marketIDSettings = box.get("marketID");
+    if (marketIDSettings != null) {
+      _selectedMarket = _markets[marketIDSettings.value];
+    } else {
+      print(
+          'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
+    }
+  }
+  // @override
+  // Future<void> initState() {
+
+  //   super.initState();
+
+  // }
+
+// _loadSavedSettingsHive(){}
+//  Box<Settings> box = Hive.box<Settings>('settings');
+//     //  var box = await Hive.openBox<Settings>('settings');
+//     Settings? userIDSettings = box.get("userID");
+//     if (userIDSettings != null) {
+//       _selectedUser = _users[userIDSettings.value];
+//     } else {
+//       print(
+//           'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
+//     }
+
+//     Settings? documentTypeIDSettings = box.get("documentTypeID");
+//     if (documentTypeIDSettings != null) {
+//       _selectedDocumentType = _documentTypes[documentTypeIDSettings.value];
+//     } else {
+//       print(
+//           'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
+//     }
+
+//     Settings? marketIDSettings = box.get("marketID");
+//     if (marketIDSettings != null) {
+//       _selectedMarket = _markets[marketIDSettings.value];
+//     } else {
+//       print(
+//           'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
+//     }
+
+//   Settings marketID = Settings(_selectedMarket.name, _selectedMarket.id);
+//   box.put("marketID", marketID);
+//   Settings documentTypeID =
+//       Settings(_selectedDocumentType.name, _selectedDocumentType.id);
+//   box.put("documentTypeID", documentTypeID);
+
+// }
 
   Widget addProfileWidget(BuildContext context) {
     Widget widget = Column(children: [
