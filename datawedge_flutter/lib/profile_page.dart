@@ -63,6 +63,7 @@ class DocumentType {
 
   static List<DocumentType> getDocumentTypes() {
     return <DocumentType>[
+      DocumentType(0, '<не выбран>', Icons.radio_button_unchecked_outlined),
       DocumentType(1, 'Заказ внутренний', Icons.airport_shuttle),
       DocumentType(2, 'Заказ поставщику', Icons.add_link),
       DocumentType(3, 'Печать ценников', Icons.add_road_sharp),
