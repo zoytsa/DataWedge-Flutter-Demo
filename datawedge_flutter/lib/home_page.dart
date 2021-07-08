@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -253,7 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
               goodItemsPage(context, goodsList, currentDocument),
               //addResultDataList(context, _resultDataList),
               addResultDataList(context, _resultDataList),
-              addResultDataList(context, _resultDataList)
+              // addResultDataList(context, _resultDataList)
+              profilePage(),
             ],
           ),
 
@@ -263,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget mainScanPage(BuildContext context) {
     Widget widget = Column(children: <Widget>[
-      Flexible(flex: 4, child: addTextHeaderBarcode(context)),
+      Flexible(flex: 5, child: addTextHeaderBarcode(context)),
       Flexible(flex: 4, child: addZebraScanButton(context)),
       Flexible(flex: 5, child: addPhotoScanButton(context)),
       Flexible(flex: 5, child: addEnterBarcodeField(context)),
