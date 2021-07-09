@@ -6,84 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dataloader.dart' as dataloader;
 import 'dataloader.dart';
 
-saveSettingsHive(BuildContext context) {
-  print(dataloader.selectedUser.id);
-  print(dataloader.selectedMarket.id);
-  print(dataloader.selectedDocumentType.id);
-
-  bool noNeedToSave = true;
-  Box<Settings> box = Hive.box<Settings>('settings');
-
-  Settings? userIDSettings = box.get("userID");
-  if (userIDSettings != null) {
-    if (dataloader.selectedUser.id != userIDSettings.value) {
-      userIDSettings.value = dataloader.selectedUser.id;
-      userIDSettings.name = dataloader.selectedUser.name;
-      userIDSettings.save();
-      noNeedToSave = false;
-    }
-  }
-  if (userIDSettings == null) {
-    Settings userID =
-        Settings(dataloader.selectedUser.name, dataloader.selectedUser.id);
-    box.put("userID", userID);
-    noNeedToSave = false;
-  }
-
-  Settings? documentTypeSettings = box.get("documentTypeID");
-  if (documentTypeSettings != null) {
-    if (dataloader.selectedDocumentType.id != documentTypeSettings.value) {
-      documentTypeSettings.value = dataloader.selectedDocumentType.id;
-      documentTypeSettings.name = dataloader.selectedDocumentType.name;
-      documentTypeSettings.save();
-      noNeedToSave = false;
-    }
-  }
-
-  if (documentTypeSettings == null) {
-    Settings documentTypeID = Settings(dataloader.selectedDocumentType.name,
-        dataloader.selectedDocumentType.id);
-    noNeedToSave = false;
-    box.put("documentTypeID", documentTypeID);
-  }
-
-  Settings? marketSettings = box.get("marketID");
-  if (marketSettings != null) {
-    if (dataloader.selectedMarket.id != marketSettings.value) {
-      marketSettings.value = dataloader.selectedMarket.id;
-      marketSettings.name = dataloader.selectedMarket.name;
-      marketSettings.save();
-      noNeedToSave = false;
-    }
-  }
-
-  if (marketSettings == null) {
-    Settings marketID =
-        Settings(dataloader.selectedMarket.name, dataloader.selectedMarket.id);
-    box.put("marketID", marketID);
-    noNeedToSave = false;
-  }
-
-  if (noNeedToSave == true) {
-    Fluttertoast.showToast(
-        msg: "No need to save...",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.green[300],
-      duration: Duration(seconds: 1),
-      content: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text("Saved!", textAlign: TextAlign.center)),
-    ));
-  }
-}
-
 List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
   List<DropdownMenuItem<User>> items = [];
   for (User user in users) {
@@ -248,6 +170,32 @@ class _profilePageState extends State<profilePage> {
         child: Padding(
             padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
             child: Row(children: <Widget>[
+              Text("Доступ:               "),
+              SizedBox(
+                height: 5.0,
+              ),
+              Expanded(
+                  child: ListTile(
+                title: DropdownButton(
+                    items: buildDropdownMenuItemsProfile(dataloader.profiles),
+                    style: TextStyle(color: Colors.blue[300]),
+                    value: dataloader.selectedMarket,
+                    onChanged: (valueSelectedByUser) {
+                      setState(() {
+                        debugPrint('User selected $valueSelectedByUser');
+                        // onChangeDropdownItem(valueSelectedByUser as Market);
+                        dataloader.selectedMarket =
+                            valueSelectedByUser as Market;
+                      });
+                    }),
+              ))
+            ])),
+      ),
+      Container(
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+        child: Padding(
+            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
+            child: Row(children: <Widget>[
               Text("Маркет:               "),
               SizedBox(
                 height: 5.0,
@@ -305,6 +253,7 @@ class _profilePageState extends State<profilePage> {
     Widget widget = GestureDetector(
       onTapDown: (TapDownDetails) async {
         saveSettingsHive(context);
+        saveProfileOnDCT(context);
       },
       onTapUp: (TapUpDetails) {},
       child: Container(
