@@ -23,6 +23,12 @@ saveSettingsHive(BuildContext context) {
       noNeedToSave = false;
     }
   }
+  if (userIDSettings == null) {
+    Settings userID =
+        Settings(dataloader.selectedUser.name, dataloader.selectedUser.id);
+    box.put("userID", userID);
+    noNeedToSave = false;
+  }
 
   Settings? documentTypeSettings = box.get("documentTypeID");
   if (documentTypeSettings != null) {
@@ -34,6 +40,13 @@ saveSettingsHive(BuildContext context) {
     }
   }
 
+  if (documentTypeSettings == null) {
+    Settings documentTypeID = Settings(dataloader.selectedDocumentType.name,
+        dataloader.selectedDocumentType.id);
+    noNeedToSave = false;
+    box.put("documentTypeID", documentTypeID);
+  }
+
   Settings? marketSettings = box.get("marketID");
   if (marketSettings != null) {
     if (dataloader.selectedMarket.id != marketSettings.value) {
@@ -42,6 +55,13 @@ saveSettingsHive(BuildContext context) {
       marketSettings.save();
       noNeedToSave = false;
     }
+  }
+
+  if (marketSettings == null) {
+    Settings marketID =
+        Settings(dataloader.selectedMarket.name, dataloader.selectedMarket.id);
+    box.put("marketID", marketID);
+    noNeedToSave = false;
   }
 
   if (noNeedToSave == true) {
@@ -171,8 +191,9 @@ class _profilePageState extends State<profilePage> {
     if (userIDSettings != null) {
       dataloader.selectedUser = dataloader.users[userIDSettings.value];
     } else {
-      print(
-          'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
+      dataloader.selectedUser = dataloader.users[0];
+      // print(
+      //     'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
     }
 
     Settings? documentTypeIDSettings = box.get("documentTypeID");
@@ -180,16 +201,18 @@ class _profilePageState extends State<profilePage> {
       dataloader.selectedDocumentType =
           dataloader.documentTypes[documentTypeIDSettings.value];
     } else {
-      print(
-          'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
+      dataloader.selectedDocumentType = dataloader.documentTypes[0];
+      // print(
+      //     'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
     }
 
     Settings? marketIDSettings = box.get("marketID");
     if (marketIDSettings != null) {
       dataloader.selectedMarket = dataloader.markets[marketIDSettings.value];
     } else {
-      print(
-          'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
+      dataloader.selectedMarket = dataloader.markets[0];
+      // print(
+      //     'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
     }
   }
 
