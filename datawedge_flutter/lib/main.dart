@@ -1,4 +1,6 @@
+import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/home_page.dart';
+import 'package:datawedgeflutter/login_signup.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -19,6 +21,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Box<Settings> box = Hive.box<Settings>('settings');
+    //  var box = await Hive.openBox<Settings>('settings');
+    Settings? userIDSettings = box.get("userID");
+    if (userIDSettings != null) {
+      selectedUser = users[userIDSettings.value];
+      if (selectedUser.id != 111111 && selectedUser.id != 0) {
+        print(selectedUser.id);
+        //isAuthorized = true;
+      }
+    } else {
+      selectedUser = users[0];
+    }
+
     return MaterialApp(
       title: 'DCT',
       theme: ThemeData(
@@ -37,7 +52,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'DCT'),
+      home: isAuthorized ? MyHomePage(title: 'DCT') : LoginSignupScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

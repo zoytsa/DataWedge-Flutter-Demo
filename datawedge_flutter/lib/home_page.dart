@@ -5,6 +5,9 @@ import 'package:datawedgeflutter/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
+import 'package:hive/hive.dart';
+
+import 'model/settings.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -63,6 +66,37 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     scanChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
     _createProfile("DataWedgeFlutterDemo");
+
+    Box<Settings> box = Hive.box<Settings>('settings');
+    //  var box = await Hive.openBox<Settings>('settings');
+
+    Settings? userIDSettings = box.get("userID");
+    if (userIDSettings != null) {
+      selectedUser = users[userIDSettings.value];
+    } else {
+      selectedUser = users[0];
+    }
+
+    Settings? documentTypeIDSettings = box.get("documentTypeID");
+    if (documentTypeIDSettings != null) {
+      selectedDocumentType = documentTypes[documentTypeIDSettings.value];
+    } else {
+      selectedDocumentType = documentTypes[0];
+    }
+
+    Settings? marketIDSettings = box.get("marketID");
+    if (marketIDSettings != null) {
+      selectedMarket = markets[marketIDSettings.value];
+    } else {
+      selectedMarket = markets[0];
+    }
+
+    Settings? profileIDSettings = box.get("profileID");
+    if (profileIDSettings != null) {
+      selectedProfile = profiles[profileIDSettings.value];
+    } else {
+      selectedProfile = profiles[0];
+    }
   }
 
   void _onEvent(event) {
@@ -212,65 +246,84 @@ class _MyHomePageState extends State<MyHomePage> {
 // *** WIDGETS: MAIN SCAN *** //
   @override
   Widget build(BuildContext context) {
+    IconData _profileHeaderIcon = Icons.person;
+    if (selectedProfile != null) {
+      _profileHeaderIcon = selectedProfile.getIcon();
+    }
     String _goodsHeader = "Goods";
     if (_goodsCount != 0) {
       _goodsHeader = "Goods(" + _goodsCount.toString() + ")";
     } else {}
-    return DefaultTabController(
-        length: 4, //tabs.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("DCT: 2 PRO"),
-            centerTitle: true,
-            flexibleSpace: (Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-              colors: [Colors.purple, Colors.blue],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            )))),
-            bottom: TabBar(
-              isScrollable: true,
-              indicatorColor: Colors.white,
-              indicatorWeight: 5,
-              //tabs: tabs,
+    return GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: DefaultTabController(
+            length: 4, //tabs.length,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text("DCT: 2 PRO"),
+                centerTitle: true,
+                flexibleSpace: (Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                  colors: [Colors.purple, Colors.blue],
+                  begin: Alignment.bottomRight,
+                  end: Alignment.topLeft,
+                )))),
+                bottom: TabBar(
+                  isScrollable: true,
+                  indicatorColor: Colors.white,
+                  indicatorWeight: 5,
+                  //tabs: tabs,
 
-              tabs: [
-                Tab(icon: Icon(Icons.search_sharp), text: 'Scanner'),
-                //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
-                Tab(icon: Icon(Icons.insert_emoticon), text: _goodsHeader),
-                Tab(icon: Icon(Icons.space_bar), text: 'Documents'),
-                Tab(icon: Icon(Icons.person), text: 'Profile'),
-              ],
-            ),
-            elevation: 20,
-            titleSpacing: 20,
-          ),
+                  tabs: [
+                    Tab(icon: Icon(Icons.search_sharp), text: 'Scanner'),
+                    //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
+                    Tab(icon: Icon(Icons.insert_emoticon), text: _goodsHeader),
+                    Tab(icon: Icon(Icons.space_bar), text: 'Documents'),
+                    //Tab(icon: Icon(Icons.person), text: 'Profile'),
+                    Tab(icon: Icon(_profileHeaderIcon), text: 'Profile'),
+                  ],
+                ),
+                elevation: 20,
+                titleSpacing: 20,
+              ),
 
-          body: TabBarView(
-            children: [
-              mainScanPage(context),
-              //addGoodItemsList(context, goodsList),
-              goodItemsPage(context, goodsList, currentDocument),
-              //addResultDataList(context, _resultDataList),
-              addResultDataList(context, _resultDataList),
-              // addResultDataList(context, _resultDataList)
-              profilePage(),
-            ],
-          ),
+              body: TabBarView(
+                children: [
+                  mainScanPage(context),
+                  //addGoodItemsList(context, goodsList),
+                  goodItemsPage(context, goodsList, currentDocument),
+                  //addResultDataList(context, _resultDataList),
+                  addResultDataList(context, _resultDataList),
+                  // addResultDataList(context, _resultDataList)
+                  profilePage(),
+                ],
+              ),
 
-          //body: mainScanPage(context),
-        ));
+              //body: mainScanPage(context),
+            )));
   }
 
+  // Widget mainScanPage(BuildContext context) {
+  //   Widget widget = Column(children: <Widget>[
+  //     Flexible(flex: 5, child: addTextHeaderBarcode(context)),
+  //     Flexible(flex: 4, child: addZebraScanButton(context)),
+  //     Flexible(flex: 5, child: addPhotoScanButton(context)),
+  //     Flexible(flex: 5, child: addEnterBarcodeField(context)),
+  //     Flexible(flex: 17, child: addResultDataList(context, _resultDataList))
+  //   ]);
+  //   return widget;
+  // }
+
   Widget mainScanPage(BuildContext context) {
-    Widget widget = Column(children: <Widget>[
-      Flexible(flex: 5, child: addTextHeaderBarcode(context)),
-      Flexible(flex: 4, child: addZebraScanButton(context)),
-      Flexible(flex: 5, child: addPhotoScanButton(context)),
-      Flexible(flex: 5, child: addEnterBarcodeField(context)),
-      Flexible(flex: 17, child: addResultDataList(context, _resultDataList))
-    ]);
+    Widget widget = SingleChildScrollView(
+        child: Column(children: <Widget>[
+      SizedBox(height: 80, child: addTextHeaderBarcode(context)),
+      SizedBox(height: 60, child: addZebraScanButton(context)),
+      SizedBox(height: 70, child: addPhotoScanButton(context)),
+      SizedBox(height: 85, child: addEnterBarcodeField(context)),
+      SizedBox(height: 250, child: addResultDataList(context, _resultDataList))
+    ]));
     return widget;
   }
 
@@ -433,7 +486,7 @@ class _MyHomePageState extends State<MyHomePage> {
           for (int i = 0; i < dataList.length; i++)
             Card(
               elevation: i == 0 ? 8.0 : null,
-              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+              margin: new EdgeInsets.only(left: 10.0),
               child: Container(
                 decoration:
                     i == 0 ? BoxDecoration(color: Colors.blue[100]) : null,

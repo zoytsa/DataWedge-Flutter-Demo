@@ -7,20 +7,26 @@ import 'package:http/http.dart' as http;
 
 enum FormatMarket { gipermarket, supermarket, express, gurme }
 
-List<User> users = User.getUsers();
-List<Market> markets = Market.getMarkets();
-List<DocumentType> documentTypes = DocumentType.getDocumentTypes();
-User selectedUser = users[0];
-Market selectedMarket = markets[0];
-DocumentType selectedDocumentType = documentTypes[0];
-Profile selectedProfile = Profile.getDefaultProfile();
-String enteredPin = "";
+var users = User.getUsers();
+var markets = Market.getMarkets();
+var documentTypes = DocumentType.getDocumentTypes();
+var profiles = Profile.getAvailableProfiles();
+var profileRoles = ProfileRole.getProfileRoles();
+var selectedUser = users[0];
+var selectedMarket = markets[0];
+var selectedDocumentType = documentTypes[0];
+var selectedProfile = profiles[0]; //Profile.getDefaultProfile();
+var enteredPin = 111111;
+var enteredID = 111111;
+var isRememberMe = true;
+var isAuthorized = false;
 
 class User {
   int id = 0;
   String name = "";
   IconData icon = Icons.account_balance_wallet;
   Market market = markets[0];
+  bool useMultiProfiles = false;
   User(this.id, this.name, this.market, this.icon);
 
   static List<User> getUsers() {
@@ -45,8 +51,7 @@ class Market {
 
   static List<Market> getMarkets() {
     return <Market>[
-      Market(0, '<не выбран>', FormatMarket.gipermarket,
-          Icons.radio_button_unchecked_outlined),
+      Market(0, '<не выбран>', FormatMarket.gipermarket, Icons.unfold_more),
       Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
       Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
       Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),
@@ -64,7 +69,7 @@ class DocumentType {
 
   static List<DocumentType> getDocumentTypes() {
     return <DocumentType>[
-      DocumentType(0, '<не выбран>', Icons.radio_button_unchecked_outlined),
+      DocumentType(0, '<не выбран>', Icons.unfold_more),
       DocumentType(1, 'Заказ внутренний', Icons.airport_shuttle),
       DocumentType(2, 'Заказ поставщику', Icons.add_link),
       DocumentType(3, 'Печать ценников', Icons.add_road_sharp),
@@ -102,7 +107,7 @@ class Profile {
   String name = "undefined";
   String date = "";
   String status = "";
-  int profilePin = 0;
+  int profilePin = 111111;
 
   Profile(this.profileID, this.userID, this.roleID, this.marketID,
       this.defaultDocumentTypeID, this.name, this.profilePin);
@@ -117,6 +122,11 @@ class Profile {
     name = json['name'];
     date = json['date'];
     status = json['status'];
+    try {
+      profilePin = json['profilePin'];
+    } catch (e) {
+      profilePin = 111111;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -130,6 +140,28 @@ class Profile {
     data['name'] = this.name;
     data['date'] = this.date;
     data['status'] = this.status;
+
+    try {
+      data['profilePin'] = this.profilePin;
+    } catch (e) {}
+    return data;
+  }
+
+  Map<dynamic, dynamic> toJsonDynamic() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['profileID'] = this.profileID;
+    data['userID'] = this.userID;
+    data['roleID'] = this.roleID;
+    data['marketID'] = this.marketID;
+    data['defaultDocumentTypeID'] = this.defaultDocumentTypeID;
+    data['usingZebra'] = this.usingZebra;
+    data['name'] = this.name;
+    data['date'] = this.date;
+    data['status'] = this.status;
+
+    try {
+      data['profilePin'] = this.profilePin;
+    } catch (e) {}
     return data;
   }
 
@@ -137,19 +169,26 @@ class Profile {
     return Profile(0, 0, 0, 0, 0, "<не выбран>", 0);
   }
 
-static List<ProfileRole> getAvailableProfiles() {
-    // get profile 'cars'
-    return <ProfileRole>[
-      ProfileRole(0, '<не выбран>', Icons.unfold_more),
-      ProfileRole(1, 'root', Icons.airline_seat_recline_extra_sharp),
-      ProfileRole(
-          2, 'administrator', Icons.airline_seat_legroom_reduced_outlined),
-      ProfileRole(3, 'manager', Icons.headset_mic_rounded),
-      ProfileRole(4, 'head', Icons.manage_accounts_outlined),
-      ProfileRole(5, 'staff', Icons.pregnant_woman_rounded), // preblwole
+  static List<Profile> getAvailableProfiles() {
+    return <Profile>[
+      Profile(0, 0, 0, 0, 0, "<0>", 0),
+      Profile(1, 1, 1, 1, 1, "<1>", 1),
+      Profile(2, 2, 2, 2, 2, "<2>", 2),
+      Profile(3, 3, 3, 3, 3, "<3>", 3),
+      Profile(4, 4, 4, 4, 4, "<4>", 4),
+      Profile(5, 5, 5, 5, 5, "<5>", 5),
     ];
   }
 
+  IconData getIcon() {
+    return (profileRoles[this.roleID].icon);
+  }
+
+  // Map<String, dynamic> toMapStringDynamic(Map<dynamic, dynamic> data) {
+  //   Map<String, dynamic> result = {};
+  //   data.forEach((k, v) => result[k.toString()] = v);
+  //   return result;
+  // }
   // @override
   // String toString() {
   //   // TODO: implement toString
@@ -312,9 +351,10 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
 }
 
 saveSettingsHive(BuildContext context) {
-  print(selectedUser.id);
-  print(selectedMarket.id);
-  print(selectedDocumentType.id);
+  print('selectedUser.id: ${selectedUser.id}');
+  print('selectedMarket.id: ${selectedMarket.id}');
+  print('selectedDocumentType.id: ${selectedDocumentType.id}');
+  print('selectedProfile.profileID: ${selectedProfile.profileID}');
 
   bool noNeedToSave = true;
   Box<Settings> box = Hive.box<Settings>('settings');
@@ -367,6 +407,42 @@ saveSettingsHive(BuildContext context) {
     noNeedToSave = false;
   }
 
+  Settings? profileIDSettings = box.get("profileID");
+  if (profileIDSettings != null) {
+    if (selectedProfile.profileID != profileIDSettings.value) {
+      profileIDSettings.value = selectedProfile.profileID;
+      profileIDSettings.name = selectedProfile.name;
+      profileIDSettings.save();
+      noNeedToSave = false;
+    }
+  }
+
+  if (profileIDSettings == null) {
+    Settings profileID =
+        Settings(selectedProfile.name, selectedProfile.profileID);
+    noNeedToSave = false;
+    box.put("profileID", profileID);
+  }
+
+  var profileData = selectedProfile.toJsonDynamic();
+
+  Settings? profileDataSettings = box.get("profileData");
+  if (profileDataSettings != null) {
+    if (profileData.toString() != profileDataSettings.value.toString()) {
+      profileDataSettings.value = profileData;
+      profileDataSettings.name = selectedProfile.name;
+      profileDataSettings.save();
+      noNeedToSave = false;
+    }
+  }
+
+  if (profileDataSettings == null) {
+    Settings profileDataSettings2Save =
+        Settings(selectedProfile.name, profileData);
+    noNeedToSave = false;
+    box.put("profileData", profileDataSettings2Save);
+  }
+
   if (noNeedToSave == true) {
     Fluttertoast.showToast(
         msg: "No need to save...",
@@ -391,15 +467,36 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
   //await Future.delayed(Duration(milliseconds: 200));
   //Profile newProfile = DocumentOrder(goodItems);
 
-  bool noNeedToSave = true;
+  bool notSaved = true;
 
-  if (noNeedToSave == true) {
+  var myData = selectedProfile.toJson();
+
+  print('myData: ${myData}');
+  var body = json.encode(myData);
+
+  final response = await http.post(
+    Uri.parse(
+        'http://212.112.116.229:7788/weblink/hs/dct-profile/post_profile'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: body,
+  );
+
+  Profile? newresponse = null;
+
+  if (response.statusCode == 200) {
+    newresponse = Profile.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    notSaved = false;
+  }
+
+  if (notSaved == true) {
     Fluttertoast.showToast(
-        msg: "No need to save on DCT...",
+        msg: "Error! Not saved on DCT...",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.orange,
         textColor: Colors.white,
         fontSize: 16.0);
   } else {
@@ -412,22 +509,5 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
     ));
   }
 
-  // var myData = selectedProfile.toJson();
-  // var body = json.encode(myData);
-
-  // final response = await http.post(
-  //   Uri.parse(
-  //       'http://212.112.116.229:7788/weblink/hs/dct-profile/post_profile'),
-  //   headers: <String, String>{
-  //     'Content-Type': 'application/json; charset=UTF-8',
-  //   },
-  //   body: body,
-  // );
-
-  // if (response.statusCode == 200) {
-  //   return Profile.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-  // } else {
-  //   //throw Exception(response.toString());
-  //   return null;
-  // }
+  return newresponse;
 }

@@ -1,10 +1,8 @@
+import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'dataloader.dart' as dataloader;
-import 'dataloader.dart';
+//import 'package:fluttertoast/fluttertoast.dart';
 
 List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
   List<DropdownMenuItem<User>> items = [];
@@ -88,6 +86,90 @@ List<DropdownMenuItem<DocumentType>> buildDropdownMenuItemsDocumentTypes(
   return items;
 }
 
+List<DropdownMenuItem<Profile>> buildTest(List profiles) {
+  List<DropdownMenuItem<Profile>> items = [];
+  for (Profile profile in profiles) {
+    items.add(
+      DropdownMenuItem(
+        value: profile,
+        child: Row(
+          children: [
+            Icon(
+              profile.getIcon(),
+              color: Colors.blue[100],
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 5.0),
+              child: Text(
+                profile.name,
+                style: TextStyle(color: Colors.blue.shade900),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  return items;
+}
+
+List<DropdownMenuItem<ProfileRole>> buildDropdownMenuItemsProfileRoles(
+    List profileRoles) {
+  List<DropdownMenuItem<ProfileRole>> items = [];
+  //var profile = profiles[0];
+  for (ProfileRole profileRole in profileRoles) {
+    items.add(
+      DropdownMenuItem(
+        value: profileRole,
+        child: Row(
+          children: [
+            Icon(
+              profileRole.icon,
+              color: Colors.blue[100],
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 5.0),
+              child: Text(
+                profileRole.name,
+                style: TextStyle(color: Colors.blue.shade900),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  return items;
+}
+
+List<DropdownMenuItem<Profile>> buildDropdownMenuItemsProfile(List profiles) {
+  List<DropdownMenuItem<Profile>> items = [];
+  //var profile = profiles[0];
+  for (Profile profile in profiles) {
+    items.add(
+      DropdownMenuItem(
+        value: profile,
+        child: Row(
+          children: [
+            Icon(
+              profile.getIcon(),
+              color: Colors.blue[100],
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 5.0),
+              child: Text(
+                profile.name,
+                style: TextStyle(color: Colors.blue.shade900),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  return items;
+}
+
 class profilePage extends StatefulWidget {
   @override
   _profilePageState createState() => _profilePageState();
@@ -111,31 +193,40 @@ class _profilePageState extends State<profilePage> {
     //  var box = await Hive.openBox<Settings>('settings');
     Settings? userIDSettings = box.get("userID");
     if (userIDSettings != null) {
-      dataloader.selectedUser = dataloader.users[userIDSettings.value];
+      selectedUser = users[userIDSettings.value];
     } else {
-      dataloader.selectedUser = dataloader.users[0];
-      // print(
-      //     'Could not read user settings, value equals: ${userIDSettings!.value}'); // id
+      selectedUser = users[0];
     }
 
     Settings? documentTypeIDSettings = box.get("documentTypeID");
     if (documentTypeIDSettings != null) {
-      dataloader.selectedDocumentType =
-          dataloader.documentTypes[documentTypeIDSettings.value];
+      selectedDocumentType = documentTypes[documentTypeIDSettings.value];
     } else {
-      dataloader.selectedDocumentType = dataloader.documentTypes[0];
-      // print(
-      //     'Could not read document type settings settings, value equals: ${documentTypeIDSettings!.value}'); // id
+      selectedDocumentType = documentTypes[0];
     }
 
     Settings? marketIDSettings = box.get("marketID");
     if (marketIDSettings != null) {
-      dataloader.selectedMarket = dataloader.markets[marketIDSettings.value];
+      selectedMarket = markets[marketIDSettings.value];
     } else {
-      dataloader.selectedMarket = dataloader.markets[0];
-      // print(
-      //     'Could not read market settings settings, value equals: ${documentTypeIDSettings.value}'); // id
+      selectedMarket = markets[0];
     }
+
+    Settings? profileIDSettings = box.get("profileID");
+    if (profileIDSettings != null) {
+      selectedProfile = profiles[profileIDSettings.value];
+    } else {
+      selectedProfile = profiles[0];
+    }
+
+    // Settings? profileDataSettings = box.get("profileData");
+    // if (profileDataSettings != null) {
+    //   //converting map dynamic dynamic to map string dynamic
+    //   Map<String, dynamic> dataJson = {};
+    //   profileDataSettings.value.forEach((k, v) => dataJson[k.toString()] = v);
+    //   selectedProfile = Profile.fromJson(dataJson);
+    //   print(selectedProfile);
+    // }
   }
 
   Widget addProfileWidget(BuildContext context) {
@@ -152,40 +243,14 @@ class _profilePageState extends State<profilePage> {
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsUser(dataloader.users),
+                    items: buildDropdownMenuItemsUser(users),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: dataloader.selectedUser,
+                    value: selectedUser,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        dataloader.selectedUser = valueSelectedByUser as User;
-                      });
-                    }),
-              ))
-            ])),
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Доступ:               "),
-              SizedBox(
-                height: 5.0,
-              ),
-              Expanded(
-                  child: ListTile(
-                title: DropdownButton(
-                    items: buildDropdownMenuItemsProfile(dataloader.profiles),
-                    style: TextStyle(color: Colors.blue[300]),
-                    value: dataloader.selectedMarket,
-                    onChanged: (valueSelectedByUser) {
-                      setState(() {
-                        debugPrint('User selected $valueSelectedByUser');
-                        // onChangeDropdownItem(valueSelectedByUser as Market);
-                        dataloader.selectedMarket =
-                            valueSelectedByUser as Market;
+                        selectedUser = valueSelectedByUser as User;
                       });
                     }),
               ))
@@ -203,15 +268,14 @@ class _profilePageState extends State<profilePage> {
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsMarket(dataloader.markets),
+                    items: buildDropdownMenuItemsMarket(markets),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: dataloader.selectedMarket,
+                    value: selectedMarket,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        dataloader.selectedMarket =
-                            valueSelectedByUser as Market;
+                        selectedMarket = valueSelectedByUser as Market;
                       });
                     }),
               ))
@@ -229,16 +293,71 @@ class _profilePageState extends State<profilePage> {
               Expanded(
                   child: ListTile(
                 title: DropdownButton(
-                    items: buildDropdownMenuItemsDocumentTypes(
-                        dataloader.documentTypes),
+                    items: buildDropdownMenuItemsDocumentTypes(documentTypes),
                     style: TextStyle(color: Colors.blue[300]),
-                    value: dataloader.selectedDocumentType,
+                    value: selectedDocumentType,
                     onChanged: (valueSelectedByUser) {
                       setState(() {
                         debugPrint('User selected $valueSelectedByUser');
                         // onChangeDropdownItem(valueSelectedByUser as Market);
-                        dataloader.selectedDocumentType =
+                        selectedDocumentType =
                             valueSelectedByUser as DocumentType;
+                      });
+                      ;
+                    }),
+              ))
+            ])),
+      ),
+      // SizedBox(
+      //   height: 30.0,
+      // ),
+      // Container(
+      //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+      //   child: Padding(
+      //       padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
+      //       child: Row(children: <Widget>[
+      //         Text("Профиль-роль:                  "),
+      //         SizedBox(
+      //           height: 5.0,
+      //         ),
+      //         Expanded(
+      //           child: Text(selectedProfile.name.toString()),
+      //           // child: ListTile(
+      //           //   title: DropdownButton(
+      //           //       items: buildDropdownMenuItemsProfileRoles(profileRoles),
+      //           //       style: TextStyle(color: Colors.blue[300]),
+      //           //       value: selectedProfile,
+      //           //       onChanged: (valueSelectedByUser) {
+      //           //         setState(() {
+      //           //           debugPrint('User selected $valueSelectedByUser');
+      //           //           // onChangeDropdownItem(valueSelectedByUser as Market);
+      //           //           //selectedProfile = valueSelectedByUser as ProfileRole;
+      //           //         });
+      //           //       }),
+      //           // ),
+      //         )
+      //       ])),
+      // ),
+      Container(
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+        child: Padding(
+            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
+            child: Row(children: <Widget>[
+              Text("Профиль:           "),
+              SizedBox(
+                height: 5.0,
+              ),
+              Expanded(
+                  child: ListTile(
+                title: DropdownButton(
+                    items: buildTest(profiles),
+                    style: TextStyle(color: Colors.blue[300]),
+                    value: selectedProfile,
+                    onChanged: (valueSelectedByUser) {
+                      setState(() {
+                        debugPrint('User selected $valueSelectedByUser');
+                        // onChangeDropdownItem(valueSelectedByUser as Market);
+                        selectedProfile = valueSelectedByUser as Profile;
                       });
                       ;
                     }),
