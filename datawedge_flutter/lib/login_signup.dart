@@ -1,12 +1,13 @@
 import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/home_page.dart';
+//import 'package:datawedgeflutter/open_iconic_flutter.dart';
 import 'package:datawedgeflutter/restore_pass_page.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_icons/flutter_icons.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:flutter/cupertino.dart' as cupertino;
+//import 'package:flutter/cupertino.dart' as cupertino;
 import 'model/settings.dart';
 
 var loginEnteredID = 0;
@@ -254,8 +255,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             false,
           ),
           //buildTextField(MaterialCommunityIcons.lock_outline, "**********",
-          buildTextFieldPin(IconData(0xe3b1, fontFamily: 'MaterialIcons'),
-              "**********", true, false),
+          buildTextFieldPin(
+              Icons.lock_outline,
+              //  IconData(0xe3b1, fontFamily: 'MaterialIcons'),
+              //OpenIconicIcons.target,
+              "**********",
+              true,
+              false),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -292,8 +298,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       child: Column(
         children: [
           //    buildTextField(MaterialCommunityIcons.account_outline, "111111",
-          buildTextFieldID(IconData(0xee35, fontFamily: 'MaterialIcons'),
-              "111111", false, false),
+          buildTextFieldID(
+              //IconData(0xee35, fontFamily: 'MaterialIcons'),
+              Icons.person,
+              // OpenIconicIcons.share,
+              "111111",
+              false,
+              false),
           // buildTextField(
           //     MaterialCommunityIcons.email_outline, "email", false, true),
           // buildTextField(
@@ -497,9 +508,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       child: Row(children: [
                         SizedBox(width: 15),
                         Icon(
-                          IconData(0xe09c,
-                              fontFamily: 'MaterialIcons',
-                              matchTextDirection: true),
+                          //OpenIconicIcons.accountLogin,
+                          Icons.stars,
+                          // IconData(0xe09c,
+                          //     fontFamily: 'MaterialIcons',
+                          //     matchTextDirection: true),
                           color: Colors.white,
                         ),
                         Text("СТАРТ",

@@ -28,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
       EventChannel('com.darryncampbell.datawedgeflutter/scan');
 
   String _scanBarcode = 'Unknown';
-  String _barcodeString = "Barcode will be shown here";
+  String _barcodeString = "Просканируйте товар...";
   String _barcodeSymbology = "Symbology will be shown here";
   String _scanTime = "Scan Time will be shown here";
   List<String> _resultDataList = [];
@@ -356,7 +356,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                     //padding: const EdgeInsets.only(bottom: 2),
                     child: Text('$_barcodeString',
-                        style: TextStyle(fontWeight: FontWeight.bold))),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Palette.textColor1))),
                 addNewGoodButton(context, addButtonTitle)
               ]))
         ]));
