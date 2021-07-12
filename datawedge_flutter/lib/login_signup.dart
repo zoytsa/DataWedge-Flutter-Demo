@@ -439,14 +439,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     return Positioned(
       // duration: Duration(milliseconds: 700),
       // curve: Curves.bounceInOut,
-      top: isSignupScreen ? 475 : 475,
+      top: isSignupScreen ? 480 : 480,
       right: 0,
       left: 0,
       child: Center(
         child: Container(
           height: 80,
           width: 150,
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(50),
@@ -505,7 +505,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         Text("СТАРТ",
                             style: TextStyle(
                                 fontSize: 15,
-                                letterSpacing: 1.5,
+                                letterSpacing: 1,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
                             textAlign: TextAlign.center)
