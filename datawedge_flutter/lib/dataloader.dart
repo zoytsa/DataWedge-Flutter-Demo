@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:datawedgeflutter/home_page.dart';
+import 'package:datawedgeflutter/login_signup.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,6 +22,7 @@ var enteredPin = 111111;
 var enteredID = 111111;
 var isRememberMe = true;
 var isAuthorized = false;
+var usingZebra = false;
 
 class User {
   int id = 0;
@@ -90,9 +93,9 @@ class ProfileRole {
       ProfileRole(1, 'root', Icons.airline_seat_recline_extra_sharp),
       ProfileRole(
           2, 'administrator', Icons.airline_seat_legroom_reduced_outlined),
-      ProfileRole(3, 'manager', Icons.headset_mic_rounded),
-      ProfileRole(4, 'head', Icons.manage_accounts_outlined),
-      ProfileRole(5, 'staff', Icons.pregnant_woman_rounded), // preblwole
+      ProfileRole(3, 'Управляющий', Icons.headset_mic_rounded),
+      ProfileRole(4, 'Руководитель', Icons.manage_accounts_outlined),
+      ProfileRole(5, 'Персонал', Icons.pregnant_woman_rounded), // preblwole
     ];
   }
 }
@@ -171,8 +174,8 @@ class Profile {
 
   static List<Profile> getAvailableProfiles() {
     return <Profile>[
-      Profile(0, 0, 0, 0, 0, "<0>", 0),
-      Profile(1, 1, 1, 1, 1, "<1>", 1),
+      Profile(0, 0, 0, 5, 0, "<0>", 0),
+      Profile(1, 1, 1, 0, 1, "<1>", 1),
       Profile(2, 2, 2, 2, 2, "<2>", 2),
       Profile(3, 3, 3, 3, 3, "<3>", 3),
       Profile(4, 4, 4, 4, 4, "<4>", 4),
@@ -184,6 +187,17 @@ class Profile {
     return (profileRoles[this.roleID].icon);
   }
 
+  String getName() {
+    if (this.marketID == 0) {
+      return (profileRoles[this.roleID].name + " (все)").trim();
+    } else {
+      return (profileRoles[this.roleID].name +
+              " [" +
+              markets[this.marketID].name +
+              "]")
+          .trim();
+    }
+  }
   // Map<String, dynamic> toMapStringDynamic(Map<dynamic, dynamic> data) {
   //   Map<String, dynamic> result = {};
   //   data.forEach((k, v) => result[k.toString()] = v);
@@ -424,6 +438,22 @@ saveSettingsHive(BuildContext context) {
     box.put("profileID", profileID);
   }
 
+  Settings? usingZebraSettings = box.get("usingZebra");
+  if (usingZebraSettings != null) {
+    if (usingZebra != usingZebraSettings.value) {
+      usingZebraSettings.value = usingZebra;
+      usingZebraSettings.name = 'usingZebra';
+      usingZebraSettings.save();
+      noNeedToSave = false;
+    }
+  }
+
+  if (usingZebraSettings == null) {
+    Settings hiveUsingZebra = Settings('usingZebra', usingZebra);
+    noNeedToSave = false;
+    box.put("usingZebra", hiveUsingZebra);
+  }
+
   var profileData = selectedProfile.toJsonDynamic();
 
   Settings? profileDataSettings = box.get("profileData");
@@ -459,6 +489,72 @@ saveSettingsHive(BuildContext context) {
       content: Padding(
           padding: EdgeInsets.only(top: 3),
           child: Text("Saved!", textAlign: TextAlign.center)),
+    ));
+  }
+}
+
+saveExitSettingsHive(BuildContext context) {
+  print('2selectedUser.id: ${selectedUser.id}');
+  print('2selectedMarket.id: ${selectedMarket.id}');
+  print('2selectedDocumentType.id: ${selectedDocumentType.id}');
+  print('2selectedProfile.profileID: ${selectedProfile.profileID}');
+
+  bool noNeedToSave = true;
+  Box<Settings> box = Hive.box<Settings>('settings');
+
+  Settings? userIDSettings = box.get("userID");
+  if (userIDSettings != null) {
+    selectedUser = users[0];
+    userIDSettings.value = 0;
+    userIDSettings.name = selectedUser.name;
+    userIDSettings.save();
+    noNeedToSave = false;
+  }
+
+  Settings? profileIDSettings = box.get("profileID");
+  if (profileIDSettings != null) {
+    selectedProfile = profiles[0]; // IDSettings.value) {
+    profileIDSettings.value = selectedProfile.profileID;
+    profileIDSettings.name = selectedProfile.name;
+    profileIDSettings.save();
+    // noNeedToSave = false;
+  }
+
+  var profileData = selectedProfile.toJsonDynamic();
+
+  Settings? profileDataSettings = box.get("profileData");
+  if (profileDataSettings != null) {
+    if (profileData.toString() != profileDataSettings.value.toString()) {
+      profileDataSettings.value = profileData;
+      profileDataSettings.name = selectedProfile.name;
+      profileDataSettings.save();
+      //  noNeedToSave = false;
+    }
+  }
+
+  print('yo what the hell');
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginSignupScreen(),
+      ));
+
+  if (noNeedToSave == true) {
+    Fluttertoast.showToast(
+        msg: "Не удалось выйти...",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.orange[400],
+      duration: Duration(seconds: 1),
+      content: Padding(
+          padding: EdgeInsets.only(top: 3),
+          child: Text("ВЫХОД", textAlign: TextAlign.center)),
     ));
   }
 }
@@ -510,4 +606,86 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
   }
 
   return newresponse;
+}
+
+Future<bool> accessAlowed(
+    BuildContext context, loginEnteredID, loginEnteredPin) async {
+  var result = false;
+  switch (loginEnteredID) {
+    case 1:
+      {
+        if (loginEnteredPin == 1) {
+          selectedUser = users[1];
+
+          result = true;
+        }
+      }
+      break;
+    case 2:
+      {
+        if (loginEnteredPin == 2) {
+          selectedUser = users[2];
+          result = true;
+        }
+      }
+      break;
+    case 3:
+      {
+        if (loginEnteredPin == 3) {
+          selectedUser = users[3];
+          result = true;
+        }
+      }
+      break;
+    case 4:
+      {
+        if (loginEnteredPin == 4) {
+          selectedUser = users[4];
+          result = true;
+        }
+      }
+      break;
+    case 5:
+      {
+        if (loginEnteredPin == 5) {
+          result = true;
+        }
+      }
+      break;
+    case 111111:
+      {
+        selectedUser = users[0];
+        result = true;
+      }
+      break;
+    default:
+  }
+
+  //if (result != true) {
+  FocusManager.instance.primaryFocus?.unfocus();
+  await showError(context, result);
+  //}
+  return result;
+}
+
+Future<void> showError(BuildContext context, bool result) async {
+  await Future.delayed(Duration(milliseconds: 300));
+  if (result != true) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.orange[600],
+      duration: Duration(seconds: 1),
+      content: Padding(
+          padding: EdgeInsets.only(top: 3),
+          child: Text("Не верный ID или пароль!", textAlign: TextAlign.center)),
+    ));
+    ;
+  } else {
+    saveSettingsHive(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: "Connector F"),
+      ),
+    );
+  }
 }

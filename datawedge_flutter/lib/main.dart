@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       selectedUser = users[userIDSettings.value];
       if (selectedUser.id != 111111 && selectedUser.id != 0) {
         print(selectedUser.id);
-        //isAuthorized = true;
+        isAuthorized = true;
       }
     } else {
       selectedUser = users[0];

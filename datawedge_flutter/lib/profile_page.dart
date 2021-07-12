@@ -1,4 +1,5 @@
 import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -17,12 +18,14 @@ List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                user.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    user.name,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
           ],
         ),
       ),
@@ -44,12 +47,14 @@ List<DropdownMenuItem<Market>> buildDropdownMenuItemsMarket(List markets) {
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                market.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    market.name,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
           ],
         ),
       ),
@@ -72,12 +77,14 @@ List<DropdownMenuItem<DocumentType>> buildDropdownMenuItemsDocumentTypes(
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                documentType.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    documentType.name,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                )),
           ],
         ),
       ),
@@ -99,12 +106,14 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                profile.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    profile.getName(),
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
           ],
         ),
       ),
@@ -128,12 +137,14 @@ List<DropdownMenuItem<ProfileRole>> buildDropdownMenuItemsProfileRoles(
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                profileRole.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    profileRole.name,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
           ],
         ),
       ),
@@ -156,12 +167,14 @@ List<DropdownMenuItem<Profile>> buildDropdownMenuItemsProfile(List profiles) {
               color: Colors.blue[100],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                profile.name,
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            )
+                padding: EdgeInsets.only(left: 5.0),
+                child: SizedBox(
+                  width: 130,
+                  child: Text(
+                    profile.getName(),
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
           ],
         ),
       ),
@@ -178,11 +191,24 @@ class profilePage extends StatefulWidget {
 class _profilePageState extends State<profilePage> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
+    return Container(
+        // backgroundColor: Color(0xFF3b5999).withOpacity(0.9),
+        // decoration: BoxDecoration(
+        //     image: DecorationImage(
+        //   image: AssetImage("images/background.jpg"),
+        //   fit: BoxFit.cover,
+        //   colorFilter: new ColorFilter.mode(
+        //       Colors.black.withOpacity(0.1), BlendMode.dstATop),
+
+        //   // fit: BoxFit.scaleDown //.fill
+        // )),
+        child: Container(
+            // color: Colors.white.withOpacity(.85),
+            child: Column(children: <Widget>[
       Flexible(flex: 4, child: addProfileWidget(context)),
       Container(child: addSaveSettingsButton(context)),
       // Flexible(flex: 5, child: addPhotoScanButton(context)),
-    ]);
+    ])));
   }
 
   @override
@@ -214,7 +240,9 @@ class _profilePageState extends State<profilePage> {
 
     Settings? profileIDSettings = box.get("profileID");
     if (profileIDSettings != null) {
-      selectedProfile = profiles[profileIDSettings.value];
+      selectedProfile = profileIDSettings.value is int
+          ? profiles[profileIDSettings.value]
+          : selectedProfile = profiles[0];
     } else {
       selectedProfile = profiles[0];
     }
@@ -230,83 +258,154 @@ class _profilePageState extends State<profilePage> {
   }
 
   Widget addProfileWidget(BuildContext context) {
-    Widget widget = Column(children: [
+    Widget widget =
+        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Container(
-        padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
         child: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
             child: Row(children: <Widget>[
-              Text("Пользователь:  "),
+              Text("Пользователь: ",
+                  style: TextStyle(color: Palette.textColor2)),
               SizedBox(
                 height: 5.0,
               ),
-              Expanded(
+              SizedBox(
+                  width: 220,
                   child: ListTile(
-                title: DropdownButton(
-                    items: buildDropdownMenuItemsUser(users),
-                    style: TextStyle(color: Colors.blue[300]),
-                    value: selectedUser,
-                    onChanged: (valueSelectedByUser) {
-                      setState(() {
-                        debugPrint('User selected $valueSelectedByUser');
-                        // onChangeDropdownItem(valueSelectedByUser as Market);
-                        selectedUser = valueSelectedByUser as User;
-                      });
-                    }),
-              ))
+                    title: DropdownButton(
+                        items: buildDropdownMenuItemsUser(users),
+                        style: TextStyle(color: Colors.blue[300]),
+                        value: selectedUser,
+                        onChanged: (valueSelectedByUser) {
+                          setState(() {
+                            debugPrint('User selected $valueSelectedByUser');
+                            // onChangeDropdownItem(valueSelectedByUser as Market);
+                            selectedUser = valueSelectedByUser as User;
+                          });
+                        }),
+                  )),
+              //buttonExit(context)
+            ])),
+      ),
+      buttonExit(context),
+      Container(
+        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+        child: Padding(
+            padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
+            child: Row(children: <Widget>[
+              Text("Профиль:          ",
+                  style: TextStyle(color: Palette.textColor2)),
+              SizedBox(
+                height: 5.0,
+                //          width: 100,
+              ),
+              SizedBox(
+                  width: 220,
+                  child: ListTile(
+                    title: DropdownButton(
+                        items: buildTest(profiles),
+                        style: TextStyle(color: Colors.blue[300]),
+                        value: selectedProfile,
+                        onChanged: (valueSelectedByUser) {
+                          setState(() {
+                            debugPrint('User selected $valueSelectedByUser');
+                            // onChangeDropdownItem(valueSelectedByUser as Market);
+                            selectedProfile = valueSelectedByUser as Profile;
+                          });
+                          ;
+                        }),
+                  ))
+            ])),
+      ),
+
+      Container(
+        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+        child: Padding(
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            child: Row(children: <Widget>[
+              Text("Маркет:             ",
+                  style: TextStyle(color: Palette.textColor2)),
+              SizedBox(
+                height: 5.0,
+              ),
+              SizedBox(
+                  width: 220,
+                  child: ListTile(
+                    title: DropdownButton(
+                        items: buildDropdownMenuItemsMarket(markets),
+                        style: TextStyle(color: Colors.blue[300]),
+                        value: selectedMarket,
+                        onChanged: (valueSelectedByUser) {
+                          setState(() {
+                            debugPrint('User selected $valueSelectedByUser');
+                            // onChangeDropdownItem(valueSelectedByUser as Market);
+                            selectedMarket = valueSelectedByUser as Market;
+                          });
+                        }),
+                  ))
             ])),
       ),
       Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
         child: Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
             child: Row(children: <Widget>[
-              Text("Маркет:               "),
+              Text("Документ:        ",
+                  style: TextStyle(color: Palette.textColor2)),
+              SizedBox(height: 5.0),
               SizedBox(
-                height: 5.0,
-              ),
-              Expanded(
+                  width: 220,
                   child: ListTile(
-                title: DropdownButton(
-                    items: buildDropdownMenuItemsMarket(markets),
-                    style: TextStyle(color: Colors.blue[300]),
-                    value: selectedMarket,
-                    onChanged: (valueSelectedByUser) {
-                      setState(() {
-                        debugPrint('User selected $valueSelectedByUser');
-                        // onChangeDropdownItem(valueSelectedByUser as Market);
-                        selectedMarket = valueSelectedByUser as Market;
-                      });
-                    }),
-              ))
+                    title: DropdownButton(
+                        items:
+                            buildDropdownMenuItemsDocumentTypes(documentTypes),
+                        style: TextStyle(color: Colors.blue[300]),
+                        value: selectedDocumentType,
+                        onChanged: (valueSelectedByUser) {
+                          setState(() {
+                            debugPrint('User selected $valueSelectedByUser');
+                            // onChangeDropdownItem(valueSelectedByUser as Market);
+                            selectedDocumentType =
+                                valueSelectedByUser as DocumentType;
+                          });
+                          ;
+                        }),
+                  ))
             ])),
       ),
       Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Вид документа:"),
-              SizedBox(
-                height: 5.0,
-              ),
-              Expanded(
-                  child: ListTile(
-                title: DropdownButton(
-                    items: buildDropdownMenuItemsDocumentTypes(documentTypes),
-                    style: TextStyle(color: Colors.blue[300]),
-                    value: selectedDocumentType,
-                    onChanged: (valueSelectedByUser) {
+        //width: 250,
+
+        padding: const EdgeInsets.only(right: 20.0),
+        child: Column(//crossAxisAlignment: CrossAxisAlignment.center,
+            // width: 250,
+            children: [
+          Padding(
+              padding: EdgeInsets.only(left: 15.0, right: 20.0),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: usingZebra,
+                    activeColor: Palette.textColor2,
+                    onChanged: (value) {
                       setState(() {
-                        debugPrint('User selected $valueSelectedByUser');
-                        // onChangeDropdownItem(valueSelectedByUser as Market);
-                        selectedDocumentType =
-                            valueSelectedByUser as DocumentType;
+                        usingZebra = !usingZebra;
                       });
-                      ;
-                    }),
-              ))
-            ])),
+                    },
+                  ),
+                  Container(
+                      width: 250,
+                      child: Text(
+                        "Отображать кнопку встроенного сканера ТСД (Zebra)",
+                        style:
+                            TextStyle(fontSize: 14, color: Palette.textColor1),
+                        softWrap: true,
+                        textAlign: TextAlign.left,
+                      ))
+                ],
+              )),
+        ]),
       ),
       // SizedBox(
       //   height: 30.0,
@@ -338,60 +437,85 @@ class _profilePageState extends State<profilePage> {
       //         )
       //       ])),
       // ),
-      Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Профиль:           "),
-              SizedBox(
-                height: 5.0,
-              ),
-              Expanded(
-                  child: ListTile(
-                title: DropdownButton(
-                    items: buildTest(profiles),
-                    style: TextStyle(color: Colors.blue[300]),
-                    value: selectedProfile,
-                    onChanged: (valueSelectedByUser) {
-                      setState(() {
-                        debugPrint('User selected $valueSelectedByUser');
-                        // onChangeDropdownItem(valueSelectedByUser as Market);
-                        selectedProfile = valueSelectedByUser as Profile;
-                      });
-                      ;
-                    }),
-              ))
-            ])),
-      ),
     ]);
     return widget;
   }
 
   Widget addSaveSettingsButton(BuildContext context) {
     Widget widget = GestureDetector(
-      onTapDown: (TapDownDetails) async {
-        saveSettingsHive(context);
-        saveProfileOnDCT(context);
-      },
-      onTapUp: (TapUpDetails) {},
-      child: Container(
-        margin: EdgeInsets.only(left: 120.0, right: 120, top: 10, bottom: 60),
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          color: Colors.blue[200],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Center(
-          child: Text(
-            "    SAVE    ",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+        onTapDown: (TapDownDetails) async {
+          saveSettingsHive(context);
+          saveProfileOnDCT(context);
+        },
+        onTapUp: (TapUpDetails) {},
+        child: SizedBox(
+          width: 120,
+          child: Container(
+            margin: EdgeInsets.only(bottom: 50),
+            padding: EdgeInsets.all(15.0),
+            // decoration: BoxDecoration(
+            //   color: Colors.blue[200],
+            //   borderRadius: BorderRadius.circular(8.0),
+            // ),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
+                  begin: Alignment.bottomRight,
+                  end: Alignment.topLeft,
+                ),
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(.3),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 1))
+                ]),
+            child: Center(
+              child: Text(
+                "    Сохранить    ",
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
     return widget;
+  }
+
+  Widget buttonExit(BuildContext context) {
+    return
+        // GestureDetector(
+        //     onTapDown: (TapDownDetails) async {
+        //       saveExitSettingsHive(context);
+        //     },
+        //     onTapUp: (TapUpDetails) {},
+        //     child:
+        SizedBox(
+            width: 120,
+            height: 40,
+            child: TextButton(
+              onPressed: () => saveExitSettingsHive(context),
+              style: TextButton.styleFrom(
+                  //side: BorderSide(width: 1, color: Colors.white),
+                  minimumSize: Size(60, 20),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  primary: Colors.white,
+                  backgroundColor: Colors.purple[100]),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.exit_to_app_rounded,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "Выйти...",
+                  )
+                ],
+              ),
+            ));
   }
 }
