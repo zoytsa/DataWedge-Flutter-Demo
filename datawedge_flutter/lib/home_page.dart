@@ -642,6 +642,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget addTextHeaderGoodItems(
       BuildContext context, String producer, List goodItems, docNumber) {
     Widget widget = Container(
+        //   width: 100,
         padding: const EdgeInsets.all(22),
         child: Row(children: [
           Expanded(
@@ -650,7 +651,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                 Container(
+                    width: 180,
                     child: Text(producer,
+                        softWrap: true,
                         style: TextStyle(fontWeight: FontWeight.bold))),
                 Container(
                     child: Text(docNumber,

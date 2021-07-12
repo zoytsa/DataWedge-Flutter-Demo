@@ -33,6 +33,7 @@ dependencies:
   hive: ^2.0.3
   hive_flutter: ^1.0.0
   fluttertoast: ^8.0.7
+  flutter_native_splash: ^1.2.0
   #open_iconic_flutter: 0.1.0    
 
 dev_dependencies:
@@ -43,6 +44,12 @@ dev_dependencies:
   build_runner: ^1.12.2
   hive_generator: ^1.0.1
 
+flutter_native_splash:
+  android: true
+  background_image: "images/background_qr.jpg"
+  image: images/background_qr.jpg
+#  color: “42a5f5”
+  android_disable_fullscreen: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
