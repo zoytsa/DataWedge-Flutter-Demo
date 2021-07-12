@@ -53,8 +53,9 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "images/playstore.png"
-
+  image_path: "images/playstore2.png"
+  adaptive_icon_background: "images/playstore_back.png"
+  adaptive_icon_foreground: "images/playstore2.png"
 #flutter_native_splash:
  # android: true
   #background_image: "images/background_qr.jpg"
@@ -79,7 +80,8 @@ flutter:
     - images/background_qr.jpg
     - images/icon_zebra.png
     - images/background.jpg
-    - images/playstore.png
+    - images/playstore2.png
+    - images/playstore_back.png
   # fonts:
   #   - family: OpenIconic
   #     fonts:
