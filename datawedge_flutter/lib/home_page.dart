@@ -278,12 +278,14 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Scaffold(
               resizeToAvoidBottomInset: false,
               appBar: AppBar(
+                automaticallyImplyLeading: false,
                 toolbarHeight: isDCT ? 70 : null,
                 title: Text(
                   "Connector F.",
                   style: TextStyle(fontSize: 15),
                 ),
                 centerTitle: true,
+                iconTheme: IconThemeData(color: Colors.white),
                 flexibleSpace: (Container(
                     //height: 200,
                     decoration: BoxDecoration(
@@ -297,24 +299,44 @@ class _MyHomePageState extends State<MyHomePage> {
                   isScrollable: true,
                   indicatorColor: Colors.white,
                   indicatorWeight: 5,
+
                   //tabs: tabs,
 
                   tabs: [
                     Tab(
-                        icon: isDCT ? null : Icon(Icons.search_sharp),
+                        icon: isDCT
+                            ? null
+                            : Icon(
+                                Icons.search_sharp,
+                                color: Colors.white,
+                              ),
                         text: 'Сканер'),
                     //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
                     Tab(
-                        icon: isDCT ? null : Icon(Icons.insert_emoticon),
+                        icon: isDCT
+                            ? null
+                            : Icon(
+                                Icons.insert_emoticon,
+                                color: Colors.white,
+                              ),
                         text: _goodsHeader),
                     Tab(
-                        icon: isDCT ? null : Icon(Icons.space_bar),
+                        icon: isDCT
+                            ? null
+                            : Icon(Icons.space_bar, color: Colors.white),
                         text: 'Документы'),
                     //Tab(icon: Icon(Icons.person), text: 'Profile'),
                     Tab(
-                        icon: isDCT ? null : Icon(_profileHeaderIcon),
-                        text: 'Профиль'),
+                      icon: isDCT
+                          ? null
+                          : Icon(
+                              _profileHeaderIcon,
+                              color: Colors.white,
+                            ),
+                      text: 'Профиль',
+                    ),
                   ],
+                  labelColor: Colors.white,
                 ),
                 elevation: 20,
                 titleSpacing: 20,
@@ -362,7 +384,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //SizedBox(height: 90),
 
       Align(
-        alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.85),
+        alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
         child: !usingZebra
             ? //Row(
             // mainAxisAlignment: MainAxisAlignment.center,
