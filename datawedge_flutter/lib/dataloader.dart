@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/login_signup.dart';
@@ -596,13 +597,13 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
         textColor: Colors.white,
         fontSize: 16.0);
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.green[300],
-      duration: Duration(seconds: 1),
-      content: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text("Saved on DCT!", textAlign: TextAlign.center)),
-    ));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   backgroundColor: Colors.green[300],
+    //   duration: Duration(seconds: 1),
+    //   content: Padding(
+    //       padding: EdgeInsets.only(top: 3),
+    //       child: Text("Saved on DCT!", textAlign: TextAlign.center)),
+    // ));
   }
 
   return newresponse;

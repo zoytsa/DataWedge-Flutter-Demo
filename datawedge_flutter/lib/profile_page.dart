@@ -15,7 +15,7 @@ List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
           children: [
             Icon(
               user.icon,
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -44,7 +44,7 @@ List<DropdownMenuItem<Market>> buildDropdownMenuItemsMarket(List markets) {
           children: [
             Icon(
               market.icon,
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -74,7 +74,7 @@ List<DropdownMenuItem<DocumentType>> buildDropdownMenuItemsDocumentTypes(
           children: [
             Icon(
               documentType.icon,
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -103,7 +103,7 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
           children: [
             Icon(
               profile.getIcon(),
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -134,7 +134,7 @@ List<DropdownMenuItem<ProfileRole>> buildDropdownMenuItemsProfileRoles(
           children: [
             Icon(
               profileRole.icon,
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -164,7 +164,7 @@ List<DropdownMenuItem<Profile>> buildDropdownMenuItemsProfile(List profiles) {
           children: [
             Icon(
               profile.getIcon(),
-              color: Colors.blue[100],
+              color: Colors.indigo[200],
             ),
             Padding(
                 padding: EdgeInsets.only(left: 5.0),
@@ -184,6 +184,17 @@ List<DropdownMenuItem<Profile>> buildDropdownMenuItemsProfile(List profiles) {
 }
 
 class profilePage extends StatefulWidget {
+  var vcbUsingZebra = usingZebra;
+  final VoidCallback? vcbUsingZebraOnSelected;
+  final Function(bool) vcbUsinZebraOnChanged;
+
+  profilePage(
+      {Key? key,
+      required this.vcbUsingZebra,
+      this.vcbUsingZebraOnSelected,
+      required this.vcbUsinZebraOnChanged})
+      : super(key: key);
+
   @override
   _profilePageState createState() => _profilePageState();
 }
@@ -191,6 +202,9 @@ class profilePage extends StatefulWidget {
 class _profilePageState extends State<profilePage> {
   @override
   Widget build(BuildContext context) {
+    // var my_vcbUsingZebraOnSelected = widget.vcbUsingZebraOnSelected!();
+    // var vcbUsinZebraOnChanged = widget.vcbUsinZebraOnChanged();
+    bool isDCT = MediaQuery.of(context).size.height < 600;
     return Container(
         // backgroundColor: Color(0xFF3b5999).withOpacity(0.9),
         // decoration: BoxDecoration(
@@ -202,13 +216,212 @@ class _profilePageState extends State<profilePage> {
 
         //   // fit: BoxFit.scaleDown //.fill
         // )),
-        child: Container(
+        child: SingleChildScrollView(
+            // child: Container(
             // color: Colors.white.withOpacity(.85),
-            child: Column(children: <Widget>[
-      Flexible(flex: 4, child: addProfileWidget(context)),
-      Container(child: addSaveSettingsButton(context)),
-      // Flexible(flex: 5, child: addPhotoScanButton(context)),
-    ])));
+            //child: //Column(children: <Widget>[
+            //Container(
+            child: Center(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+          Container(
+            padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+            child: Padding(
+                padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
+                child: Row(children: [
+                  //   ? isDCT Icon(Icons.person) : Icon(Icons.person),
+                  //Icon(Icons.person),
+                  isDCT
+                      ? Icon(Icons.person, color: Palette.textColor1)
+                      : SizedBox(),
+                  !isDCT
+                      ? Text("Пользователь: ",
+                          style: TextStyle(color: Palette.textColor2))
+                      : SizedBox(),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  SizedBox(
+                      width: 220,
+                      child: ListTile(
+                        title: DropdownButton(
+                            items: buildDropdownMenuItemsUser(users),
+                            style: TextStyle(color: Colors.blue[300]),
+                            value: selectedUser,
+                            onChanged: (valueSelectedByUser) {
+                              setState(() {
+                                debugPrint(
+                                    'User selected $valueSelectedByUser');
+                                // onChangeDropdownItem(valueSelectedByUser as Market);
+                                selectedUser = valueSelectedByUser as User;
+                                saveSettingsHive(context);
+                                saveProfileOnDCT(context);
+                              });
+                            }),
+                      )),
+                  //buttonExit(context)
+                ])),
+          ),
+          buttonExit(context),
+          Container(
+            padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+            child: Padding(
+                padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
+                child: Row(children: <Widget>[
+                  isDCT
+                      ? Icon(
+                          Icons.security_rounded,
+                          color: Palette.textColor1,
+                        )
+                      : SizedBox(),
+                  !isDCT
+                      ? Text("Профиль:          ",
+                          style: TextStyle(color: Palette.textColor2))
+                      : SizedBox(),
+                  SizedBox(
+                    height: 5.0,
+                    //          width: 100,
+                  ),
+                  SizedBox(
+                      width: 220,
+                      child: ListTile(
+                        title: DropdownButton(
+                            items: buildTest(profiles),
+                            style: TextStyle(color: Colors.blue[300]),
+                            value: selectedProfile,
+                            onChanged: (valueSelectedByUser) {
+                              setState(() {
+                                debugPrint(
+                                    'User selected $valueSelectedByUser');
+                                // onChangeDropdownItem(valueSelectedByUser as Market);
+                                selectedProfile =
+                                    valueSelectedByUser as Profile;
+                                saveSettingsHive(context);
+                                saveProfileOnDCT(context);
+                              });
+                              ;
+                            }),
+                      ))
+                ])),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+            child: Padding(
+                padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Row(children: <Widget>[
+                  isDCT
+                      ? Icon(Icons.shop_outlined, color: Palette.textColor1)
+                      : SizedBox(),
+                  !isDCT
+                      ? Text("Маркет:             ",
+                          style: TextStyle(color: Palette.textColor2))
+                      : SizedBox(),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  SizedBox(
+                      width: 220,
+                      child: ListTile(
+                        title: DropdownButton(
+                            items: buildDropdownMenuItemsMarket(markets),
+                            style: TextStyle(color: Colors.blue[300]),
+                            value: selectedMarket,
+                            onChanged: (valueSelectedByUser) {
+                              setState(() {
+                                debugPrint(
+                                    'User selected $valueSelectedByUser');
+                                // onChangeDropdownItem(valueSelectedByUser as Market);
+                                selectedMarket = valueSelectedByUser as Market;
+                                saveSettingsHive(context);
+                                saveProfileOnDCT(context);
+                              });
+                            }),
+                      ))
+                ])),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+            child: Padding(
+                padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Row(children: <Widget>[
+                  isDCT
+                      ? Icon(Icons.document_scanner_outlined,
+                          color: Palette.textColor1)
+                      : SizedBox(),
+                  !isDCT
+                      ? Text("Документ:        ",
+                          style: TextStyle(color: Palette.textColor2))
+                      : SizedBox(),
+                  SizedBox(height: 5.0),
+                  SizedBox(
+                      width: 220,
+                      child: ListTile(
+                        title: DropdownButton(
+                            items: buildDropdownMenuItemsDocumentTypes(
+                                documentTypes),
+                            style: TextStyle(color: Colors.blue[300]),
+                            value: selectedDocumentType,
+                            onChanged: (valueSelectedByUser) {
+                              setState(() {
+                                debugPrint(
+                                    'User selected $valueSelectedByUser');
+                                // onChangeDropdownItem(valueSelectedByUser as Market);
+                                selectedDocumentType =
+                                    valueSelectedByUser as DocumentType;
+                                saveSettingsHive(context);
+                                saveProfileOnDCT(context);
+                              });
+                              ;
+                            }),
+                      ))
+                ])),
+          ),
+          Container(
+            //width: 250,
+
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Column(//crossAxisAlignment: CrossAxisAlignment.center,
+                // width: 250,
+                children: [
+              Padding(
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Row(
+                    children: [
+                      //SizedBox(width: 3),
+                      Checkbox(
+                        value: usingZebra,
+                        activeColor: Palette.textColor2,
+                        onChanged: (value) {
+                          setState(() {
+                            usingZebra = !usingZebra;
+                            saveSettingsHive(context);
+                            saveProfileOnDCT(context);
+                            widget.vcbUsinZebraOnChanged(usingZebra);
+                            widget.vcbUsingZebraOnSelected!();
+                            // my_vcbUsingZebraOnSelected();
+                            //  super.setState(() {});
+                          });
+                        },
+                      ),
+                      Container(
+                          width: 250,
+                          child: Text(
+                            "Отображать кнопку встроенного сканера ТСД (Zebra)",
+                            style: TextStyle(
+                                fontSize: 14, color: Palette.textColor1),
+                            softWrap: true,
+                            textAlign: TextAlign.left,
+                          ))
+                    ],
+                  )),
+            ]),
+          ),
+        ]))));
+
+    // Container(child: addSaveSettingsButton(context)),
+    // Flexible(flex: 5, child: addPhotoScanButton(context)),
   }
 
   @override
@@ -257,187 +470,8 @@ class _profilePageState extends State<profilePage> {
     // }
   }
 
-  Widget addProfileWidget(BuildContext context) {
-    Widget widget =
-        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Container(
-        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Пользователь: ",
-                  style: TextStyle(color: Palette.textColor2)),
-              SizedBox(
-                height: 5.0,
-              ),
-              SizedBox(
-                  width: 220,
-                  child: ListTile(
-                    title: DropdownButton(
-                        items: buildDropdownMenuItemsUser(users),
-                        style: TextStyle(color: Colors.blue[300]),
-                        value: selectedUser,
-                        onChanged: (valueSelectedByUser) {
-                          setState(() {
-                            debugPrint('User selected $valueSelectedByUser');
-                            // onChangeDropdownItem(valueSelectedByUser as Market);
-                            selectedUser = valueSelectedByUser as User;
-                          });
-                        }),
-                  )),
-              //buttonExit(context)
-            ])),
-      ),
-      buttonExit(context),
-      Container(
-        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Профиль:          ",
-                  style: TextStyle(color: Palette.textColor2)),
-              SizedBox(
-                height: 5.0,
-                //          width: 100,
-              ),
-              SizedBox(
-                  width: 220,
-                  child: ListTile(
-                    title: DropdownButton(
-                        items: buildTest(profiles),
-                        style: TextStyle(color: Colors.blue[300]),
-                        value: selectedProfile,
-                        onChanged: (valueSelectedByUser) {
-                          setState(() {
-                            debugPrint('User selected $valueSelectedByUser');
-                            // onChangeDropdownItem(valueSelectedByUser as Market);
-                            selectedProfile = valueSelectedByUser as Profile;
-                          });
-                          ;
-                        }),
-                  ))
-            ])),
-      ),
-
-      Container(
-        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Маркет:             ",
-                  style: TextStyle(color: Palette.textColor2)),
-              SizedBox(
-                height: 5.0,
-              ),
-              SizedBox(
-                  width: 220,
-                  child: ListTile(
-                    title: DropdownButton(
-                        items: buildDropdownMenuItemsMarket(markets),
-                        style: TextStyle(color: Colors.blue[300]),
-                        value: selectedMarket,
-                        onChanged: (valueSelectedByUser) {
-                          setState(() {
-                            debugPrint('User selected $valueSelectedByUser');
-                            // onChangeDropdownItem(valueSelectedByUser as Market);
-                            selectedMarket = valueSelectedByUser as Market;
-                          });
-                        }),
-                  ))
-            ])),
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 10.0, right: 20.0),
-        child: Padding(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(children: <Widget>[
-              Text("Документ:        ",
-                  style: TextStyle(color: Palette.textColor2)),
-              SizedBox(height: 5.0),
-              SizedBox(
-                  width: 220,
-                  child: ListTile(
-                    title: DropdownButton(
-                        items:
-                            buildDropdownMenuItemsDocumentTypes(documentTypes),
-                        style: TextStyle(color: Colors.blue[300]),
-                        value: selectedDocumentType,
-                        onChanged: (valueSelectedByUser) {
-                          setState(() {
-                            debugPrint('User selected $valueSelectedByUser');
-                            // onChangeDropdownItem(valueSelectedByUser as Market);
-                            selectedDocumentType =
-                                valueSelectedByUser as DocumentType;
-                          });
-                          ;
-                        }),
-                  ))
-            ])),
-      ),
-      Container(
-        //width: 250,
-
-        padding: const EdgeInsets.only(right: 20.0),
-        child: Column(//crossAxisAlignment: CrossAxisAlignment.center,
-            // width: 250,
-            children: [
-          Padding(
-              padding: EdgeInsets.only(left: 15.0, right: 20.0),
-              child: Row(
-                children: [
-                  Checkbox(
-                    value: usingZebra,
-                    activeColor: Palette.textColor2,
-                    onChanged: (value) {
-                      setState(() {
-                        usingZebra = !usingZebra;
-                      });
-                    },
-                  ),
-                  Container(
-                      width: 250,
-                      child: Text(
-                        "Отображать кнопку встроенного сканера ТСД (Zebra)",
-                        style:
-                            TextStyle(fontSize: 14, color: Palette.textColor1),
-                        softWrap: true,
-                        textAlign: TextAlign.left,
-                      ))
-                ],
-              )),
-        ]),
-      ),
-      // SizedBox(
-      //   height: 30.0,
-      // ),
-      // Container(
-      //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-      //   child: Padding(
-      //       padding: EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-      //       child: Row(children: <Widget>[
-      //         Text("Профиль-роль:                  "),
-      //         SizedBox(
-      //           height: 5.0,
-      //         ),
-      //         Expanded(
-      //           child: Text(selectedProfile.name.toString()),
-      //           // child: ListTile(
-      //           //   title: DropdownButton(
-      //           //       items: buildDropdownMenuItemsProfileRoles(profileRoles),
-      //           //       style: TextStyle(color: Colors.blue[300]),
-      //           //       value: selectedProfile,
-      //           //       onChanged: (valueSelectedByUser) {
-      //           //         setState(() {
-      //           //           debugPrint('User selected $valueSelectedByUser');
-      //           //           // onChangeDropdownItem(valueSelectedByUser as Market);
-      //           //           //selectedProfile = valueSelectedByUser as ProfileRole;
-      //           //         });
-      //           //       }),
-      //           // ),
-      //         )
-      //       ])),
-      // ),
-    ]);
+  Widget addProfileWidget(
+      BuildContext context, VoidCallback my_vcbUsingZebraOnSelected) {
     return widget;
   }
 
@@ -500,20 +534,20 @@ class _profilePageState extends State<profilePage> {
                   //side: BorderSide(width: 1, color: Colors.white),
                   minimumSize: Size(60, 20),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(8)),
                   primary: Colors.white,
-                  backgroundColor: Colors.purple[100]),
+                  backgroundColor: Colors.indigo[200]),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.exit_to_app_rounded,
+                  Text(
+                    "   Выйти...",
                   ),
                   SizedBox(
                     width: 5,
                   ),
-                  Text(
-                    "Выйти...",
-                  )
+                  Icon(
+                    Icons.exit_to_app_rounded,
+                  ),
                 ],
               ),
             ));

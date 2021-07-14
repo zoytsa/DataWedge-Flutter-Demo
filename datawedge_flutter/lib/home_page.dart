@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> children = [];
   int _goodsCount = 0;
   List<GoodItem> goodsList = [];
-  String addButtonTitle = "  + ADD*  ";
+  String addButtonTitle = "  + В СПИСОК*  ";
   List<GoodItem> goodItems = [];
   DocumentOrder? currentDocument = null;
 
@@ -203,11 +203,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
 //bool noItem = true;
-    addButtonTitle = "  +  ADD (0)";
+    addButtonTitle = "  +  В СПИСОК (0)";
     for (GoodItem item in goodsList) {
       if (item.name == goodInfo.name) {
         // noItem = false;
-        addButtonTitle = "  +  ADD (" + item.quantity.toString() + ")";
+        addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
         break;
       }
     }
@@ -224,6 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loadData(text) async {
+    //text = "111";
     var receivedGoodInfo = await loadGoods(text);
     goodInfo = receivedGoodInfo;
     _onManualInputBarcode(text);
@@ -238,12 +239,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _addNewGood() {
     if (goodInfo.name != "") {
       bool noItem = true;
-      addButtonTitle = "  +  ADD (1)";
+      addButtonTitle = "  +  В СПИСОК (1)";
       for (GoodItem item in goodsList) {
         if (item.name == goodInfo.name) {
           item.quantity++;
           noItem = false;
-          addButtonTitle = "  +  ADD (" + item.quantity.toString() + ")";
+          addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
           break;
         }
       }
@@ -261,26 +262,34 @@ class _MyHomePageState extends State<MyHomePage> {
 // *** WIDGETS: MAIN SCAN *** //
   @override
   Widget build(BuildContext context) {
+    final isDCT = MediaQuery.of(context).size.height < 600;
     IconData _profileHeaderIcon = Icons.person;
     if (selectedProfile != null) {
       _profileHeaderIcon = selectedProfile.getIcon();
     }
-    String _goodsHeader = "Goods";
+    String _goodsHeader = "Список";
     if (_goodsCount != 0) {
-      _goodsHeader = "Goods(" + _goodsCount.toString() + ")";
+      _goodsHeader = "Список(" + _goodsCount.toString() + ")";
     } else {}
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: DefaultTabController(
             length: 4, //tabs.length,
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: AppBar(
-                title: Text("Connector F"),
+                toolbarHeight: isDCT ? 70 : null,
+                title: Text(
+                  "Connector F.",
+                  style: TextStyle(fontSize: 15),
+                ),
                 centerTitle: true,
                 flexibleSpace: (Container(
+                    //height: 200,
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
-                  colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+                  //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+                  colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
                   begin: Alignment.bottomRight,
                   end: Alignment.topLeft,
                 )))),
@@ -291,56 +300,93 @@ class _MyHomePageState extends State<MyHomePage> {
                   //tabs: tabs,
 
                   tabs: [
-                    Tab(icon: Icon(Icons.search_sharp), text: 'Scanner'),
+                    Tab(
+                        icon: isDCT ? null : Icon(Icons.search_sharp),
+                        text: 'Сканер'),
                     //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
-                    Tab(icon: Icon(Icons.insert_emoticon), text: _goodsHeader),
-                    Tab(icon: Icon(Icons.space_bar), text: 'Documents'),
+                    Tab(
+                        icon: isDCT ? null : Icon(Icons.insert_emoticon),
+                        text: _goodsHeader),
+                    Tab(
+                        icon: isDCT ? null : Icon(Icons.space_bar),
+                        text: 'Документы'),
                     //Tab(icon: Icon(Icons.person), text: 'Profile'),
-                    Tab(icon: Icon(_profileHeaderIcon), text: 'Profile'),
+                    Tab(
+                        icon: isDCT ? null : Icon(_profileHeaderIcon),
+                        text: 'Профиль'),
                   ],
                 ),
                 elevation: 20,
                 titleSpacing: 20,
               ),
 
-              body: TabBarView(
-                children: [
-                  mainScanPage(context),
-                  //addGoodItemsList(context, goodsList),
-                  goodItemsPage(context, goodsList, currentDocument),
-                  //addResultDataList(context, _resultDataList),
-                  addResultDataList(context, _resultDataList),
-                  // addResultDataList(context, _resultDataList)
-                  profilePage(),
-                ],
-              ),
+              body: TabBarView(children: [
+                mainScanPage(context, isDCT),
+                //addGoodItemsList(context, goodsList),
+                goodItemsPage(context, goodsList, currentDocument),
+                //addResultDataList(context, _resultDataList),
+                addResultDataList(context, _resultDataList),
+                // addResultDataList(context, _resultDataList)
+                profilePage(
+                    vcbUsingZebraOnSelected: () {
+                      print("vcb rules");
+                    },
+                    vcbUsinZebraOnChanged: (bool val) {
+                      setState(() {
+                        usingZebra = val;
+                      });
+                    },
+                    vcbUsingZebra: usingZebra)
+              ]),
 
               //body: mainScanPage(context),
             )));
   }
 
-  // Widget mainScanPage(BuildContext context) {
-  //   Widget widget = Column(children: <Widget>[
-  //     Flexible(flex: 5, child: addTextHeaderBarcode(context)),
-  //     Flexible(flex: 4, child: addZebraScanButton(context)),
-  //     Flexible(flex: 5, child: addPhotoScanButton(context)),
-  //     Flexible(flex: 5, child: addEnterBarcodeField(context)),
-  //     Flexible(flex: 17, child: addResultDataList(context, _resultDataList))
-  //   ]);
-  //   return widget;
-  // }
+  Widget mainScanPage(BuildContext context, isDCT) {
+    Widget widget = Stack(children: [
+      Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(height: 80, child: addTextHeaderBarcode(context))),
+      Align(
+          alignment: isDCT ? Alignment(0, -0.72) : Alignment(0, -0.79),
+          child: SizedBox(height: 85, child: addEnterBarcodeField(context))),
 
-  Widget mainScanPage(BuildContext context) {
-    Widget widget = SingleChildScrollView(
-        child: Column(children: <Widget>[
-      SizedBox(height: 80, child: addTextHeaderBarcode(context)),
-      usingZebra
-          ? SizedBox(height: 60, child: addZebraScanButton(context))
-          : SizedBox(),
-      SizedBox(height: 70, child: addPhotoScanButton(context)),
-      SizedBox(height: 85, child: addEnterBarcodeField(context)),
-      SizedBox(height: 305, child: addResultDataList(context, _resultDataList))
-    ]));
+      Align(
+          alignment: isDCT ? Alignment(0, 0.2) : Alignment(0, 2.2),
+          child: SizedBox(
+              height: isDCT ? 270 : 600,
+              //child: SizedBox(
+              //   height: 600,
+              child: addResultDataList(context, _resultDataList))),
+      //SizedBox(height: 90),
+
+      Align(
+        alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.85),
+        child: !usingZebra
+            ? //Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            //children: [
+            //   SizedBox(width: 40),
+            SizedBox(
+                height: isDCT ? 60 : 70,
+                // width: isDCT ? 180 : null,
+                child: addPhotoScanButton(context, isDCT))
+            // ])
+            : Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                SizedBox(
+                    height: isDCT ? 60 : 70,
+                    width: isDCT ? 200 : 220,
+                    child: addPhotoScanButton(context, isDCT)),
+                usingZebra
+                    ? SizedBox(
+                        height: isDCT ? 60 : 70,
+                        child: addZebraScanButton(context))
+                    : SizedBox(height: 60),
+              ]),
+      )
+    ]);
     return widget;
   }
 
@@ -374,21 +420,42 @@ class _MyHomePageState extends State<MyHomePage> {
         //  stopScan();
       },
       child: Container(
-        margin: EdgeInsets.all(1.0),
-        padding: EdgeInsets.all(8.0),
+        //margin: EdgeInsets.all(1.0),
+        padding: EdgeInsets.all(10.0),
+
         decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Center(
-          child: Text(
+            gradient: LinearGradient(
+              // colors: [
+              //   Colors.green,
+              //   Colors.tealAccent,
+              //   Colors.green,
+              //   Colors.black54
+              // ],
+              // colors: [Colors.black87, Colors.green],
+              colors: [Colors.green, Colors.lightGreen],
+              begin: Alignment.bottomRight,
+              //end: Alignment.topLeft,
+            ),
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(.3),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: Offset(0, 1))
+            ]),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          // Icon(
+          //   Icons.add_circle_outline,
+          //   color: Colors.white,
+          // ),
+          Text(
             addButtonTitle,
             //"  +  ADD  ",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
           ),
-        ),
+        ]),
       ),
     );
     return widget;
@@ -407,10 +474,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // The custom button
 
         child: SizedBox(
-          width: 250,
+          width: 160,
           child: Container(
             //alignment: ,
-            margin: EdgeInsets.all(8.0),
+            margin: EdgeInsets.all(10.0),
             padding: EdgeInsets.only(left: 20.0),
             // decoration: BoxDecoration(
             //   color: Colors.lightBlueAccent,
@@ -436,10 +503,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white,
               ),
               Text(
-                "         ZEBRA",
+                "   ZEBRA",
                 style: TextStyle(
-                    fontSize: 15,
-                    letterSpacing: 1.5,
+                    //  fontSize: 12,
+                    letterSpacing: 1.8,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
                 textAlign: TextAlign.center,
@@ -450,7 +517,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget addPhotoScanButton(BuildContext context) {
+  Widget addPhotoScanButton(BuildContext context, isDCT) {
     Widget widget = GestureDetector(
         // When the child is tapped, scan with camera
         onTapDown: (TapDownDetails) {
@@ -460,10 +527,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // stopScan();
         },
         child: SizedBox(
-          width: 250,
+          width: isDCT ? 200 : 220,
           child: Container(
             //alignment: ,
-            margin: EdgeInsets.all(8.0),
+            margin: EdgeInsets.all(10.0),
             padding: EdgeInsets.only(left: 20.0),
             // decoration: BoxDecoration(
             //   color: Colors.lightBlueAccent,
@@ -489,11 +556,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white,
               ),
               Text(
-                "    СКАНИРОВАТЬ",
+                !isDCT ? "   СКАНИРОВАТЬ" : " СКАНИРОВАТЬ",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     //  fontSize: 12,
-                    letterSpacing: 1.5,
+                    letterSpacing: !isDCT ? 1.5 : 1,
                     color: Colors.white),
                 textAlign: TextAlign.center,
               ),
@@ -598,6 +665,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           begin: Alignment.bottomRight,
                           end: Alignment.topLeft,
                         ),
+
                         //borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                             BoxShadow(
@@ -651,7 +719,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                 Container(
-                    width: 180,
+                    width: MediaQuery.of(context).size.height < 600 ? 120 : 180,
                     child: Text(producer,
                         softWrap: true,
                         style: TextStyle(fontWeight: FontWeight.bold))),

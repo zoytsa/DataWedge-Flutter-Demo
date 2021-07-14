@@ -23,12 +23,15 @@ class LoginSignupScreen extends StatefulWidget {
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   bool isSignupScreen = false;
   bool isMale = true;
+  bool isDCT = false;
   //bool isRememberMe = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    //isDCT = MediaQuery.of(context).size.width < 721;
 
     Box<Settings> box = Hive.box<Settings>('settings');
     //  var box = await Hive.openBox<Settings>('settings');
@@ -58,10 +61,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           backgroundColor: Palette.backgroundColor,
           body: Stack(
             children: [
-              Positioned(
-                top: 0,
-                right: 0,
-                left: 0,
+              Align(
+                alignment: const Alignment(0, -1),
+                // top: 0,
+                // right: 0,
+                // left: 0,
                 child: Container(
                   height: 300,
                   decoration: BoxDecoration(
@@ -114,105 +118,117 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ),
                 ),
               ),
-              // Trick to add the shadow for the submit button
-              buildBottomHalfContainer(true),
-              //Main Contianer for Login and Signup
-              Positioned(
-                // duration: Duration(milliseconds: 300),
-                // curve: Curves.bounceInOut,
-                top: isSignupScreen ? 230 : 230,
-                child: Container(
-                  // duration: Duration(milliseconds: 700),
-                  // curve: Curves.bounceInOut,
-                  height: isSignupScreen ? 290 : 290,
-                  padding: EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width - 40,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 15,
-                            spreadRadius: 5),
-                      ]),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isSignupScreen = false;
-                                });
-                              },
-                              child: Column(
+              Align(
+                  alignment: Alignment.center,
+                  // top: 0,
+                  // right: 0,
+                  // left: 0,
+                  child: Stack(alignment: Alignment.center, children: [
+                    // Trick to add the shadow for the submit button
+                    buildBottomHalfContainer(true),
+                    //Main Contianer for Login and Signup
+                    Positioned(
+                      // duration: Duration(milliseconds: 300),
+                      // curve: Curves.bounceInOut,
+                      top: isSignupScreen ? 230 : 230,
+                      child: Container(
+                        // duration: Duration(milliseconds: 700),
+                        // curve: Curves.bounceInOut,
+                        height: isSignupScreen ? 290 : 290,
+                        padding: EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width - 40,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 15,
+                                  spreadRadius: 5),
+                            ]),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text(
-                                    "Войти...",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: !isSignupScreen
-                                            ? Palette.activeColor
-                                            : Palette.textColor1),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isSignupScreen = false;
+                                      });
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Войти...",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: !isSignupScreen
+                                                  ? Palette.activeColor
+                                                  : Palette.textColor1),
+                                        ),
+                                        if (!isSignupScreen)
+                                          Container(
+                                            margin: EdgeInsets.only(top: 3),
+                                            height: 2,
+                                            width: 55,
+                                            color: Colors.yellow[500],
+                                          )
+                                      ],
+                                    ),
                                   ),
-                                  if (!isSignupScreen)
-                                    Container(
-                                      margin: EdgeInsets.only(top: 3),
-                                      height: 2,
-                                      width: 55,
-                                      color: Colors.yellow[500],
-                                    )
+                                  GestureDetector(
+                                    onTap: () {
+                                      //_controllerID.clear();
+                                      _clearIDAndPin();
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                      setState(() {
+                                        isSignupScreen = true;
+                                      });
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Демо-доступ",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: isSignupScreen
+                                                  ? Palette.activeColor
+                                                  : Palette.textColor1),
+                                        ),
+                                        if (isSignupScreen)
+                                          Container(
+                                              margin: EdgeInsets.only(top: 3),
+                                              height: 2,
+                                              width: 55,
+                                              color: Colors.yellow[500])
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                //_controllerID.clear();
-                                _clearIDAndPin();
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                setState(() {
-                                  isSignupScreen = true;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Демо-доступ",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: isSignupScreen
-                                            ? Palette.activeColor
-                                            : Palette.textColor1),
-                                  ),
-                                  if (isSignupScreen)
-                                    Container(
-                                        margin: EdgeInsets.only(top: 3),
-                                        height: 2,
-                                        width: 55,
-                                        color: Colors.yellow[500])
-                                ],
-                              ),
-                            )
-                          ],
+                              if (isSignupScreen) buildSignupSection(),
+                              if (!isSignupScreen) buildSigninSection()
+                            ],
+                          ),
                         ),
-                        if (isSignupScreen) buildSignupSection(),
-                        if (!isSignupScreen) buildSigninSection()
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              // Trick to add the submit button
-              buildBottomHalfContainer(false),
+                    // Trick to add the submit button
+                    buildBottomHalfContainer(false)
+                  ])),
               //  Bottom buttons
               Positioned(
-                top: MediaQuery.of(context).size.height - 100,
+                //alignment: const Alignment(0, 100),
+                top: MediaQuery.of(context).size.height < 600
+                    ? 12
+                    : MediaQuery.of(context).size.height - 100,
                 right: 0,
                 left: 0,
                 child: Column(
