@@ -76,12 +76,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/background_friends.jpg
-    - images/background_qr.jpg
-    - images/icon_zebra.png
-    - images/background.jpg
-    - images/playstore2.png
-    - images/playstore_back.png
+    - images/
+    - assets/images/
+    - assets/icons/
   # fonts:
   #   - family: OpenIconic
   #     fonts:

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/profile_page.dart';
+import 'package:datawedgeflutter/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -279,9 +280,11 @@ class _MyHomePageState extends State<MyHomePage> {
               resizeToAvoidBottomInset: false,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
-                toolbarHeight: isDCT ? 70 : null,
+                toolbarHeight: isDCT ? 80 : null,
                 title: Text(
-                  "Connector F.",
+                  selectedUser.name == ""
+                      ? "Connector F."
+                      : "Connector F.: " + selectedUser.name,
                   style: TextStyle(fontSize: 15),
                 ),
                 centerTitle: true,
@@ -295,6 +298,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   begin: Alignment.bottomRight,
                   end: Alignment.topLeft,
                 )))),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.search_outlined,
+                    ),
+                    onPressed: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CatalogScreen(
+                                title: "Searching...",
+                                selectedUser: selectedUser),
+                          ))
+                    },
+                  )
+                ],
                 bottom: TabBar(
                   isScrollable: true,
                   indicatorColor: Colors.white,
@@ -365,7 +384,7 @@ class _MyHomePageState extends State<MyHomePage> {
             )));
   }
 
-  Widget mainScanPage(BuildContext context, isDCT) {
+  Widget mainScanPage(BuildContext context, bool isDCT) {
     Widget widget = Stack(children: [
       Align(
           alignment: Alignment.topCenter,
@@ -404,7 +423,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 usingZebra
                     ? SizedBox(
                         height: isDCT ? 60 : 70,
-                        child: addZebraScanButton(context))
+                        child: addZebraScanButton(context, isDCT))
                     : SizedBox(height: 60),
               ]),
       )
@@ -483,7 +502,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget addZebraScanButton(BuildContext context) {
+  Widget addZebraScanButton(BuildContext context, bool isDCT) {
     Widget widget = GestureDetector(
         // When the child is tapped, show a snackbar.
         onTapDown: (TapDownDetails) {
@@ -496,7 +515,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // The custom button
 
         child: SizedBox(
-          width: 160,
+          width: isDCT ? 140 : 160,
           child: Container(
             //alignment: ,
             margin: EdgeInsets.all(10.0),
@@ -525,10 +544,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white,
               ),
               Text(
-                "   ZEBRA",
+                isDCT ? "  ZEBRA" : "   ZEBRA",
                 style: TextStyle(
                     //  fontSize: 12,
-                    letterSpacing: 1.8,
+                    letterSpacing: isDCT ? 1.2 : 1.8,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
                 textAlign: TextAlign.center,
