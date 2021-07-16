@@ -299,19 +299,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   end: Alignment.topLeft,
                 )))),
                 actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.search_outlined,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.search_outlined,
+                      ),
+                      onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CatalogScreen(
+                                  title: "Searching...",
+                                  selectedUser: selectedUser),
+                            ))
+                      },
                     ),
-                    onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CatalogScreen(
-                                title: "Searching...",
-                                selectedUser: selectedUser),
-                          ))
-                    },
                   )
                 ],
                 bottom: TabBar(
@@ -394,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: SizedBox(height: 85, child: addEnterBarcodeField(context))),
 
       Align(
-          alignment: isDCT ? Alignment(0, 0.2) : Alignment(0, 2.2),
+          alignment: isDCT ? Alignment(0, 0.22) : Alignment(0, 5.2),
           child: SizedBox(
               height: isDCT ? 270 : 600,
               //child: SizedBox(
@@ -654,7 +657,7 @@ class _MyHomePageState extends State<MyHomePage> {
             suffixIcon: IconButton(
               // onPressed: _controllerID.clear(),
               onPressed: () => _loadData(enteredBarcode),
-              icon: Icon(Icons.search_outlined),
+              icon: Icon(Icons.check),
             ),
           ),
           onChanged: (String str) {

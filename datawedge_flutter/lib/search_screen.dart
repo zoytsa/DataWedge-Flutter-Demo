@@ -1,5 +1,6 @@
 import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/details_screen.dart';
+import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
@@ -7,21 +8,29 @@ import 'package:flutter/material.dart';
 // import 'package:shop_app/screens/home/components/body.dart';
 
 import 'constants.dart';
+import 'model/palette.dart';
 
 var selectedCategory = categories[0];
+var enteredSearchString = "";
 
 class ItemCard extends StatelessWidget {
   final Product product;
-  final Function press;
-  const ItemCard({
-    required this.product,
-    required this.press,
-  });
+  //final Function press;
+  final VoidCallback press;
+  final VoidCallback longPress;
+  final VoidCallback doubleTap;
+  const ItemCard(
+      {required this.product,
+      required this.press,
+      required this.longPress,
+      required this.doubleTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      //onTap: press,
+      onTap: press,
+      onLongPress: longPress,
+      onDoubleTap: doubleTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -77,10 +86,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
         appBar: buildAppBar(context),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
+            //  SizedBox(height: 100),
+            addEnterSearchField(context),
+//SizedBox(height: 100),
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPaddin, vertical: 8),
+                  horizontal: kDefaultPaddin, vertical: 0),
               child: SizedBox(
                   width: 230,
                   child: DropdownButton(
@@ -130,6 +142,20 @@ class _CatalogScreenState extends State<CatalogScreen> {
                               MaterialPageRoute(
                                 builder: (context) => DetailsScreen(
                                   product: products[index],
+                                ),
+                              )),
+                          longPress: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(
+                                  title: "we are back",
+                                ),
+                              )),
+                          doubleTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(
+                                  title: "we are back",
                                 ),
                               )),
                         )),
@@ -240,7 +266,9 @@ List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories(List items) {
               child: Text(
                 category.title,
                 style: TextStyle(
-                  color: kTextLightColor,
+                  color: Colors.black54,
+                  // fontStyle: FontStyle.italic,
+                  fontSize: 16,
                 ),
               ),
             )
@@ -251,3 +279,94 @@ List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories(List items) {
   }
   return items;
 }
+
+Widget addEnterSearchField(BuildContext context) {
+  Widget widget = Container(
+    // width: 250,
+    height: 32,
+    // margin: EdgeInsets.all(8.0),
+    // padding: EdgeInsets.all(5.0),
+    //decoration: BoxDecoration(
+    //color: Colors.deepPurple[200],
+    // borderRadius: BorderRadius.circular(8.0)),
+
+    child: Container(
+      // margin: const EdgeInsets.all(15.0),
+      // padding: const EdgeInsets.all(23.0),
+      decoration: BoxDecoration(border: Border.all(color: Colors.white)),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+                child:
+                    // Text(
+                    //   "ADD BARCODE:",
+                    //   style: TextStyle(
+                    //     fontWeight: FontWeight.bold,
+                    //     //fontSize: 20,
+                    //     letterSpacing: 2,
+                    //   ),
+                    // ),
+                    TextField(
+              cursorColor: Colors.pinkAccent,
+              // maxLength: 100,
+              // keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                //   // prefixIcon: Icon(
+                //   //   Icons.qr_code_sharp,
+                //   //   color: Palette.iconColor,
+                //   // ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                ),
+                contentPadding: EdgeInsets.only(left: 15),
+                hintText: "Введите код или наименование...",
+                hintStyle: TextStyle(
+                    fontSize: 14,
+                    color: Palette.textColor1,
+                    fontStyle: FontStyle.italic),
+                // suffixIcon: IconButton(
+                //   // onPressed: _controllerID.clear(),
+                //   onPressed: () => searchingGoods(enteredSearchString),
+                //   icon: Icon(Icons.search_rounded),
+                // ),
+              ),
+              onChanged: (String str) {
+                {
+                  try {
+                    enteredSearchString = str;
+                  } catch (e) {
+                    enteredSearchString = "";
+                  }
+                }
+                ;
+              },
+              onSubmitted: (text) {
+                searchingGoods(text);
+              },
+            )),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 0),
+              child: IconButton(
+                // onPressed: _controllerID.clear(),
+                onPressed: () => searchingGoods(enteredSearchString),
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.black26,
+                ),
+              ),
+            ),
+          ]),
+    ),
+  );
+
+  return widget;
+}
+
+void searchingGoods(String text) {}
