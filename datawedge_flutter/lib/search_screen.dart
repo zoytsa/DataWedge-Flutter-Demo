@@ -13,24 +13,48 @@ import 'model/palette.dart';
 var selectedCategory = categories[0];
 var enteredSearchString = "";
 
-class ItemCard extends StatelessWidget {
+class ItemCard extends StatefulWidget {
   final Product product;
   //final Function press;
-  final VoidCallback press;
-  final VoidCallback longPress;
+  // final VoidCallback press;
+  // final VoidCallback longPress;
   final VoidCallback doubleTap;
   const ItemCard(
       {required this.product,
-      required this.press,
-      required this.longPress,
+      // required this.press,
+      // required this.longPress,
       required this.doubleTap});
 
   @override
+  _ItemCardState createState() => _ItemCardState();
+}
+
+class _ItemCardState extends State<ItemCard> {
+  void _onCheck(bool? newValue) {
+    setState(() {
+      widget.product.check = newValue!;
+    });
+  }
+
+  void _onTap() {
+    setState(() {
+      widget.product.check = !widget.product.check;
+    });
+  }
+
+  void _onLongPress() {
+    setState(() {
+      widget.product.check = !widget.product.check;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print('updated: ${widget.product.title}');
     return GestureDetector(
-      onTap: press,
-      onLongPress: longPress,
-      onDoubleTap: doubleTap,
+      onTap: _onTap,
+      onLongPress: _onLongPress,
+      onDoubleTap: widget.doubleTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -42,27 +66,58 @@ class ItemCard extends StatelessWidget {
               // height: 180,
               // width: 160,
               decoration: BoxDecoration(
-                color: product.color,
+                color: widget.product.color,
                 borderRadius: BorderRadius.circular(16),
+                border: widget.product.check
+                    ? Border.all(color: Colors.green.withOpacity(0.8), width: 5)
+                    : null,
               ),
               child: Hero(
-                tag: "${product.id}",
-                child: Image.asset(product.image),
+                tag: "${widget.product.id}",
+                child: Image.asset(widget.product.image),
               ),
             ),
           ),
+          // SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 4),
+            padding: const EdgeInsets.only(top: 4),
             child: Text(
               // products is out demo list
-              product.title,
+              widget.product.title,
               style: TextStyle(color: kTextLightColor),
             ),
           ),
-          Text(
-            "\$${product.price}",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          )
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                "\$${widget.product.price}",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+          // SizedBox(
+          //   height: 25,
+          //   child: Row(
+          //       // crossAxisAlignment: CrossAxisAlignment.stretch,
+          //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Expanded(
+          //           child: Padding(
+          //               padding: const EdgeInsets.symmetric(vertical: 0),
+          //               child: Text(
+          //                 "\$${widget.product.price}",
+          //                 style: TextStyle(fontWeight: FontWeight.bold),
+          //               )),
+          //         ),
+          //         // Checkbox(
+          //         //     // checkColor: Colors.green[200],
+          //         //     //hoverColor: Colors.green,
+          //         //     side: BorderSide(
+          //         //       color: Colors.grey,
+          //         //     ),
+          //         //     activeColor: Colors.green.withOpacity(0.80),
+          //         //     value: widget.product.check,
+          //         //     onChanged: (bool? newValue) => _onCheck(newValue)),
+          //       ]),
+          // ),
         ],
       ),
     );
@@ -137,20 +192,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     ),
                     itemBuilder: (context, index) => ItemCard(
                           product: products[index],
-                          press: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailsScreen(
-                                  product: products[index],
-                                ),
-                              )),
-                          longPress: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MyHomePage(
-                                  title: "we are back",
-                                ),
-                              )),
+                          // press: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => DetailsScreen(
+                          //         product: products[index],
+                          //       ),
+                          //     )),
+                          // longPress: () => products[index].check = false,
+
                           doubleTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -158,6 +208,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                   title: "we are back",
                                 ),
                               )),
+                          // doubleTap: () => products[index].check = true,
                         )),
               ),
             ),
