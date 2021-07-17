@@ -65,6 +65,23 @@ List<Product> products = [
     image: "assets/images/bag_6.png",
     color: Color(0xFFAEAEAE),
   ),
+  Product(
+      id: 6,
+      title: "Office Code 555",
+      price: 2340,
+      size: 182,
+      description: dummyText,
+      image: "assets/images/bag_5.png",
+      color: Color(0xFFFB7883)),
+  Product(
+    id: 7,
+    title: "Office Code 777",
+    price: 2734,
+    size: 132,
+    description: dummyText,
+    image: "assets/images/bag_6.png",
+    color: Colors.black54,
+  ),
 ];
 
 class Category {

@@ -397,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: SizedBox(height: 85, child: addEnterBarcodeField(context))),
 
       Align(
-          alignment: isDCT ? Alignment(0, 0.22) : Alignment(0, 5.2),
+          alignment: isDCT ? Alignment(0, 0.22) : Alignment(0, 2.2),
           child: SizedBox(
               height: isDCT ? 270 : 600,
               //child: SizedBox(
