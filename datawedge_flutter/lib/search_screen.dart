@@ -129,6 +129,7 @@ class CatalogScreen extends StatefulWidget {
       : super(key: key);
   final String title;
   final User selectedUser;
+  var addGoodsTitle = "";
 
   @override
   _CatalogScreenState createState() => _CatalogScreenState();
@@ -138,7 +139,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context),
+        appBar: buildAppBar(context, widget.addGoodsTitle),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -216,32 +217,147 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ));
   }
 
-  AppBar buildAppBar(BuildContext context) {
+  AppBar buildAppBar(BuildContext context, addGoodsTitle) {
     final isDCT = MediaQuery.of(context).size.height < 600;
     return AppBar(
-        //automaticallyImplyLeading: false,
-        toolbarHeight: isDCT ? 45 : null,
-        title: Text(
-          widget.selectedUser.name == ""
-              ? "Connector F."
-              : "Connector F.: " + widget.selectedUser.name,
-          style: TextStyle(fontSize: 15),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
-        flexibleSpace: (Container(
-            //height: 200,
+      //automaticallyImplyLeading: false,
+      toolbarHeight: isDCT ? 45 : null,
+      title: GestureDetector(
+        onTapDown: (TapDownDetails) {
+          _addNewGoodsFromSearch();
+        },
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          SizedBox(width: 10),
+          Container(
+            //margin: EdgeInsets.all(1.0),
+            padding: EdgeInsets.all(isDCT ? 6.0 : 10),
+
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-          //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
-          colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-        )))));
+                  // colors: [
+                  //   Colors.green,
+                  //   Colors.tealAccent,
+                  //   Colors.green,
+                  //   Colors.black54
+                  // ],
+                  // colors: [Colors.black87, Colors.green],
+                  colors: [Colors.green, Colors.lightGreen],
+                  begin: Alignment.bottomRight,
+                  //end: Alignment.topLeft,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(.3),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 1))
+                ]),
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              // Icon(
+              //   Icons.turned_in_not_outlined,
+              //   color: Colors.white,
+              // ),
+              Text(
+                " +  В СПИСОК ",
+                style: TextStyle(fontSize: 13),
+              ),
+            ]),
+          ),
+          SizedBox(width: 10)
+        ]),
+      ),
+
+      centerTitle: true,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+      flexibleSpace: (Container(
+          //height: 200,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+        //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+        colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
+        begin: Alignment.bottomRight,
+        end: Alignment.topLeft,
+      )))),
+      // actions: <Widget>[
+      //addNewGoodromSearchButton(context, addGoodsTitle)
+      // Padding(
+      //   padding: const EdgeInsets.only(right: 8),
+      //   child: IconButton(
+      //     icon: Icon(
+      //       Icons.search_outlined,
+      //     ),
+      //     onPressed: () => {
+      //       Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => CatalogScreen(
+      //                 title: "Searching...", selectedUser: selectedUser),
+      //           ))
+      //     },
+      //   ),
+      // )
+      //],
+    );
   }
 }
 
+Widget addNewGoodromSearchButton(BuildContext context, String addGoodsTitle) {
+  Widget widget = GestureDetector(
+    onTapDown: (TapDownDetails) {
+      _addNewGoodsFromSearch();
+    },
+    child: Center(
+      child: Container(
+        //margin: EdgeInsets.all(1.0),
+        padding: EdgeInsets.all(10.0),
+
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+              // colors: [
+              //   Colors.green,
+              //   Colors.tealAccent,
+              //   Colors.green,
+              //   Colors.black54
+              // ],
+              // colors: [Colors.black87, Colors.green],
+              colors: [Colors.green, Colors.lightGreen],
+              begin: Alignment.bottomRight,
+              //end: Alignment.topLeft,
+            ),
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(.3),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: Offset(0, 1))
+            ]),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          // Icon(
+          //   Icons.add_circle_outline,
+          //   color: Colors.white,
+          // ),
+          Text(
+            addGoodsTitle,
+            //"  +  ADD  ",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+          ),
+        ]),
+      ),
+    ),
+  );
+  return widget;
+}
+
+void _addNewGoodsFromSearch() {
+  print('go to tems');
+  print(products);
+}
 // We need satefull widget for our categories
 
 class SubcategoriesWidget extends StatefulWidget {
