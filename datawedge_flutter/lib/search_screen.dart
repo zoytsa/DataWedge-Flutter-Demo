@@ -2,6 +2,7 @@ import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/details_screen.dart';
 import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/model/Product.dart';
+import 'package:datawedgeflutter/selected_products_couner.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
 // import 'package:shop_app/constants.dart';
@@ -10,8 +11,12 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'model/palette.dart';
 
+//import 'package:datawedgeflutter/selected_products_couner.dart';
+
 var selectedCategory = categories[0];
 var enteredSearchString = "";
+List<Product> selectedProducts = [];
+//var selectedProducts = [];
 
 class ItemCard extends StatefulWidget {
   final Product product;
@@ -19,11 +24,16 @@ class ItemCard extends StatefulWidget {
   // final VoidCallback press;
   // final VoidCallback longPress;
   final VoidCallback doubleTap;
+  final VoidCallback vcbOnTap;
+  final VoidCallback vcbOnlongPress;
+
   const ItemCard(
       {required this.product,
       // required this.press,
       // required this.longPress,
-      required this.doubleTap});
+      required this.doubleTap,
+      required this.vcbOnTap,
+      required this.vcbOnlongPress});
 
   @override
   _ItemCardState createState() => _ItemCardState();
@@ -37,20 +47,30 @@ class _ItemCardState extends State<ItemCard> {
   }
 
   void _onTap() {
+    !widget.product.check
+        ? addProductToSelected(widget.product, selectedProducts)
+        : removeProductFromSelected(widget.product, selectedProducts);
     setState(() {
       widget.product.check = !widget.product.check;
     });
+    // update parent widget Appbar via Void Callback
+    widget.vcbOnTap();
   }
 
   void _onLongPress() {
+    !widget.product.check
+        ? addProductToSelected(widget.product, selectedProducts)
+        : removeProductFromSelected(widget.product, selectedProducts);
     setState(() {
       widget.product.check = !widget.product.check;
     });
+    // update parent widget Appbar via Void Callback
+    widget.vcbOnlongPress();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('updated: ${widget.product.title}');
+    print('called build ItemCard: ${widget.product.title}');
     return GestureDetector(
       onTap: _onTap,
       onLongPress: _onLongPress,
@@ -68,9 +88,11 @@ class _ItemCardState extends State<ItemCard> {
               decoration: BoxDecoration(
                 color: widget.product.color,
                 borderRadius: BorderRadius.circular(16),
-                border: widget.product.check
-                    ? Border.all(color: Colors.green.withOpacity(0.8), width: 5)
-                    : null,
+                border: widget.product.inTheList
+                    ? Border.all(color: Colors.lightBlue, width: 5)
+                    : widget.product.check
+                        ? Border.all(color: Colors.green, width: 5)
+                        : null,
               ),
               child: Hero(
                 tag: "${widget.product.id}",
@@ -136,10 +158,19 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
+  var addGoodsTitle2 = "";
+
+  void _updateSelectedProductsTitle() {
+    print('called _updateSelectedProductsTitle');
+    setState(() {
+      addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString() + ".";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context, widget.addGoodsTitle),
+        appBar: buildAppBar(context, widget.addGoodsTitle, addGoodsTitle2),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -209,7 +240,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                   title: "we are back",
                                 ),
                               )),
-                          // doubleTap: () => products[index].check = true,
+                          vcbOnTap: () => _updateSelectedProductsTitle(),
+                          vcbOnlongPress: () => _updateSelectedProductsTitle(),
                         )),
               ),
             ),
@@ -217,8 +249,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ));
   }
 
-  AppBar buildAppBar(BuildContext context, addGoodsTitle) {
+  AppBar buildAppBar(
+      BuildContext context, String addGoodsTitle, String addGoodsTitle2) {
     final isDCT = MediaQuery.of(context).size.height < 600;
+
+    //updateSelectedProductsTitle();
+
+    var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
+
     return AppBar(
       //automaticallyImplyLeading: false,
       toolbarHeight: isDCT ? 45 : null,
@@ -228,7 +266,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
         },
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          SizedBox(width: 10),
+          SizedBox(
+              width: 100,
+              child: Container(
+                child: Text(addGoodsTitle2,
+                    style: TextStyle(fontSize: isDCT ? 12 : 13)),
+              )),
           Container(
             //margin: EdgeInsets.all(1.0),
             padding: EdgeInsets.all(isDCT ? 6.0 : 10),
@@ -266,7 +309,113 @@ class _CatalogScreenState extends State<CatalogScreen> {
               ),
             ]),
           ),
-          SizedBox(width: 10)
+          //SizedBox(width: 10)
+        ]),
+      ),
+
+      centerTitle: true,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+      flexibleSpace: (Container(
+          //height: 200,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+        //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+        colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
+        begin: Alignment.bottomRight,
+        end: Alignment.topLeft,
+      )))),
+      // actions: <Widget>[
+      //addNewGoodromSearchButton(context, addGoodsTitle)
+      // Padding(
+      //   padding: const EdgeInsets.only(right: 8),
+      //   child: IconButton(
+      //     icon: Icon(
+      //       Icons.search_outlined,
+      //     ),
+      //     onPressed: () => {
+      //       Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => CatalogScreen(
+      //                 title: "Searching...", selectedUser: selectedUser),
+      //           ))
+      //     },
+      //   ),
+      // )
+      //],
+    );
+  }
+}
+
+class AppBarSearchPageWidget extends StatefulWidget {
+  const AppBarSearchPageWidget({Key? key, required this.appBarSearchTitle})
+      : super(key: key);
+  final appBarSearchTitle;
+  @override
+  _AppBarSearchPageWidgetState createState() => _AppBarSearchPageWidgetState();
+}
+
+class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
+//updateSelectedProductsTitle();
+  var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
+
+  @override
+  Widget build(BuildContext context) {
+    final isDCT = MediaQuery.of(context).size.height < 600;
+    return AppBar(
+      //automaticallyImplyLeading: false,
+      toolbarHeight: isDCT ? 45 : null,
+      title: GestureDetector(
+        onTapDown: (TapDownDetails) {
+          _addNewGoodsFromSearch();
+        },
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          SizedBox(
+              width: 100,
+              child: Container(
+                child: Text(widget.appBarSearchTitle, // addGoodsTitle2
+                    style: TextStyle(fontSize: isDCT ? 12 : 13)),
+              )),
+          Container(
+            //margin: EdgeInsets.all(1.0),
+            padding: EdgeInsets.all(isDCT ? 6.0 : 10),
+
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  // colors: [
+                  //   Colors.green,
+                  //   Colors.tealAccent,
+                  //   Colors.green,
+                  //   Colors.black54
+                  // ],
+                  // colors: [Colors.black87, Colors.green],
+                  colors: [Colors.green, Colors.lightGreen],
+                  begin: Alignment.bottomRight,
+                  //end: Alignment.topLeft,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(.3),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 1))
+                ]),
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              // Icon(
+              //   Icons.turned_in_not_outlined,
+              //   color: Colors.white,
+              // ),
+              Text(
+                " +  В СПИСОК ",
+                style: TextStyle(fontSize: 13),
+              ),
+            ]),
+          ),
+          //SizedBox(width: 10)
         ]),
       ),
 

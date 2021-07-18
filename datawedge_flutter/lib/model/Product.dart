@@ -1,10 +1,12 @@
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 class Product {
   final String image, title, description;
   final int price, size, id;
   final Color color;
-  bool check;
+  bool check, inTheList;
   Product(
       {required this.id,
       required this.image,
@@ -13,7 +15,20 @@ class Product {
       required this.description,
       required this.size,
       required this.color,
-      required this.check});
+      required this.check,
+      required this.inTheList});
+
+  getCheckedQuantity(List<Product> products) {}
+  @override
+  String toString() {
+    // TODO: implement toString
+    return (this.title +
+        " [id: " +
+        this.id.toString() +
+        ", check:" +
+        this.check.toString() +
+        "]");
+  }
 }
 
 List<Product> products = [
@@ -25,7 +40,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_1.png",
       color: Color(0xFF3D82AE),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 2,
       title: "Belt Bag",
@@ -34,7 +50,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_2.png",
       color: Color(0xFFD3A984),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 3,
       title: "Hang Top",
@@ -43,7 +60,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_3.png",
       color: Color(0xFF989493),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 4,
       title: "Old Fashion",
@@ -52,7 +70,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_4.png",
       color: Color(0xFFE6B398),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 5,
       title: "Office Code",
@@ -61,7 +80,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_5.png",
       color: Color(0xFFFB7883),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 6,
       title: "Office Code",
@@ -70,7 +90,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_6.png",
       color: Color(0xFFAEAEAE),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 7,
       title: "Office Code 555",
@@ -79,7 +100,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_7.png",
       color: Color(0xFFFB7883),
-      check: false),
+      check: false,
+      inTheList: false),
   Product(
       id: 8,
       title: "Office Code 777",
@@ -88,7 +110,8 @@ List<Product> products = [
       description: dummyText,
       image: "assets/images/bag_8.png",
       color: Colors.black54,
-      check: false),
+      check: false,
+      inTheList: false),
 ];
 
 class Category {

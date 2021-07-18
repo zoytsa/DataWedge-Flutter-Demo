@@ -22,7 +22,7 @@ class _Restore_pass_pageState extends State<Restore_pass_page> {
               flexibleSpace: (Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
-                colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+                colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
                 begin: Alignment.bottomRight,
                 end: Alignment.topLeft,
               )))),
