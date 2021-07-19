@@ -1,7 +1,7 @@
 import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/login_signup.dart';
-import 'package:datawedgeflutter/model/Product.dart';
+//import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -20,6 +20,9 @@ Future main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  //final _myTabbedPageKey = GlobalKey<MyHomePageState>();
+
   @override
   Widget build(BuildContext context) {
     Box<Settings> box = Hive.box<Settings>('settings');
@@ -55,6 +58,7 @@ class MyApp extends StatelessWidget {
       ),
       home: isAuthorized ? MyHomePage(title: 'DCT') : LoginSignupScreen(),
       debugShowCheckedModeBanner: false,
+      // key: _myTabbedPageKey,
     );
   }
 }

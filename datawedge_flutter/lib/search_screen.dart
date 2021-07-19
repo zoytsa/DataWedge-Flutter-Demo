@@ -147,30 +147,58 @@ class _ItemCardState extends State<ItemCard> {
 }
 
 class CatalogScreen extends StatefulWidget {
-  CatalogScreen({Key? key, required this.title, required this.selectedUser})
+  CatalogScreen(
+      {Key? key,
+      required this.title,
+      required this.selectedUser,
+      required this.onProductSelection})
       : super(key: key);
   final String title;
   final User selectedUser;
-  var addGoodsTitle = "";
+  final VoidCallback onProductSelection;
+  //late Function(List<Product>) onProductSelection;
 
   @override
   _CatalogScreenState createState() => _CatalogScreenState();
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  var addGoodsTitle2 = "";
+  final GlobalKey<_AppBarSearchPageWidgetState> _keyAppbar = GlobalKey();
+  var addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
 
   void _updateSelectedProductsTitle() {
-    print('called _updateSelectedProductsTitle');
-    setState(() {
-      addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString() + ".";
-    });
+    //print('called _updateSelectedProductsTitle');
+
+    //setState(() {
+    addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
+    //});
+    // _keyAppbar.currentState!.title = addGoodsTitle2;
+    _keyAppbar.currentState!.widget.appBarSearchTitle = addGoodsTitle2;
+    _keyAppbar.currentState!.updateAppbarWidget();
+  }
+
+  void onSelectedProductsSearch() {
+    print('go to items 2');
+    print('called onSelectedProductsSearch');
+    print(selectedProducts);
+    //widget.onProductSelection(selectedProducts);
+    widget.onProductSelection();
+    //setState(() {
+    //   addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
+    //   //});
+    //   // _keyAppbar.currentState!.title = addGoodsTitle2;
+    //   _keyAppbar.currentState!.widget.appBarSearchTitle = addGoodsTitle2;
+    //   _keyAppbar.currentState!.updateAppbarWidget();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context, widget.addGoodsTitle, addGoodsTitle2),
+        //appBar: buildAppBar(context, widget.addGoodsTitle, addGoodsTitle2),
+        appBar: AppBarSearchPageWidget(
+            key: _keyAppbar,
+            appBarSearchTitle: addGoodsTitle2,
+            onSelectedProductsAppBar: () => onSelectedProductsSearch()),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -233,13 +261,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           //     )),
                           // longPress: () => products[index].check = false,
 
-                          doubleTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MyHomePage(
-                                  title: "we are back",
-                                ),
-                              )),
+                          doubleTap: () => {}, //Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => MyHomePage(
+                          //         title: "we are back",
+                          //       ),
+                          //     )),
                           vcbOnTap: () => _updateSelectedProductsTitle(),
                           vcbOnlongPress: () => _updateSelectedProductsTitle(),
                         )),
@@ -249,174 +277,211 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ));
   }
 
-  AppBar buildAppBar(
-      BuildContext context, String addGoodsTitle, String addGoodsTitle2) {
-    final isDCT = MediaQuery.of(context).size.height < 600;
+  // AppBar buildAppBar(
+  //     BuildContext context, String addGoodsTitle, String addGoodsTitle2) {
+  //   final isDCT = MediaQuery.of(context).size.height < 600;
+  //   //updateSelectedProductsTitle();
+  //   var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
+  //   return AppBar(
+  //     //automaticallyImplyLeading: false,
+  //     toolbarHeight: isDCT ? 45 : null,
+  //     title: GestureDetector(
+  //       onTapDown: (TapDownDetails) {
+  //         _addNewGoodsFromSearch();
+  //       },
+  //       child:
+  //           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+  //         SizedBox(
+  //             width: 100,
+  //             child: Container(
+  //               child: Text(addGoodsTitle2,
+  //                   style: TextStyle(fontSize: isDCT ? 12 : 13)),
+  //             )),
+  //         Container(
+  //           //margin: EdgeInsets.all(1.0),
+  //           padding: EdgeInsets.all(isDCT ? 6.0 : 10),
+  //           decoration: BoxDecoration(
+  //               gradient: LinearGradient(
+  //                 // colors: [
+  //                 //   Colors.green,
+  //                 //   Colors.tealAccent,
+  //                 //   Colors.green,
+  //                 //   Colors.black54
+  //                 // ],
+  //                 // colors: [Colors.black87, Colors.green],
+  //                 colors: [Colors.green, Colors.lightGreen],
+  //                 begin: Alignment.bottomRight,
+  //                 //end: Alignment.topLeft,
+  //               ),
+  //               borderRadius: BorderRadius.circular(8),
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                     color: Colors.black.withOpacity(.3),
+  //                     spreadRadius: 1,
+  //                     blurRadius: 2,
+  //                     offset: Offset(0, 1))
+  //               ]),
+  //           child:
+  //               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+  //             // Icon(
+  //             //   Icons.turned_in_not_outlined,
+  //             //   color: Colors.white,
+  //             // ),
+  //             Text(
+  //               " +  В СПИСОК ",
+  //               style: TextStyle(fontSize: 13),
+  //             ),
+  //           ]),
+  //         ),
+  //         //SizedBox(width: 10)
+  //       ]),
+  //     ),
+  //     centerTitle: true,
+  //     elevation: 0,
+  //     iconTheme: IconThemeData(color: Colors.white),
+  //     flexibleSpace: (Container(
+  //         //height: 200,
+  //         decoration: BoxDecoration(
+  //             gradient: LinearGradient(
+  //       //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+  //       colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
+  //       begin: Alignment.bottomRight,
+  //       end: Alignment.topLeft,
+  //     )))),
+  //     // actions: <Widget>[
+  //     //addNewGoodromSearchButton(context, addGoodsTitle)
+  //     // Padding(
+  //     //   padding: const EdgeInsets.only(right: 8),
+  //     //   child: IconButton(
+  //     //     icon: Icon(
+  //     //       Icons.search_outlined,
+  //     //     ),
+  //     //     onPressed: () => {
+  //     //       Navigator.push(
+  //     //           context,
+  //     //           MaterialPageRoute(
+  //     //             builder: (context) => CatalogScreen(
+  //     //                 title: "Searching...", selectedUser: selectedUser),
+  //     //           ))
+  //     //     },
+  //     //   ),
+  //     // )
+  //     //],
+  //   );
+  // }
 
-    //updateSelectedProductsTitle();
-
-    var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
-
-    return AppBar(
-      //automaticallyImplyLeading: false,
-      toolbarHeight: isDCT ? 45 : null,
-      title: GestureDetector(
-        onTapDown: (TapDownDetails) {
-          _addNewGoodsFromSearch();
-        },
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          SizedBox(
-              width: 100,
-              child: Container(
-                child: Text(addGoodsTitle2,
-                    style: TextStyle(fontSize: isDCT ? 12 : 13)),
-              )),
-          Container(
-            //margin: EdgeInsets.all(1.0),
-            padding: EdgeInsets.all(isDCT ? 6.0 : 10),
-
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  // colors: [
-                  //   Colors.green,
-                  //   Colors.tealAccent,
-                  //   Colors.green,
-                  //   Colors.black54
-                  // ],
-                  // colors: [Colors.black87, Colors.green],
-                  colors: [Colors.green, Colors.lightGreen],
-                  begin: Alignment.bottomRight,
-                  //end: Alignment.topLeft,
-                ),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(.3),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset(0, 1))
-                ]),
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              // Icon(
-              //   Icons.turned_in_not_outlined,
-              //   color: Colors.white,
-              // ),
-              Text(
-                " +  В СПИСОК ",
-                style: TextStyle(fontSize: 13),
-              ),
-            ]),
-          ),
-          //SizedBox(width: 10)
-        ]),
-      ),
-
-      centerTitle: true,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      flexibleSpace: (Container(
-          //height: 200,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-        //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
-        colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
-        begin: Alignment.bottomRight,
-        end: Alignment.topLeft,
-      )))),
-      // actions: <Widget>[
-      //addNewGoodromSearchButton(context, addGoodsTitle)
-      // Padding(
-      //   padding: const EdgeInsets.only(right: 8),
-      //   child: IconButton(
-      //     icon: Icon(
-      //       Icons.search_outlined,
-      //     ),
-      //     onPressed: () => {
-      //       Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //             builder: (context) => CatalogScreen(
-      //                 title: "Searching...", selectedUser: selectedUser),
-      //           ))
-      //     },
-      //   ),
-      // )
-      //],
-    );
-  }
 }
 
-class AppBarSearchPageWidget extends StatefulWidget {
-  const AppBarSearchPageWidget({Key? key, required this.appBarSearchTitle})
+class AppBarSearchPageWidget extends StatefulWidget
+    implements PreferredSizeWidget {
+  Size get preferredSize => const Size.fromHeight(55);
+  //Function(List<Product>) onSelectedProductsAppBar;
+  Function() onSelectedProductsAppBar;
+
+  //const AppBarSearchPageWidget({Key? key, required this.appBarSearchTitle})
+  AppBarSearchPageWidget(
+      {Key? key,
+      required this.appBarSearchTitle,
+      required this.onSelectedProductsAppBar})
       : super(key: key);
-  final appBarSearchTitle;
+
+  String appBarSearchTitle;
   @override
   _AppBarSearchPageWidgetState createState() => _AppBarSearchPageWidgetState();
+
+  //final title = "";
 }
 
 class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
-//updateSelectedProductsTitle();
-  var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
+  void updateAppbarWidget() {
+    setState(() {});
+  }
+
+// void updateGoodTemsWidget() {
+//     setState(() {});
+//   }
+
+  void _addNewGoodsFromSearch() {
+    print('go to items 1');
+    // print(selectedProducts);
+    //widget.onSelectedProductsAppBar(selectedProducts);
+    widget.onSelectedProductsAppBar();
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDCT = MediaQuery.of(context).size.height < 600;
     return AppBar(
       //automaticallyImplyLeading: false,
-      toolbarHeight: isDCT ? 45 : null,
-      title: GestureDetector(
-        onTapDown: (TapDownDetails) {
-          _addNewGoodsFromSearch();
-        },
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      // toolbarHeight: isDCT ? 45 : null,
+      title: Container(
+        //padding: const EdgeInsets.only(right: 0),
+        child: Row(children: [
+          // Align(
+          //     alignment: Alignment.topLeft,
           SizedBox(
               width: 100,
               child: Container(
-                child: Text(widget.appBarSearchTitle, // addGoodsTitle2
+                child: Text(widget.appBarSearchTitle, //title, // addGoodsTitle2
                     style: TextStyle(fontSize: isDCT ? 12 : 13)),
               )),
-          Container(
-            //margin: EdgeInsets.all(1.0),
-            padding: EdgeInsets.all(isDCT ? 6.0 : 10),
 
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  // colors: [
-                  //   Colors.green,
-                  //   Colors.tealAccent,
-                  //   Colors.green,
-                  //   Colors.black54
-                  // ],
-                  // colors: [Colors.black87, Colors.green],
-                  colors: [Colors.green, Colors.lightGreen],
-                  begin: Alignment.bottomRight,
-                  //end: Alignment.topLeft,
-                ),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(.3),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset(0, 1))
-                ]),
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              // Icon(
-              //   Icons.turned_in_not_outlined,
-              //   color: Colors.white,
-              // ),
-              Text(
-                " +  В СПИСОК ",
-                style: TextStyle(fontSize: 13),
-              ),
-            ]),
-          ),
-          //SizedBox(width: 10)
+          // ButtonBar(
+          //     // onTapDown: (TapDownDetails) {
+          //     //   _addNewGoodsFromSearch();
+          //     children: [
+          //       // Text(
+          //       //   " +  В СПИСОК ",
+          //       //   style: TextStyle(fontSize: 13),
+          //       // )
+          //     ]),
+
+          // // Align(
+          // //   alignment: Alignment.topRight,
+          // Container(
+          //   //margin: EdgeInsets.all(1.0),
+          //   padding: EdgeInsets.all(isDCT ? 6.0 : 8),
+
+          //   decoration: BoxDecoration(
+          //       gradient: LinearGradient(
+          //         // colors: [
+          //         //   Colors.green,
+          //         //   Colors.tealAccent,
+          //         //   Colors.green,
+          //         //   Colors.black54
+          //         // ],
+          //         // colors: [Colors.black87, Colors.green],
+          //         colors: [Colors.green, Colors.lightGreen],
+          //         begin: Alignment.bottomRight,
+          //         //end: Alignment.topLeft,
+          //       ),
+          //       borderRadius: BorderRadius.circular(8),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.black.withOpacity(.3),
+          //             spreadRadius: 1,
+          //             blurRadius: 2,
+          //             offset: Offset(0, 1))
+          //       ]),
+          //   child:
+          //       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          //     // Icon(
+          //     //   Icons.turned_in_not_outlined,
+          //     //   color: Colors.white,
+          //     // ),
+          //     // GestureDetector(
+          //     //   onTapDown: (TapDownDetails) {
+          //     //     _addNewGoodsFromSearch();
+          //     // Text(
+          //     //   " +  В СПИСОК ",
+          //     //   style: TextStyle(fontSize: 13),
+          //     // ),
+          //     // },
+          //   ]),
+          // ),
         ]),
+        //SizedBox(width: 10)
       ),
 
       centerTitle: true,
@@ -431,82 +496,103 @@ class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
         begin: Alignment.bottomRight,
         end: Alignment.topLeft,
       )))),
-      // actions: <Widget>[
-      //addNewGoodromSearchButton(context, addGoodsTitle)
-      // Padding(
-      //   padding: const EdgeInsets.only(right: 8),
-      //   child: IconButton(
-      //     icon: Icon(
-      //       Icons.search_outlined,
-      //     ),
-      //     onPressed: () => {
-      //       Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //             builder: (context) => CatalogScreen(
-      //                 title: "Searching...", selectedUser: selectedUser),
-      //           ))
-      //     },
-      //   ),
-      // )
-      //],
+      actions: <Widget>[
+        //addNewGoodromSearchButton( addGoodsTitle)
+        SizedBox(
+            //width: 111,
+            // height: 40,
+            //padding: const EdgeInsets.only(right: 8),
+            child: Container(
+          margin: isDCT
+              ? EdgeInsets.only(top: 10, bottom: 9, left: 10, right: 10)
+              : EdgeInsets.all(8.5),
+          padding: EdgeInsets.all(isDCT ? 12.0 : 12),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                // colors: [
+                //   Colors.green,
+                //   Colors.tealAccent,
+                //   Colors.green,
+                //   Colors.black54
+                // ],
+                // colors: [Colors.black87, Colors.green],
+                colors: [Colors.green, Colors.lightGreen],
+                begin: Alignment.bottomRight,
+                //end: Alignment.topLeft,
+              ),
+              borderRadius: BorderRadius.circular(isDCT ? 8 : 8),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(.3),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: Offset(0, 1))
+              ]),
+          child: GestureDetector(
+              onTapDown: (TapDownDetails) {
+                _addNewGoodsFromSearch();
+              },
+              child: Text(
+                "  +   В СПИСОК  ",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: isDCT ? 12 : 13),
+              )),
+        ))
+      ],
     );
   }
 }
 
-Widget addNewGoodromSearchButton(BuildContext context, String addGoodsTitle) {
-  Widget widget = GestureDetector(
-    onTapDown: (TapDownDetails) {
-      _addNewGoodsFromSearch();
-    },
-    child: Center(
-      child: Container(
-        //margin: EdgeInsets.all(1.0),
-        padding: EdgeInsets.all(10.0),
+// Widget addNewGoodromSearchButton(BuildContext context, String addGoodsTitle) {
+//   Widget widget = GestureDetector(
+//     onTapDown: (TapDownDetails) {
+//       _addNewGoodsFromSearch();
+//     },
+//     child: Center(
+//       child: Container(
+//         //margin: EdgeInsets.all(1.0),
+//         padding: EdgeInsets.all(10.0),
+//         decoration: BoxDecoration(
+//             gradient: LinearGradient(
+//               // colors: [
+//               //   Colors.green,
+//               //   Colors.tealAccent,
+//               //   Colors.green,
+//               //   Colors.black54
+//               // ],
+//               // colors: [Colors.black87, Colors.green],
+//               colors: [Colors.green, Colors.lightGreen],
+//               begin: Alignment.bottomRight,
+//               //end: Alignment.topLeft,
+//             ),
+//             borderRadius: BorderRadius.circular(8),
+//             boxShadow: [
+//               BoxShadow(
+//                   color: Colors.black.withOpacity(.3),
+//                   spreadRadius: 1,
+//                   blurRadius: 2,
+//                   offset: Offset(0, 1))
+//             ]),
+//         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+//           // Icon(
+//           //   Icons.add_circle_outline,
+//           //   color: Colors.white,
+//           // ),
+//           Text(
+//             addGoodsTitle,
+//             //"  +  ADD  ",
+//             style: TextStyle(
+//                 fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+//           ),
+//         ]),
+//       ),
+//     ),
+//   );
+//   return widget;
+// }
 
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              // colors: [
-              //   Colors.green,
-              //   Colors.tealAccent,
-              //   Colors.green,
-              //   Colors.black54
-              // ],
-              // colors: [Colors.black87, Colors.green],
-              colors: [Colors.green, Colors.lightGreen],
-              begin: Alignment.bottomRight,
-              //end: Alignment.topLeft,
-            ),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(.3),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: Offset(0, 1))
-            ]),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          // Icon(
-          //   Icons.add_circle_outline,
-          //   color: Colors.white,
-          // ),
-          Text(
-            addGoodsTitle,
-            //"  +  ADD  ",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-          ),
-        ]),
-      ),
-    ),
-  );
-  return widget;
-}
-
-void _addNewGoodsFromSearch() {
-  print('go to tems');
-  print(products);
-}
 // We need satefull widget for our categories
 
 class SubcategoriesWidget extends StatefulWidget {
@@ -685,4 +771,7 @@ Widget addEnterSearchField(BuildContext context) {
   return widget;
 }
 
-void searchingGoods(String text) {}
+void searchingGoods(String text) {
+  //Widget.
+  print(selectedProducts);
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/profile_page.dart';
 import 'package:datawedgeflutter/search_screen.dart';
@@ -13,13 +14,16 @@ import 'model/settings.dart';
 
 var enteredBarcode = "";
 
+//_MyHomePageState _globalStateHomePage = _MyHomePageState();
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-
+  //final selectedProducts = <Product>[];
   @override
   _MyHomePageState createState() => _MyHomePageState();
+  //_MyHomePageState createState() => _globalStateHomePage;
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -41,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String addButtonTitle = "  + В СПИСОК*  ";
   List<GoodItem> goodItems = [];
   DocumentOrder? currentDocument = null;
+  var tabIndex = 0;
 
   //  This example implementation is based on the sample implementation at
   //  https://github.com/flutter/flutter/blob/master/examples/platform_channel/lib/main.dart
@@ -260,10 +265,46 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  addGoodItemsFromSelected() {
+    print('go to items 3');
+    // selectedProducts = newSelectedProducts;
+    if (selectedProducts.length != 0) {
+      bool noItem = true;
+      //addButtonTitle = "  +  В СПИСОК (1)";
+      for (Product itemOfSelectedProducts in selectedProducts) {
+        noItem = true;
+        for (GoodItem item in goodsList) {
+          if (item.name == itemOfSelectedProducts.title) {
+            item.quantity++;
+            noItem = false;
+            //  addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
+            break;
+          }
+        }
+        if (noItem == true) {
+          GoodItem newItem = GoodItem.fromProduct(itemOfSelectedProducts);
+          goodsList.add(newItem);
+        }
+      }
+    }
+
+    // var _tabController = DefaultTabController.of(context);
+    // _tabController!.animateTo(1);
+    setState(() {
+      tabIndex = 2;
+      _goodsCount = goodsList.length;
+    });
+    // var _tabController = DefaultTabController.of(context);
+    // _tabController!.animateTo(1);
+    ;
+  }
+
 // *** WIDGETS: MAIN SCAN *** //
   @override
   Widget build(BuildContext context) {
+    print('tabIndex: ${tabIndex} ');
     final isDCT = MediaQuery.of(context).size.height < 600;
+    //final tabIndex = 0;
     IconData _profileHeaderIcon = Icons.person;
     if (selectedProfile != null) {
       _profileHeaderIcon = selectedProfile.getIcon();
@@ -276,6 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: DefaultTabController(
             length: 4, //tabs.length,
+            initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
               appBar: AppBar(
@@ -311,7 +353,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             MaterialPageRoute(
                               builder: (context) => CatalogScreen(
                                   title: "Searching...",
-                                  selectedUser: selectedUser),
+                                  selectedUser: selectedUser,
+                                  // onProductSelection: addGoodItemsFromSelected(
+                                  //     selectedProducts)
+                                  onProductSelection: () =>
+                                      addGoodItemsFromSelected()
+                                  // (
+                                  //     selectedProducts)
+                                  ),
                             ))
                       },
                     ),
@@ -397,7 +446,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: SizedBox(height: 85, child: addEnterBarcodeField(context))),
 
       Align(
-          alignment: isDCT ? Alignment(0, 0.22) : Alignment(0, 2.2),
+          alignment:
+              isDCT ? Alignment(0, 0.22) : Alignment(0, 5.2), // pixel 2 5.2
           child: SizedBox(
               height: isDCT ? 270 : 600,
               //child: SizedBox(

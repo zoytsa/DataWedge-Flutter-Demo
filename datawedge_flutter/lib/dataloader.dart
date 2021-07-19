@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/login_signup.dart';
+import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -265,6 +266,15 @@ class GoodItem {
       print(date);
       print(number);
     } catch (e) {}
+  }
+
+  GoodItem.fromProduct(Product product) {
+    name = product.title;
+    id = product.id;
+    quantity = 0;
+    barcode = product.barcode;
+    pricein = "";
+    producer = "";
   }
 
   Map<String, dynamic> toJson() {
