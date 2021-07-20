@@ -4,33 +4,22 @@ import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/selected_products_couner.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/svg.dart';
-// import 'package:shop_app/constants.dart';
-// import 'package:shop_app/screens/home/components/body.dart';
-
 import 'constants.dart';
 import 'model/palette.dart';
-
-//import 'package:datawedgeflutter/selected_products_couner.dart';
 
 var selectedCategory = categories[0];
 var enteredSearchString = "";
 List<Product> selectedProducts = [];
-//var selectedProducts = [];
 
 class ItemCard extends StatefulWidget {
   final Product product;
-  //final Function press;
-  // final VoidCallback press;
-  // final VoidCallback longPress;
+
   final VoidCallback doubleTap;
   final VoidCallback vcbOnTap;
   final VoidCallback vcbOnlongPress;
 
   const ItemCard(
       {required this.product,
-      // required this.press,
-      // required this.longPress,
       required this.doubleTap,
       required this.vcbOnTap,
       required this.vcbOnlongPress});
@@ -70,7 +59,7 @@ class _ItemCardState extends State<ItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    print('called build ItemCard: ${widget.product.title}');
+    // print('called build ItemCard: ${widget.product.title}');
     return GestureDetector(
       onTap: _onTap,
       onLongPress: _onLongPress,
@@ -156,15 +145,43 @@ class CatalogScreen extends StatefulWidget {
   final String title;
   final User selectedUser;
   final VoidCallback onProductSelection;
-  //late Function(List<Product>) onProductSelection;
 
   @override
   _CatalogScreenState createState() => _CatalogScreenState();
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  final GlobalKey<_AppBarSearchPageWidgetState> _keyAppbar = GlobalKey();
+  final GlobalKey<_AppBarSearchWidgetState> _keyAppbar = GlobalKey();
   var addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
+  // bool _showBackToTopButton = false;
+  // ScrollController? _scrollController;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _scrollController = ScrollController()
+//       ..addListener(() {
+//         setState(() {
+//           if (_scrollController!.offset >= 300) {
+//             _showBackToTopButton = true; // show the back-to-top button
+//           } else {
+//             _showBackToTopButton = false; // hide the back-to-top button
+//           }
+//         });
+//       });
+//   }
+
+//   @override
+//   void dispose() {
+//     _scrollController!.dispose(); // dispose the controller
+//     super.dispose();
+//   }
+
+// // This function is triggered when the user presses the back-to-top button
+//   void _scrollToTop() {
+//     _scrollController!
+//         .animateTo(0, duration: Duration(seconds: 3), curve: Curves.linear);
+//   }
 
   void _updateSelectedProductsTitle() {
     //print('called _updateSelectedProductsTitle');
@@ -194,192 +211,137 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //appBar: buildAppBar(context, widget.addGoodsTitle, addGoodsTitle2),
-        appBar: AppBarSearchPageWidget(
-            key: _keyAppbar,
-            appBarSearchTitle: addGoodsTitle2,
-            onSelectedProductsAppBar: () => onSelectedProductsSearch()),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //  SizedBox(height: 100),
-            addEnterSearchField(context),
-//SizedBox(height: 100),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPaddin, vertical: 0),
-              child: SizedBox(
-                  width: 230,
-                  child: DropdownButton(
-                      elevation: 0,
-                      isDense: true,
-                      isExpanded: true,
-                      items: buildDropdownMenuItemsCategories(categories),
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontWeight: FontWeight.w500, color: kTextLightColor),
-                      value: selectedCategory,
-                      onChanged: (valueSelectedByUser) {
-                        setState(() {
-                          debugPrint('User selected $valueSelectedByUser');
+      appBar: AppBarSearchWidget(
+          key: _keyAppbar,
+          appBarSearchTitle: addGoodsTitle2,
+          onSelectedProductsAppBar: () => onSelectedProductsSearch()),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          addEnterSearchField(context),
 
-                          selectedCategory = valueSelectedByUser as Category;
-                          //saveSettingsHive(context);
-                        });
-                      })),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(
-            //       horizontal: kDefaultPaddin, vertical: 10),
-            //   child: Text(
-            //     "Кулинария",
-            //     style: Theme.of(context)
-            //         .textTheme
-            //         .headline6!
-            //         .copyWith(fontWeight: FontWeight.bold),
-            //   ),
-            // ),
-            SubcategoriesWidget(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
-                child: GridView.builder(
-                    itemCount: products.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: kDefaultPaddin,
-                      crossAxisSpacing: kDefaultPaddin,
-                      childAspectRatio: 0.75,
+          Row(
+              // padding: const EdgeInsets.symmetric(
+              //     horizontal: kDefaultPaddin, vertical: 0),
+              children: [
+                SizedBox(width: kDefaultPaddin),
+                SizedBox(
+                    width: 230,
+                    child: DropdownButton(
+                        elevation: 0,
+                        isDense: true,
+                        isExpanded: true,
+                        items: buildDropdownMenuItemsCategories(categories),
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: kTextLightColor),
+                        value: selectedCategory,
+                        onChanged: (valueSelectedByUser) {
+                          setState(() {
+                            debugPrint('User selected $valueSelectedByUser');
+
+                            selectedCategory = valueSelectedByUser as Category;
+                            //saveSettingsHive(context);
+                          });
+                        })),
+                Container(
+                    child: Expanded(
+                        child: SizedBox(
+                            // width: 165,
+                            ))),
+                Container(
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.grid_view_outlined,
+                        size: 17,
+                      ),
+                      onPressed: () => {},
                     ),
-                    itemBuilder: (context, index) => ItemCard(
-                          product: products[index],
-                          // press: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => DetailsScreen(
-                          //         product: products[index],
-                          //       ),
-                          //     )),
-                          // longPress: () => products[index].check = false,
+                  ),
+                ),
+                Container(
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.list),
+                      onPressed: () => {},
+                    ),
+                  ),
+                ),
+              ]),
 
-                          doubleTap: () => {}, //Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => MyHomePage(
-                          //         title: "we are back",
-                          //       ),
-                          //     )),
-                          vcbOnTap: () => _updateSelectedProductsTitle(),
-                          vcbOnlongPress: () => _updateSelectedProductsTitle(),
-                        )),
-              ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       horizontal: kDefaultPaddin, vertical: 10),
+          //   child: Text(
+          //     "Кулинария",
+          //     style: Theme.of(context)
+          //         .textTheme
+          //         .headline6!
+          //         .copyWith(fontWeight: FontWeight.bold),
+          //   ),
+          // ),
+          SubcategoriesWidget(),
+          // SingleChildScrollView(
+          //   controller: _scrollController,
+          //   child: ConstrainedBox(
+          //     constraints: BoxConstraints(maxHeight: 380),
+          //     child:
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+              child: GridView.builder(
+                  itemCount: products.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: kDefaultPaddin,
+                    crossAxisSpacing: kDefaultPaddin,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) => ItemCard(
+                        product: products[index],
+                        // press: () => Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => DetailsScreen(
+                        //         product: products[index],
+                        //       ),
+                        //     )),
+                        // longPress: () => products[index].check = false,
+
+                        doubleTap: () => {}, //Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => MyHomePage(
+                        //         title: "we are back",
+                        //       ),
+                        //     )),
+                        vcbOnTap: () => _updateSelectedProductsTitle(),
+                        vcbOnlongPress: () => _updateSelectedProductsTitle(),
+                      )),
             ),
-          ],
-        ));
+          ),
+          //  ),
+          //),
+        ],
+      ),
+      // floatingActionButton: _showBackToTopButton == true
+      //     ? null
+      //     : FloatingActionButton(
+      //         onPressed: _scrollToTop,
+      //         child: Icon(Icons.arrow_upward),
+      //       ),
+    );
   }
-
-  // AppBar buildAppBar(
-  //     BuildContext context, String addGoodsTitle, String addGoodsTitle2) {
-  //   final isDCT = MediaQuery.of(context).size.height < 600;
-  //   //updateSelectedProductsTitle();
-  //   var addGoodsTitle3 = "Выбрано: " + selectedProducts.length.toString() + ".";
-  //   return AppBar(
-  //     //automaticallyImplyLeading: false,
-  //     toolbarHeight: isDCT ? 45 : null,
-  //     title: GestureDetector(
-  //       onTapDown: (TapDownDetails) {
-  //         _addNewGoodsFromSearch();
-  //       },
-  //       child:
-  //           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-  //         SizedBox(
-  //             width: 100,
-  //             child: Container(
-  //               child: Text(addGoodsTitle2,
-  //                   style: TextStyle(fontSize: isDCT ? 12 : 13)),
-  //             )),
-  //         Container(
-  //           //margin: EdgeInsets.all(1.0),
-  //           padding: EdgeInsets.all(isDCT ? 6.0 : 10),
-  //           decoration: BoxDecoration(
-  //               gradient: LinearGradient(
-  //                 // colors: [
-  //                 //   Colors.green,
-  //                 //   Colors.tealAccent,
-  //                 //   Colors.green,
-  //                 //   Colors.black54
-  //                 // ],
-  //                 // colors: [Colors.black87, Colors.green],
-  //                 colors: [Colors.green, Colors.lightGreen],
-  //                 begin: Alignment.bottomRight,
-  //                 //end: Alignment.topLeft,
-  //               ),
-  //               borderRadius: BorderRadius.circular(8),
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                     color: Colors.black.withOpacity(.3),
-  //                     spreadRadius: 1,
-  //                     blurRadius: 2,
-  //                     offset: Offset(0, 1))
-  //               ]),
-  //           child:
-  //               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-  //             // Icon(
-  //             //   Icons.turned_in_not_outlined,
-  //             //   color: Colors.white,
-  //             // ),
-  //             Text(
-  //               " +  В СПИСОК ",
-  //               style: TextStyle(fontSize: 13),
-  //             ),
-  //           ]),
-  //         ),
-  //         //SizedBox(width: 10)
-  //       ]),
-  //     ),
-  //     centerTitle: true,
-  //     elevation: 0,
-  //     iconTheme: IconThemeData(color: Colors.white),
-  //     flexibleSpace: (Container(
-  //         //height: 200,
-  //         decoration: BoxDecoration(
-  //             gradient: LinearGradient(
-  //       //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
-  //       colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
-  //       begin: Alignment.bottomRight,
-  //       end: Alignment.topLeft,
-  //     )))),
-  //     // actions: <Widget>[
-  //     //addNewGoodromSearchButton(context, addGoodsTitle)
-  //     // Padding(
-  //     //   padding: const EdgeInsets.only(right: 8),
-  //     //   child: IconButton(
-  //     //     icon: Icon(
-  //     //       Icons.search_outlined,
-  //     //     ),
-  //     //     onPressed: () => {
-  //     //       Navigator.push(
-  //     //           context,
-  //     //           MaterialPageRoute(
-  //     //             builder: (context) => CatalogScreen(
-  //     //                 title: "Searching...", selectedUser: selectedUser),
-  //     //           ))
-  //     //     },
-  //     //   ),
-  //     // )
-  //     //],
-  //   );
-  // }
-
 }
 
-class AppBarSearchPageWidget extends StatefulWidget
-    implements PreferredSizeWidget {
+class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(55);
   //Function(List<Product>) onSelectedProductsAppBar;
   Function() onSelectedProductsAppBar;
 
-  //const AppBarSearchPageWidget({Key? key, required this.appBarSearchTitle})
-  AppBarSearchPageWidget(
+  //const AppBarSearchWidget({Key? key, required this.appBarSearchTitle})
+  AppBarSearchWidget(
       {Key? key,
       required this.appBarSearchTitle,
       required this.onSelectedProductsAppBar})
@@ -387,19 +349,15 @@ class AppBarSearchPageWidget extends StatefulWidget
 
   String appBarSearchTitle;
   @override
-  _AppBarSearchPageWidgetState createState() => _AppBarSearchPageWidgetState();
+  _AppBarSearchWidgetState createState() => _AppBarSearchWidgetState();
 
   //final title = "";
 }
 
-class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
+class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
   void updateAppbarWidget() {
     setState(() {});
   }
-
-// void updateGoodTemsWidget() {
-//     setState(() {});
-//   }
 
   void _addNewGoodsFromSearch() {
     print('go to items 1');
@@ -504,9 +462,9 @@ class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
             //padding: const EdgeInsets.only(right: 8),
             child: Container(
           margin: isDCT
-              ? EdgeInsets.only(top: 10, bottom: 9, left: 10, right: 10)
+              ? EdgeInsets.only(top: 11, bottom: 11, left: 10, right: 10)
               : EdgeInsets.all(8.5),
-          padding: EdgeInsets.all(isDCT ? 12.0 : 12),
+          padding: EdgeInsets.all(isDCT ? 9.0 : 12),
           decoration: BoxDecoration(
               gradient: LinearGradient(
                 // colors: [
@@ -532,68 +490,22 @@ class _AppBarSearchPageWidgetState extends State<AppBarSearchPageWidget> {
               onTapDown: (TapDownDetails) {
                 _addNewGoodsFromSearch();
               },
-              child: Text(
-                "  +   В СПИСОК  ",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: isDCT ? 12 : 13),
-              )),
+              child: Row(children: [
+                // Icon(Icons.list, size: 14),
+                Icon(Icons.document_scanner_outlined, size: 14),
+                Text(
+                  "   В СПИСОК  ",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: isDCT ? 12 : 13),
+                ),
+              ])),
         ))
       ],
     );
   }
 }
-
-// Widget addNewGoodromSearchButton(BuildContext context, String addGoodsTitle) {
-//   Widget widget = GestureDetector(
-//     onTapDown: (TapDownDetails) {
-//       _addNewGoodsFromSearch();
-//     },
-//     child: Center(
-//       child: Container(
-//         //margin: EdgeInsets.all(1.0),
-//         padding: EdgeInsets.all(10.0),
-//         decoration: BoxDecoration(
-//             gradient: LinearGradient(
-//               // colors: [
-//               //   Colors.green,
-//               //   Colors.tealAccent,
-//               //   Colors.green,
-//               //   Colors.black54
-//               // ],
-//               // colors: [Colors.black87, Colors.green],
-//               colors: [Colors.green, Colors.lightGreen],
-//               begin: Alignment.bottomRight,
-//               //end: Alignment.topLeft,
-//             ),
-//             borderRadius: BorderRadius.circular(8),
-//             boxShadow: [
-//               BoxShadow(
-//                   color: Colors.black.withOpacity(.3),
-//                   spreadRadius: 1,
-//                   blurRadius: 2,
-//                   offset: Offset(0, 1))
-//             ]),
-//         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-//           // Icon(
-//           //   Icons.add_circle_outline,
-//           //   color: Colors.white,
-//           // ),
-//           Text(
-//             addGoodsTitle,
-//             //"  +  ADD  ",
-//             style: TextStyle(
-//                 fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-//           ),
-//         ]),
-//       ),
-//     ),
-//   );
-//   return widget;
-// }
-
-// We need satefull widget for our categories
 
 class SubcategoriesWidget extends StatefulWidget {
   @override

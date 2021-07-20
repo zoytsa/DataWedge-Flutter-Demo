@@ -505,69 +505,92 @@ saveSettingsHive(BuildContext context) {
 }
 
 saveExitSettingsHive(BuildContext context) {
-  print('2selectedUser.id: ${selectedUser.id}');
-  print('2selectedMarket.id: ${selectedMarket.id}');
-  print('2selectedDocumentType.id: ${selectedDocumentType.id}');
-  print('2selectedProfile.profileID: ${selectedProfile.profileID}');
+  showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text('Подтвердите выход...', style: TextStyle(fontSize: 15)),
+          content:
+              Text('Вы уверены, что хотите выйти и ввести ID и пароль вновь?'),
+          actions: [
+            // The "Yes" button
+            TextButton(
+                child: Text("Да"),
+                onPressed: () {
+                  // Close the dialog
+                  Navigator.of(context).pop();
+                  // do the rest
+                  bool noNeedToSave = true;
+                  Box<Settings> box = Hive.box<Settings>('settings');
 
-  bool noNeedToSave = true;
-  Box<Settings> box = Hive.box<Settings>('settings');
+                  Settings? userIDSettings = box.get("userID");
+                  if (userIDSettings != null) {
+                    selectedUser = users[0];
+                    userIDSettings.value = 0;
+                    userIDSettings.name = selectedUser.name;
+                    userIDSettings.save();
+                    noNeedToSave = false;
+                  }
 
-  Settings? userIDSettings = box.get("userID");
-  if (userIDSettings != null) {
-    selectedUser = users[0];
-    userIDSettings.value = 0;
-    userIDSettings.name = selectedUser.name;
-    userIDSettings.save();
-    noNeedToSave = false;
-  }
+                  Settings? profileIDSettings = box.get("profileID");
+                  if (profileIDSettings != null) {
+                    selectedProfile = profiles[0]; // IDSettings.value) {
+                    profileIDSettings.value = selectedProfile.profileID;
+                    profileIDSettings.name = selectedProfile.name;
+                    profileIDSettings.save();
+                    // noNeedToSave = false;
+                  }
 
-  Settings? profileIDSettings = box.get("profileID");
-  if (profileIDSettings != null) {
-    selectedProfile = profiles[0]; // IDSettings.value) {
-    profileIDSettings.value = selectedProfile.profileID;
-    profileIDSettings.name = selectedProfile.name;
-    profileIDSettings.save();
-    // noNeedToSave = false;
-  }
+                  var profileData = selectedProfile.toJsonDynamic();
 
-  var profileData = selectedProfile.toJsonDynamic();
+                  Settings? profileDataSettings = box.get("profileData");
+                  if (profileDataSettings != null) {
+                    if (profileData.toString() !=
+                        profileDataSettings.value.toString()) {
+                      profileDataSettings.value = profileData;
+                      profileDataSettings.name = selectedProfile.name;
+                      profileDataSettings.save();
+                      //  noNeedToSave = false;
+                    }
+                  }
 
-  Settings? profileDataSettings = box.get("profileData");
-  if (profileDataSettings != null) {
-    if (profileData.toString() != profileDataSettings.value.toString()) {
-      profileDataSettings.value = profileData;
-      profileDataSettings.name = selectedProfile.name;
-      profileDataSettings.save();
-      //  noNeedToSave = false;
-    }
-  }
+                  // print('yo what the hell');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginSignupScreen(),
+                      ));
 
-  print('yo what the hell');
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginSignupScreen(),
-      ));
+                  if (noNeedToSave == true) {
+                    Fluttertoast.showToast(
+                        msg: "Не удалось выйти...",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.orange[400],
+                      duration: Duration(seconds: 1),
+                      content: Padding(
+                          padding: EdgeInsets.only(top: 3),
+                          child: Text("ВЫХОД", textAlign: TextAlign.center)),
+                    ));
+                  }
+                }),
 
-  if (noNeedToSave == true) {
-    Fluttertoast.showToast(
-        msg: "Не удалось выйти...",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.orange[400],
-      duration: Duration(seconds: 1),
-      content: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text("ВЫХОД", textAlign: TextAlign.center)),
-    ));
-  }
+            TextButton(
+                child: Text('Нет'),
+                onPressed: () {
+                  // noNeedForAction = true;
+                  // Close the dialog
+                  Navigator.of(context).pop();
+                }),
+          ],
+        );
+      });
 }
 
 Future<Profile?> saveProfileOnDCT(BuildContext context) async {
