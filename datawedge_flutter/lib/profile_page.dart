@@ -1,6 +1,7 @@
 import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
+import 'package:datawedgeflutter/show_html_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
@@ -265,6 +266,8 @@ class _profilePageState extends State<profilePage> {
                 ])),
           ),
           buttonExit(context),
+          SizedBox(height: 20),
+          buttonHTMLSample(context),
           Container(
             padding: const EdgeInsets.only(left: 10.0, right: 20.0),
             child: Padding(
@@ -470,6 +473,23 @@ class _profilePageState extends State<profilePage> {
     // }
   }
 
+  _loadAndShowHTML(BuildContext context) async {
+    var receivedHTML = await loadHTML('Example HTML');
+    DataHTML _dataHTML = receivedHTML;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ShowHTML_Page(
+              title: _dataHTML.title, htmlContent: _dataHTML.htmlContent),
+        ));
+  }
+
+  // setState(() {
+  //   goodInfo = receivedGoodInfo;
+  //   //addButtonTitle = addButtonTitle;
+  //   _onManualInputBarcode(text);
+  // });
+
   Widget addProfileWidget(
       BuildContext context, VoidCallback my_vcbUsingZebraOnSelected) {
     return widget;
@@ -547,6 +567,42 @@ class _profilePageState extends State<profilePage> {
                   ),
                   Icon(
                     Icons.exit_to_app_rounded,
+                  ),
+                ],
+              ),
+            ));
+  }
+
+  Widget buttonHTMLSample(BuildContext context) {
+    return
+        // GestureDetector(
+        //     onTapDown: (TapDownDetails) async {
+        //       saveExitSettingsHive(context);
+        //     },
+        //     onTapUp: (TapUpDetails) {},
+        //     child:
+        SizedBox(
+            width: 120,
+            height: 40,
+            child: TextButton(
+              onPressed: () => _loadAndShowHTML(context),
+              style: TextButton.styleFrom(
+                  //side: BorderSide(width: 1, color: Colors.white),
+                  minimumSize: Size(60, 20),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  primary: Colors.white,
+                  backgroundColor: Colors.indigo[200]),
+              child: Row(
+                children: [
+                  Text(
+                    "   HTML...",
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.http,
                   ),
                 ],
               ),

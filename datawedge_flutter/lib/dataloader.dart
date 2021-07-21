@@ -325,6 +325,43 @@ class DocumentOrder {
   }
 }
 
+class DataHTML {
+  int profileID = 0;
+  int userID = 0;
+  int roleID = 0;
+  int marketID = 0;
+  String title = "";
+  String htmlContent = "";
+
+  DataHTML();
+  //      this.profileID,
+  //     this.userID,
+  //     this.roleID,
+  //     this.marketID,
+  //     this.title,
+  //     this.htmlContent);
+
+  DataHTML.fromJson(Map<String, dynamic> json) {
+    profileID = json['profileID'];
+    userID = json['userID'];
+    roleID = json['roleID'];
+    marketID = json['marketID'];
+    title = json['title'];
+    htmlContent = json['htmlContent'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['profileID'] = this.profileID;
+    data['userID'] = this.userID;
+    data['roleID'] = this.roleID;
+    data['marketID'] = this.marketID;
+    data['title'] = this.title;
+    data['htmlContent'] = this.htmlContent;
+    return data;
+  }
+}
+
 Future<Good> loadGoods(String barcode) async {
   var response = await http.get(Uri.parse(
       "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
@@ -722,4 +759,26 @@ Future<void> showError(BuildContext context, bool result) async {
       ),
     );
   }
+}
+
+Future<DataHTML> loadHTML(String title) async {
+  var response = await http.get(Uri.parse(
+      // "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
+      "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
+
+  var json = jsonDecode(utf8.decode(response.bodyBytes));
+  // var jsonGood = json["data"];
+  DataHTML results = DataHTML();
+  try {
+    results.profileID = json["profileID"];
+    results.userID = json["userID"];
+    results.roleID = json["roleID"];
+    results.marketID = json["marketID"];
+    results.title = json["title"];
+    results.htmlContent = json["htmlContent"];
+  } catch (error) {
+    results.htmlContent = error.toString();
+  }
+
+  return results;
 }
