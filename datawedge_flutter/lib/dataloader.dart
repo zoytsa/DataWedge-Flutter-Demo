@@ -25,6 +25,7 @@ var enteredID = 111111;
 var isRememberMe = true;
 var isAuthorized = false;
 var usingZebra = false;
+var selectedReport = "report1";
 
 class User {
   int id = 0;
@@ -764,10 +765,11 @@ Future<void> showError(BuildContext context, bool result) async {
 Future<DataHTML> loadHTML(String title) async {
   var response = await http.get(Uri.parse(
       // "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
-      "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
+      // "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
+      "http://212.112.116.229:7788/weblink/hs/dct-html/get_html/" + title));
 
   var json = jsonDecode(utf8.decode(response.bodyBytes));
-  // var jsonGood = json["data"];
+  print(title);
   DataHTML results = DataHTML();
   try {
     results.profileID = json["profileID"];

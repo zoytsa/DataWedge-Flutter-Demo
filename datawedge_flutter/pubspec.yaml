@@ -19,7 +19,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_html: ^2.0.0-nullsafety.0
+  #flutter_html: ^2.0.0-nullsafety.0
+  #webview_flutter_plus: ^0.2.2
+  #flutter_widget_from_html: ^0.6.1
+  webview_flutter: ^2.0.10
   flutter_barcode_scanner: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
@@ -79,6 +82,7 @@ flutter:
     - images/
     - assets/images/
     - assets/icons/
+    - assets/webpages/
   # fonts:
   #   - family: OpenIconic
   #     fonts:

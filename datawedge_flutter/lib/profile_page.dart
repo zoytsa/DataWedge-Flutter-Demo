@@ -123,6 +123,36 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
   return items;
 }
 
+List<DropdownMenuItem<String>> buildDropDownReports() {
+  List<DropdownMenuItem<String>> items = [];
+  var reports = ["report1", "report2", "report3", "report4", "report5"];
+  for (String report in reports) {
+    items.add(
+      DropdownMenuItem(
+        value: report,
+        child: Row(
+          children: [
+            // Icon(
+            //   profile.getIcon(),
+            //   color: Colors.indigo[200],
+            // ),
+            Padding(
+                padding: EdgeInsets.only(left: 2.0),
+                child: SizedBox(
+                  width: 60,
+                  child: Text(
+                    report,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+  return items;
+}
+
 List<DropdownMenuItem<ProfileRole>> buildDropdownMenuItemsProfileRoles(
     List profileRoles) {
   List<DropdownMenuItem<ProfileRole>> items = [];
@@ -267,7 +297,45 @@ class _profilePageState extends State<profilePage> {
           ),
           buttonExit(context),
           SizedBox(height: 20),
-          buttonHTMLSample(context),
+          Container(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Padding(
+                padding: EdgeInsets.only(top: 15.0, left: 15.0, right: 20.0),
+                child: Row(children: [
+                  // isDCT
+                  //     ? Icon(
+                  //         Icons.security_rounded,
+                  //         color: Palette.textColor1,
+                  //       )
+                  //     : SizedBox(),
+                  // !isDCT
+                  //     ? Text("Профиль:          ",
+                  //         style: TextStyle(color: Palette.textColor2))
+                  //     : SizedBox(),
+                  // SizedBox(
+                  //   height: 5.0,
+                  //   //          width: 100,
+                  // ),
+                  SizedBox(
+                      width: 120,
+                      child: ListTile(
+                        title: DropdownButton(
+                            items: buildDropDownReports(),
+                            style: TextStyle(color: Colors.blue[300]),
+                            value: selectedReport,
+                            onChanged: (valueSelectedByUser) {
+                              setState(() {
+                                debugPrint(
+                                    'User selected $valueSelectedByUser');
+
+                                selectedReport = valueSelectedByUser as String;
+                              });
+                              ;
+                            }),
+                      )),
+                  buttonHTMLSample(context),
+                ])),
+          ),
           Container(
             padding: const EdgeInsets.only(left: 10.0, right: 20.0),
             child: Padding(
@@ -474,13 +542,13 @@ class _profilePageState extends State<profilePage> {
   }
 
   _loadAndShowHTML(BuildContext context) async {
-    var receivedHTML = await loadHTML('Example HTML');
+    var receivedHTML = await loadHTML(selectedReport);
     DataHTML _dataHTML = receivedHTML;
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ShowHTML_Page(
-              title: _dataHTML.title, htmlContent: _dataHTML.htmlContent),
+              title: selectedReport, htmlContent: _dataHTML.htmlContent),
         ));
   }
 
@@ -582,8 +650,8 @@ class _profilePageState extends State<profilePage> {
         //     onTapUp: (TapUpDetails) {},
         //     child:
         SizedBox(
-            width: 120,
-            height: 40,
+            width: 100,
+            height: 30,
             child: TextButton(
               onPressed: () => _loadAndShowHTML(context),
               style: TextButton.styleFrom(
@@ -592,11 +660,11 @@ class _profilePageState extends State<profilePage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)),
                   primary: Colors.white,
-                  backgroundColor: Colors.indigo[200]),
+                  backgroundColor: Colors.black54),
               child: Row(
                 children: [
                   Text(
-                    "   HTML...",
+                    " HTML  ",
                   ),
                   SizedBox(
                     width: 5,
