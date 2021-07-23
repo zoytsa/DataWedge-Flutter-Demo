@@ -5,6 +5,7 @@ import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/profile_page.dart';
 import 'package:datawedgeflutter/search_screen.dart';
+import 'package:datawedgeflutter/show_html_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -302,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
 // *** WIDGETS: MAIN SCAN *** //
   @override
   Widget build(BuildContext context) {
-    print('tabIndex: ${tabIndex} ');
+    // print('tabIndex: ${tabIndex} ');
     final isDCT = MediaQuery.of(context).size.height < 600;
     //final tabIndex = 0;
     IconData _profileHeaderIcon = Icons.person;
@@ -320,106 +321,14 @@ class _MyHomePageState extends State<MyHomePage> {
             initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                toolbarHeight: isDCT ? 80 : null,
-                title: Text(
-                  selectedUser.name == ""
-                      ? "Connector F."
-                      : "Connector F.: " + selectedUser.name,
-                  style: TextStyle(fontSize: 15),
-                ),
-                centerTitle: true,
-                iconTheme: IconThemeData(color: Colors.white),
-                flexibleSpace: (Container(
-                    //height: 200,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                  //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
-                  colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
-                  begin: Alignment.bottomRight,
-                  end: Alignment.topLeft,
-                )))),
-                actions: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.search_outlined,
-                      ),
-                      onPressed: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CatalogScreen(
-                                  title: "Searching...",
-                                  selectedUser: selectedUser,
-                                  // onProductSelection: addGoodItemsFromSelected(
-                                  //     selectedProducts)
-                                  onProductSelection: () =>
-                                      addGoodItemsFromSelected()
-                                  // (
-                                  //     selectedProducts)
-                                  ),
-                            ))
-                      },
-                    ),
-                  )
-                ],
-                bottom: TabBar(
-                  isScrollable: true,
-                  indicatorColor: Colors.white,
-                  indicatorWeight: 5,
-
-                  //tabs: tabs,
-
-                  tabs: [
-                    Tab(
-                        icon: isDCT
-                            ? null
-                            : Icon(
-                                Icons.search_sharp,
-                                color: Colors.white,
-                              ),
-                        text: 'Сканер'),
-                    //Tab(icon: Icon(Icons.insert_emoticon), text: 'Goods'),
-                    Tab(
-                        icon: isDCT
-                            ? null
-                            : Icon(
-                                Icons.insert_emoticon,
-                                color: Colors.white,
-                              ),
-                        text: _goodsHeader),
-                    Tab(
-                        icon: isDCT
-                            ? null
-                            : Icon(Icons.space_bar, color: Colors.white),
-                        text: 'Документы'),
-                    //Tab(icon: Icon(Icons.person), text: 'Profile'),
-                    Tab(
-                      icon: isDCT
-                          ? null
-                          : Icon(
-                              _profileHeaderIcon,
-                              color: Colors.white,
-                            ),
-                      text: 'Профиль',
-                    ),
-                  ],
-                  labelColor: Colors.white,
-                ),
-                elevation: 20,
-                titleSpacing: 20,
-              ),
+              drawer: myDrawer(context, isDCT),
+              appBar:
+                  myAppBar(context, isDCT, _goodsHeader, _profileHeaderIcon),
 
               body: TabBarView(children: [
                 mainScanPage(context, isDCT),
-                //addGoodItemsList(context, goodsList),
                 goodItemsPage(context, goodsList, currentDocument),
-                //addResultDataList(context, _resultDataList),
                 addResultDataList(context, _resultDataList),
-                // addResultDataList(context, _resultDataList)
                 profilePage(
                     vcbUsingZebraOnSelected: () {
                       print("vcb rules");
@@ -441,19 +350,25 @@ class _MyHomePageState extends State<MyHomePage> {
       Align(
           alignment: Alignment.topCenter,
           child: SizedBox(height: 80, child: addTextHeaderBarcode(context))),
-      Align(
-          alignment: isDCT ? Alignment(0, -0.72) : Alignment(0, -0.79),
-          child: SizedBox(height: 85, child: addEnterBarcodeField(context))),
+      Column(children: [
+        SizedBox(height: isDCT ? 40 : 55),
+        SizedBox(height: 85, child: addEnterBarcodeField(context)),
+        SizedBox(
+            height: isDCT ? 270 : 550,
+            //child: SizedBox(
+            //   height: 600,
+            child: addResultDataList(context, _resultDataList))
+      ]),
 
-      Align(
-          alignment:
-              isDCT ? Alignment(0, 0.22) : Alignment(0, 5.2), // pixel 2 5.2
-          child: SizedBox(
-              height: isDCT ? 270 : 600,
-              //child: SizedBox(
-              //   height: 600,
-              child: addResultDataList(context, _resultDataList))),
-      //SizedBox(height: 90),
+      // Align(
+      //     alignment:
+      //         isDCT ? Alignment(0, 0.22) : Alignment(0, 0.85), // pixel 2 5.2
+      //     child: SizedBox(
+      //         height: isDCT ? 270 : 600,
+      //         //child: SizedBox(
+      //         //   height: 600,
+      //         child: addResultDataList(context, _resultDataList))),
+      // //SizedBox(height: 90),
 
       Align(
         alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
@@ -482,6 +397,214 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     ]);
     return widget;
+  }
+
+  Widget myDrawer(BuildContext context, bool isDCT) {
+    return Drawer(
+      child: Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.22,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 30.0,
+                    left: 20.0,
+                    child: CircleAvatar(
+                      radius: isDCT ? 30 : 35,
+                      backgroundColor: Colors.indigo.withOpacity(0.1),
+                      child: Icon(
+                        Icons.person,
+                        size: 45,
+                        color: Colors.green.withOpacity(0.8),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    child: Text(selectedUser.name,
+                        style: TextStyle(fontSize: 15, color: Colors.grey)),
+                    top: 120,
+                    left: 30,
+                  ),
+                  Positioned(
+                    child: Text('Connector F.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                        )),
+                    top: 50,
+                    right: 20,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.pageview,
+                    color: Colors.white,
+                    //   size: 30,
+                  ),
+                  Text(
+                    ' Go to sample page',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info,
+                    color: Colors.white,
+                    //    size: 30,
+                  ),
+                  Text(
+                    ' About',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.settings_applications,
+                    color: Colors.white,
+                    // size: 30,
+                  ),
+                  Text(
+                    ' Settings',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
+              ),
+            ),
+            Divider(
+              color: Colors.white,
+            ),
+            SizedBox(
+                width: 200,
+                height: 30,
+                child: TextButton(
+                  onPressed: () => _loadAndShowHTML(context),
+                  style: TextButton.styleFrom(
+                      //side: BorderSide(width: 1, color: Colors.white),
+                      minimumSize: Size(60, 20),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      primary: Colors.white,
+                      backgroundColor: Colors.indigo.withOpacity(0.1)),
+                  child: Text(
+                    " Проверка обмена... 📊",
+                  ),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget myAppBar(
+      BuildContext context, isDCT, _goodsHeader, _profileHeaderIcon) {
+    return AppBar(
+      // automaticallyImplyLeading: false,
+      toolbarHeight: isDCT ? 80 : 80,
+      title: Text(
+        selectedUser.name == ""
+            ? "Connector F."
+            : "Connector F.: " + selectedUser.name,
+        style: TextStyle(fontSize: 15),
+      ),
+      centerTitle: true,
+      iconTheme: IconThemeData(color: Colors.white),
+      // flexibleSpace: (Container(
+      //     //height: 200,
+      //     decoration: BoxDecoration(
+      //         gradient: LinearGradient(
+      //   //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+      //   colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
+      //   begin: Alignment.bottomRight,
+      //   end: Alignment.topLeft,
+      // )))),
+      actions: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: IconButton(
+            icon: Icon(
+              Icons.search_outlined,
+            ),
+            onPressed: () => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CatalogScreen(
+                        title: "Searching...",
+                        selectedUser: selectedUser,
+                        // onProductSelection: addGoodItemsFromSelected(
+                        //     selectedProducts)
+                        onProductSelection: () => addGoodItemsFromSelected()
+                        // (
+                        //     selectedProducts)
+                        ),
+                  ))
+            },
+          ),
+        )
+      ],
+      bottom: TabBar(
+        isScrollable: true,
+        indicatorColor: Colors.white,
+        indicatorWeight: 5,
+
+        //tabs: tabs,
+
+        tabs: [
+          Tab(
+              // icon: isDCT
+              //     ? null
+              //     : Icon(
+              //         Icons.search_sharp,
+              //         color: Colors.white,
+              //       ),
+              text: 'Сканер'),
+          Tab(
+              // icon: isDCT
+              //     ? null
+              //     : Icon(
+              //         Icons.insert_emoticon,
+              //         color: Colors.white,
+              //       ),
+              text: _goodsHeader),
+          Tab(
+              //  icon: isDCT ? null : Icon(Icons.space_bar, color: Colors.white),
+              text: 'Документы'),
+          Tab(
+            // icon: isDCT
+            //     ? null
+            //     : Icon(
+            //         _profileHeaderIcon,
+            //         color: Colors.white,
+            //       ),
+            text: 'Профиль',
+          ),
+        ],
+        labelColor: Colors.white,
+      ),
+      elevation: 20,
+      titleSpacing: 20,
+    );
   }
 
   Widget addTextHeaderBarcode(BuildContext context) {
@@ -533,9 +656,9 @@ class _MyHomePageState extends State<MyHomePage> {
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(.3),
-                  spreadRadius: 1,
-                  blurRadius: 2,
+                  color: Colors.black.withOpacity(.15),
+                  spreadRadius: 1.5,
+                  blurRadius: 3,
                   offset: Offset(0, 1))
             ]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -632,7 +755,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // ),
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
+                  colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
                   begin: Alignment.bottomRight,
                   end: Alignment.topLeft,
                 ),
@@ -687,8 +810,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 TextField(
           cursorColor: Colors.pinkAccent,
           maxLength: 13,
+          style: TextStyle(color: Colors.white),
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
+            counterStyle: TextStyle(
+              color: Palette.textColor1,
+            ),
             prefixIcon: Icon(
               Icons.qr_code_sharp,
               color: Palette.iconColor,
@@ -707,7 +834,7 @@ class _MyHomePageState extends State<MyHomePage> {
             suffixIcon: IconButton(
               // onPressed: _controllerID.clear(),
               onPressed: () => _loadData(enteredBarcode),
-              icon: Icon(Icons.check),
+              icon: Icon(Icons.check, color: Palette.textColor1),
             ),
           ),
           onChanged: (String str) {
@@ -742,8 +869,9 @@ class _MyHomePageState extends State<MyHomePage> {
           //  for (var i in dataList)
           for (int i = 0; i < dataList.length; i++)
             Card(
+              color: Colors.indigo[300],
               elevation: i == 0 ? 8.0 : null,
-              // margin: new EdgeInsets.only(left: 10.0),
+              margin: new EdgeInsets.only(left: 0.0),
               child: Container(
                 //decoration:
                 // i == 0 ? BoxDecoration(color: Colors.blue[100]) : null,
@@ -754,13 +882,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           colors: [
                             Colors.indigo,
                             Colors.blue,
-                            Color(0xFF3b5999)
+                            Colors.indigo,
+                            Colors.indigo,
                           ],
                           begin: Alignment.bottomRight,
                           end: Alignment.topLeft,
                         ),
-
-                        //borderRadius: BorderRadius.circular(30),
+                        //  borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                             BoxShadow(
                                 color: Colors.black.withOpacity(.3),
@@ -768,7 +896,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                 blurRadius: 2,
                                 offset: Offset(0, 1))
                           ])
-                    : null,
+                    : BoxDecoration(
+                        // borderRadius: BorderRadius.circular(0),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.indigo,
+                            //   Colors.blue,
+                            Colors.indigo,
+                          ],
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topLeft,
+                        ),
+                        boxShadow: [
+                            BoxShadow(
+                                color: Palette.textColor1
+                                    .withOpacity(.4), //.white.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
 
                 child: Padding(
                   padding: i == 0 ? EdgeInsets.all(12.0) : EdgeInsets.all(4.0),
@@ -781,7 +927,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: i == 0
                         ? const TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white)
-                        : null,
+                        : const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -929,4 +1075,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return widget;
   }
+}
+
+_loadAndShowHTML(BuildContext context) async {
+  selectedReport = "report2";
+  var receivedHTML = await loadHTML(selectedReport);
+  DataHTML _dataHTML = receivedHTML;
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ShowHTML_Page2(
+            title: selectedReport, htmlContent: _dataHTML.htmlContent),
+      ));
 }
