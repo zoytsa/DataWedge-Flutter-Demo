@@ -2,6 +2,7 @@ import 'package:datawedgeflutter/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:datawedgeflutter/show_html_page.dart';
+import 'package:datawedgeflutter/show_html_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
@@ -547,7 +548,7 @@ class _profilePageState extends State<profilePage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ShowHTML_Page(
+          builder: (context) => ShowHTML_Page2(
               title: selectedReport, htmlContent: _dataHTML.htmlContent),
         ));
   }
