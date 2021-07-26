@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <title>Подключение CSS файла</title>
+    <style type="text/css">
+        .table_blue {
+            font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+            font-size: 14px;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th,
+        td:first-child {
+            background: #AFCDE7;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        th,
+        td {
+            border-style: solid;
+            border-width: 0 1px 1px 0;
+            border-color: white;
+        }
+
+        td {
+            background: #D8E6F3;
+        }
+
+        th:first-child,
+        td:first-child {
+            text-align: left;
+        }
+
+        .table_blue tr:hover td {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table_blue">
+        <tr>
+            <th>Company</th>
+            <th>Q1</th>
+            <th>Q2</th>
+            <th>Q3</th>
+            <th>Q4</th>
+        </tr>
+        <tr>
+            <td>Microsoft</td>
+            <td>20.3</td>
+            <td>30.5</td>
+            <td>23.5</td>
+            <td>40.3</td>
+        </tr>
+        <tr>
+            <td>Google</td>
+            <td>50.2</td>
+            <td>40.63</td>
+            <td>45.23</td>
+            <td>39.3</td>
+        </tr>
+        <tr>
+            <td>Apple</td>
+            <td>25.4</td>
+            <td>30.2</td>
+            <td>33.3</td>
+            <td>36.7</td>
+        </tr>
+        <tr>
+            <td>IBM</td>
+            <td>20.4</td>
+            <td>15.6</td>
+            <td>22.3</td>
+            <td>29.3</td>
+        </tr>
+    </table>
+</body>
+
+</html>

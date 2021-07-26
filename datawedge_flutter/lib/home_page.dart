@@ -321,7 +321,7 @@ class _MyHomePageState extends State<MyHomePage> {
             initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              drawer: myDrawer(context, isDCT),
+              drawer: myDrawer2(context, isDCT),
               appBar:
                   myAppBar(context, isDCT, _goodsHeader, _profileHeaderIcon),
 
@@ -351,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.topCenter,
           child: SizedBox(height: 80, child: addTextHeaderBarcode(context))),
       Column(children: [
-        SizedBox(height: isDCT ? 40 : 55),
+        SizedBox(height: isDCT ? 55 : 55),
         SizedBox(height: 85, child: addEnterBarcodeField(context)),
         SizedBox(
             height: isDCT ? 270 : 550,
@@ -512,6 +512,126 @@ class _MyHomePageState extends State<MyHomePage> {
                 ))
           ],
         ),
+      ),
+    );
+  }
+
+  Widget myDrawer2(BuildContext context, bool isDCT) {
+    return Drawer(
+      //backgroundColor: Colors.white,
+      child: Container(
+        color: Colors.grey.withOpacity(0.42),
+        child: ListView(
+          children: <Widget>[
+            //Set User Information Username Avatar
+            UserAccountsDrawerHeader(
+              accountName: new Text(selectedUser.name),
+              //   accountEmail: new Text(selectedProfile.name),
+              accountEmail: ListTile(
+                title: DropdownButton(
+                    items: buildTest(profiles),
+                    style: TextStyle(color: Colors.blue[300]),
+                    value: selectedProfile,
+                    onChanged: (valueSelectedByUser) {
+                      setState(() {
+                        debugPrint('User selected $valueSelectedByUser');
+                        // onChangeDropdownItem(valueSelectedByUser as Market);
+                        selectedProfile = valueSelectedByUser as Profile;
+                        saveSettingsHive(context);
+                        saveProfileOnDCT(context);
+                      });
+                      ;
+                    }),
+              ),
+
+              //Current avatar
+              currentAccountPicture: new CircleAvatar(
+                child: Icon(
+                  selectedProfile.getIcon(),
+                  //     size: 45,
+                  //     color: Colors.green.withOpacity(0.8),
+                ),
+                // backgroundImage: new  AssetImage("images/1.jpeg"),
+              ),
+              onDetailsPressed: () {
+                print("onDetailsPressed");
+              },
+              //Other account avatars
+              otherAccountsPictures: <Widget>[
+                new Container(
+                  child: Text("assests/images/bag_1.png"),
+                )
+              ],
+            ),
+            // ListTile(
+            //   leading: new CircleAvatar(
+            //     child: new Icon(Icons.color_lens),
+            //   ),
+            //   title: Text("personalized dress up"),
+            // ),
+            // ListTile(
+            //   leading: new CircleAvatar(
+            //     child: new Icon(Icons.photo),
+            //   ),
+            //   title: Text("My Album"),
+            // ),
+            // ListTile(
+            //   leading: new CircleAvatar(
+            //     child: new Icon(Icons.wifi),
+            //   ),
+            //   title: new Text("wifi"),
+            // ),
+            ExpansionTile(
+              onExpansionChanged: (valueSelectedByUser) {
+                setState(() {
+                  debugPrint('User selected $valueSelectedByUser');
+                  // onChangeDropdownItem(valueSelectedByUser as Market);
+                  selectedProfile = valueSelectedByUser as Profile;
+                  saveSettingsHive(context);
+                  saveProfileOnDCT(context);
+                });
+              },
+              title: Text("Expansion Title"),
+              children: <Widget>[
+                Text("children 1"),
+                Text("children 2"),
+                Text("children 3"),
+                Text("children 4"),
+                Text("children 5"),
+                Text("children 6"),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget myDrawer3(BuildContext context, bool isDCT) {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          ExpansionTile(
+            onExpansionChanged: (valueSelectedByUser) {
+              setState(() {
+                debugPrint('User selected $valueSelectedByUser');
+                // onChangeDropdownItem(valueSelectedByUser as Market);
+                selectedProfile = valueSelectedByUser as Profile;
+                saveSettingsHive(context);
+                saveProfileOnDCT(context);
+              });
+            },
+            title: Text("Expansion Title"),
+            children: <Widget>[
+              Text("children 1"),
+              Text("children 2"),
+              Text("children 3"),
+              Text("children 4"),
+              Text("children 5"),
+              Text("children 6"),
+            ],
+          )
+        ],
       ),
     );
   }
