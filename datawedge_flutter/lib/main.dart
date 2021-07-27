@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
         ),
         primaryColor: Colors.indigo,
         scaffoldBackgroundColor: Colors.indigo,
+        canvasColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: isAuthorized ? MyHomePage(title: 'DCT') : LoginSignupScreen(),

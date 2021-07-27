@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/extra_widgets.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/profile_page.dart';
@@ -28,6 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // final GlobalKey expansionTileKey = GlobalKey();
+  static const Duration _kExpand = Duration(milliseconds: 200);
   static const MethodChannel methodChannel =
       MethodChannel('com.darryncampbell.datawedgeflutter/command');
   static const EventChannel scanChannel =
@@ -321,7 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
             initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              drawer: myDrawer2(context, isDCT),
+              drawer: myDrawer3(context, isDCT),
               appBar:
                   myAppBar(context, isDCT, _goodsHeader, _profileHeaderIcon),
 
@@ -610,37 +613,232 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget myDrawer3(BuildContext context, bool isDCT) {
     return Drawer(
       child: ListView(
-        children: <Widget>[
-          ExpansionTile(
-            onExpansionChanged: (valueSelectedByUser) {
-              setState(() {
-                debugPrint('User selected $valueSelectedByUser');
-                // onChangeDropdownItem(valueSelectedByUser as Market);
-                selectedProfile = valueSelectedByUser as Profile;
-                saveSettingsHive(context);
-                saveProfileOnDCT(context);
-              });
+        shrinkWrap: true,
+        primary: false,
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * (isDCT ? 0.15 : 0.13),
+            width: MediaQuery.of(context).size.width,
+            //  color: Colors.white,
+            decoration: BoxDecoration(
+                gradient:
+
+                    //  Colors.white
+                    LinearGradient(
+              colors: [Colors.indigo, Colors.blue, Colors.indigo],
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+            )),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: isDCT ? 20 : 25.0,
+                  left: isDCT ? 16 : 20.0,
+                  child: CircleAvatar(
+                    radius: isDCT ? 28 : 33,
+                    backgroundColor: Colors.indigo.withOpacity(0.3),
+                    child: Icon(
+                      selectedProfile.getIcon(),
+                      //  Icons.person,
+                      size: isDCT ? 35 : 45,
+                      color: Colors.green.withOpacity(0.8),
+                    ),
+                  ),
+                ),
+                // Positioned(
+                //   child: Text(selectedUser.name,
+                //       style: TextStyle(fontSize: 15, color: Colors.grey)),
+                //   top: 120,
+                //   left: 30,
+                // ),
+                Positioned(
+                  child: Text(selectedUser.name,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey[200],
+                      )),
+                  top: isDCT ? 25 : 30,
+                  right: 20,
+                ),
+                Positioned(
+                  child: Text(selectedProfile.getName(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey[200],
+                          fontStyle: FontStyle.italic)),
+                  top: isDCT ? 48 : 55,
+                  right: 20,
+                ),
+              ],
+            ),
+          ),
+          // SizedBox(
+          //     height: 12,
+          //     child: Container(
+          //         decoration: BoxDecoration(
+          //             gradient:
+
+          //                 //  Colors.white
+          //                 LinearGradient(
+          //       colors: [Colors.indigo, Colors.blue, Colors.indigo],
+          //       begin: Alignment.bottomRight,
+          //       end: Alignment.topLeft,
+          //     )))),
+          listItem(title: "Операции", icon: Icons.dock_outlined),
+          listItem(title: "Отчеты", icon: Icons.dashboard_rounded),
+          listItem(title: "Инструкции", icon: Icons.help_rounded),
+          listItem(title: "Настройки", icon: Icons.settings),
+          SizedBox(height: isDCT ? 0 : 0),
+          GestureDetector(
+            onTap: () => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CatalogScreen(
+                        title: "Searching...",
+                        selectedUser: selectedUser,
+                        // onProductSelection: addGoodItemsFromSelected(
+                        //     selectedProducts)
+                        onProductSelection: () => addGoodItemsFromSelected()
+                        // (
+                        //     selectedProducts)
+                        ),
+                  ))
             },
-            title: Text("Expansion Title"),
-            children: <Widget>[
-              Text("children 1"),
-              Text("children 2"),
-              Text("children 3"),
-              Text("children 4"),
-              Text("children 5"),
-              Text("children 6"),
-            ],
-          )
+            child: ListTile(
+              //contentPadding: EdgeInsets.all(20),
+              leading: Icon(
+                Icons.search_outlined,
+                size: 30,
+              ),
+              title: Text(
+                "Каталог товаров",
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+          ),
+          SizedBox(height: isDCT ? 0 : 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Статистика за сегодня:",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Новых документов: 4",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Позиций товаров: 18",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Общее колиичество товаров: 512 ед.",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Время работы: 02:05:12",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text("Последнее сохранение: 18 минут назад",
+                style: TextStyle(fontSize: isDCT ? 10 : 11)),
+          ),
         ],
       ),
     );
+  }
+
+  Widget listItem({int? index, String? title, icon}) {
+    final GlobalKey expansionTileKey = GlobalKey();
+    return Material(
+      color: Colors.indigo,
+      child: Theme(
+        data: ThemeData(accentColor: Colors.black),
+        child: ExpansionTile(
+          key: expansionTileKey,
+          iconColor: Colors.white,
+          collapsedIconColor: Colors.white,
+          backgroundColor: Colors.blue.withOpacity(0.3),
+          onExpansionChanged: (value) {
+            if (value) {
+              _scrollToSelectedContent(expansionTileKey: expansionTileKey);
+            }
+          },
+          leading: GradientIcon(
+              icon,
+              30.0,
+              LinearGradient(
+                colors: [Colors.green, Colors.lightGreen],
+                begin: Alignment.bottomRight,
+              )),
+          // Icon(
+          //   icon,
+          //   size: 40,
+          // ),
+          title: Text(
+            title!,
+            style: TextStyle(fontSize: 15, color: Colors.white),
+          ),
+          children: <Widget>[for (int i = 0; i < 5; i++) cardWidget()],
+        ),
+      ),
+    );
+  }
+
+  Widget cardWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 5.0, bottom: 8),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.91,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset(1, 3), color: Colors.grey, blurRadius: 5),
+              BoxShadow(
+                  offset: Offset(-1, -3), color: Colors.grey, blurRadius: 5)
+            ]),
+        child: Row(
+          children: [
+            Icon(
+              Icons.image_rounded,
+              size: 22,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Title of Card",
+              style: TextStyle(fontSize: 15),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _scrollToSelectedContent({GlobalKey? expansionTileKey}) {
+    final keyContext = expansionTileKey!.currentContext;
+    if (keyContext != null) {
+      Future.delayed(Duration(milliseconds: 200)).then((value) {
+        Scrollable.ensureVisible(keyContext,
+            duration: Duration(milliseconds: 200));
+      });
+    }
   }
 
   PreferredSizeWidget myAppBar(
       BuildContext context, isDCT, _goodsHeader, _profileHeaderIcon) {
     return AppBar(
       // automaticallyImplyLeading: false,
-      toolbarHeight: isDCT ? 80 : 80,
+      toolbarHeight: isDCT ? 85 : 90,
       title: Text(
         selectedUser.name == ""
             ? "Connector F."
