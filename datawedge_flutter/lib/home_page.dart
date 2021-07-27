@@ -792,24 +792,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget cardWidget() {
     return Padding(
-      padding: const EdgeInsets.only(top: 5.0, bottom: 8),
+      padding: const EdgeInsets.only(top: 2.0, bottom: 2),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.91,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+        width: MediaQuery.of(context).size.width * 0.51,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
-                  offset: Offset(1, 3), color: Colors.grey, blurRadius: 5),
-              BoxShadow(
-                  offset: Offset(-1, -3), color: Colors.grey, blurRadius: 5)
+                offset: Offset(1, 3),
+                color: Colors.grey,
+              ),
+              // BoxShadow(
+              //   offset: Offset(-1, -3),
+              //   color: Colors.grey,
+              // )
             ]),
         child: Row(
           children: [
             Icon(
-              Icons.image_rounded,
-              size: 22,
+              Icons.arrow_forward_outlined,
+              size: 20,
             ),
             SizedBox(
               width: 10,
