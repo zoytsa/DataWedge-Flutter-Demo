@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<GoodItem> goodItems = [];
   DocumentOrder? currentDocument = null;
   var tabIndex = 0;
-
+  bool isDCT = false;
   //  This example implementation is based on the sample implementation at
   //  https://github.com/flutter/flutter/blob/master/examples/platform_channel/lib/main.dart
   //  That sample implementation also includes how to return data from the method
@@ -307,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // print('tabIndex: ${tabIndex} ');
-    final isDCT = MediaQuery.of(context).size.height < 600;
+    isDCT = MediaQuery.of(context).size.height < 600;
     //final tabIndex = 0;
     IconData _profileHeaderIcon = Icons.person;
     if (selectedProfile != null) {
@@ -324,12 +324,11 @@ class _MyHomePageState extends State<MyHomePage> {
             initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              drawer: myDrawer3(context, isDCT),
-              appBar:
-                  myAppBar(context, isDCT, _goodsHeader, _profileHeaderIcon),
+              drawer: myDrawer3(context),
+              appBar: myAppBar(context, _goodsHeader, _profileHeaderIcon),
 
               body: TabBarView(children: [
-                mainScanPage(context, isDCT),
+                mainScanPage(context),
                 goodItemsPage(context, goodsList, currentDocument),
                 addResultDataList(context, _resultDataList),
                 profilePage(
@@ -348,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
             )));
   }
 
-  Widget mainScanPage(BuildContext context, bool isDCT) {
+  Widget mainScanPage(BuildContext context) {
     Widget widget = Stack(children: [
       Align(
           alignment: Alignment.topCenter,
@@ -402,7 +401,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget myDrawer(BuildContext context, bool isDCT) {
+  Widget myDrawer(BuildContext context) {
     return Drawer(
       child: Container(
         color: Colors.grey,
@@ -519,7 +518,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget myDrawer2(BuildContext context, bool isDCT) {
+  Widget myDrawer2(BuildContext context) {
     return Drawer(
       //backgroundColor: Colors.white,
       child: Container(
@@ -610,14 +609,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget myDrawer3(BuildContext context, bool isDCT) {
+  Widget myDrawer3(BuildContext context) {
     return Drawer(
       child: ListView(
         shrinkWrap: true,
         primary: false,
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * (isDCT ? 0.15 : 0.13),
+            height: MediaQuery.of(context).size.height * (isDCT ? 0.10 : 0.13),
             width: MediaQuery.of(context).size.width,
             //  color: Colors.white,
             decoration: BoxDecoration(
@@ -632,16 +631,24 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Stack(
               children: [
                 Positioned(
-                  top: isDCT ? 20 : 25.0,
+                  top: isDCT ? 10 : 25.0,
                   left: isDCT ? 16 : 20.0,
                   child: CircleAvatar(
-                    radius: isDCT ? 28 : 33,
-                    backgroundColor: Colors.indigo.withOpacity(0.3),
-                    child: Icon(
-                      selectedProfile.getIcon(),
-                      //  Icons.person,
-                      size: isDCT ? 35 : 45,
-                      color: Colors.green.withOpacity(0.8),
+                    radius: isDCT ? 20 : 31,
+                    // backgroundColor: Colors.white.withOpacity(0.4),
+                    child: CircleAvatar(
+                      radius: isDCT ? 19 : 30,
+                      backgroundColor: Colors.blue,
+                      child: CircleAvatar(
+                        radius: isDCT ? 19 : 30,
+                        backgroundColor: Colors.indigo.withOpacity(0.6),
+                        child: Icon(
+                          selectedProfile.getIcon(),
+                          //  Icons.person,
+                          size: isDCT ? 28 : 45,
+                          color: Colors.green.withOpacity(0.99),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -654,19 +661,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 Positioned(
                   child: Text(selectedUser.name,
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: isDCT ? 12 : 15,
                         color: Colors.grey[200],
                       )),
-                  top: isDCT ? 25 : 30,
+                  top: isDCT ? 10 : 30,
                   right: 20,
                 ),
                 Positioned(
                   child: Text(selectedProfile.getName(),
                       style: TextStyle(
-                          fontSize: 15,
+                          fontSize: isDCT ? 12 : 15,
                           color: Colors.grey[200],
                           fontStyle: FontStyle.italic)),
-                  top: isDCT ? 48 : 55,
+                  top: isDCT ? 29 : 55,
                   right: 20,
                 ),
               ],
@@ -684,10 +691,11 @@ class _MyHomePageState extends State<MyHomePage> {
           //       begin: Alignment.bottomRight,
           //       end: Alignment.topLeft,
           //     )))),
-          listItem(title: "Операции", icon: Icons.dock_outlined),
-          listItem(title: "Отчеты", icon: Icons.dashboard_rounded),
-          listItem(title: "Инструкции", icon: Icons.help_rounded),
-          listItem(title: "Настройки", icon: Icons.settings),
+          listItemDocTypes(title: "Операции", icon: Icons.dock_outlined),
+          listItem(
+              title: "Отчеты", icon: Icons.dashboard_rounded, isDCT: isDCT),
+          listItem(title: "Инструкции", icon: Icons.help_rounded, isDCT: isDCT),
+          listItem(title: "Настройки", icon: Icons.settings, isDCT: isDCT),
           SizedBox(height: isDCT ? 0 : 0),
           GestureDetector(
             onTap: () => {
@@ -706,6 +714,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ))
             },
             child: ListTile(
+              dense: isDCT ? false : true,
               //contentPadding: EdgeInsets.all(20),
               leading: Icon(
                 Icons.search_outlined,
@@ -753,7 +762,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget listItem({int? index, String? title, icon}) {
+  Widget listItem({int? index, String? title, icon, bool? isDCT}) {
     final GlobalKey expansionTileKey = GlobalKey();
     return Material(
       color: Colors.indigo,
@@ -762,7 +771,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ExpansionTile(
           key: expansionTileKey,
           iconColor: Colors.white,
-          collapsedIconColor: Colors.white,
+          collapsedIconColor: Palette.greenSelected,
           backgroundColor: Colors.blue.withOpacity(0.3),
           onExpansionChanged: (value) {
             if (value) {
@@ -771,10 +780,10 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           leading: GradientIcon(
               icon,
-              30.0,
+              isDCT! ? 25.0 : 30,
               LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
-                begin: Alignment.bottomRight,
+                colors: [Colors.lightGreen, Colors.green],
+                begin: Alignment.topRight,
               )),
           // Icon(
           //   icon,
@@ -784,9 +793,87 @@ class _MyHomePageState extends State<MyHomePage> {
             title!,
             style: TextStyle(fontSize: 15, color: Colors.white),
           ),
-          children: <Widget>[for (int i = 0; i < 5; i++) cardWidget()],
+          children: <Widget>[for (int i = 0; i < 5; i++) cardWidget3()],
         ),
       ),
+    );
+  }
+
+  Widget listItemDocTypes({int? index, String? title, icon}) {
+    final GlobalKey expansionTileKey = GlobalKey();
+    var items = <Widget>[];
+    for (DocumentType documentType in documentTypes) {
+      items.add(cardWidgetDocTypes(documentType));
+    }
+    return Material(
+      color: Colors.indigo,
+      child: Theme(
+        data: ThemeData(accentColor: Colors.black),
+        child: ExpansionTile(
+          key: expansionTileKey,
+          iconColor: Colors.white,
+          collapsedIconColor: Palette.greenSelected,
+          backgroundColor: Colors.blue.withOpacity(0.3),
+          onExpansionChanged: (value) {
+            if (value) {
+              _scrollToSelectedContent(expansionTileKey: expansionTileKey);
+            }
+          },
+          leading: GradientIcon(
+              icon,
+              isDCT ? 25.0 : 30,
+              LinearGradient(
+                colors: [Colors.lightGreen, Colors.green],
+                begin: Alignment.topRight,
+              )),
+          // Icon(
+          //   icon,
+          //   size: 40,
+          // ),
+          title: Text(
+            title!,
+            style: TextStyle(fontSize: 15, color: Colors.white),
+          ),
+          children: items,
+        ),
+      ),
+    );
+  }
+
+  Widget cardWidgetDocTypes(DocumentType docType) {
+    return Container(
+      margin: EdgeInsets.all(isDCT ? 2 : 3.0),
+      width: MediaQuery.of(context).size.width * 0.55,
+      height: selectedDocumentType == docType ? 38.0 : 35,
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.3),
+        border: Border.all(
+            color: selectedDocumentType == docType
+                ? Palette.greenSelected
+                : Colors.white70,
+            width: selectedDocumentType == docType
+                ? isDCT
+                    ? 2.5
+                    : 3
+                : isDCT
+                    ? 1
+                    : 1.5),
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: TextButton.icon(
+          label: Text(docType.name,
+              style: TextStyle(
+                  color: selectedDocumentType == docType
+                      ? Colors.white
+                      : Colors.white70)),
+          icon: Icon(docType.icon,
+              color: selectedDocumentType == docType
+                  ? Colors.white
+                  : Colors.white70,
+              size: 17),
+          onPressed: () {
+            print('Pressed');
+          }),
     );
   }
 
@@ -828,6 +915,57 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget cardWidget2() {
+    return Padding(
+        padding: const EdgeInsets.only(top: 1.0, bottom: 1),
+        child: Card(
+          /// height:50,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          elevation: 10,
+          color: Colors.lightBlue,
+          child: Container(
+              width: 220,
+              height: 60,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const ListTile(
+                    leading: Icon(Icons.security_rounded, size: 30),
+                    title: Text("Проверка состояни обмена",
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
+                  )
+                ],
+              )),
+        ));
+  }
+
+  Widget cardWidget3() {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: InkWell(
+        onTap: () => print('hello'),
+        child: new Container(
+          margin: EdgeInsets.all(2.0),
+          width: MediaQuery.of(context).size.width * 0.5, //100.0,
+          height: 35.0,
+          decoration: new BoxDecoration(
+            color: Colors.blue.withOpacity(0.3),
+            border: new Border.all(color: Colors.white, width: isDCT ? 1 : 1.5),
+            borderRadius: new BorderRadius.circular(15.0),
+          ),
+          child: new Center(
+            child: new Text(
+              'Проверка состояния обмена',
+              style: new TextStyle(fontSize: 12.0, color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _scrollToSelectedContent({GlobalKey? expansionTileKey}) {
     final keyContext = expansionTileKey!.currentContext;
     if (keyContext != null) {
@@ -839,7 +977,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   PreferredSizeWidget myAppBar(
-      BuildContext context, isDCT, _goodsHeader, _profileHeaderIcon) {
+      BuildContext context, _goodsHeader, _profileHeaderIcon) {
     return AppBar(
       // automaticallyImplyLeading: false,
       toolbarHeight: isDCT ? 85 : 90,

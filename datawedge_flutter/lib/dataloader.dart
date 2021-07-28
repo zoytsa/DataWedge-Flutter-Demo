@@ -68,17 +68,26 @@ class Market {
 }
 
 class DocumentType {
+  // Операции
   int id = 0;
   String name = "";
   IconData icon = Icons.ad_units;
-  DocumentType(this.id, this.name, this.icon);
+  ImageIcon? imageIcon;
+  DocumentType(this.id, this.name, this.icon, this.imageIcon);
 
   static List<DocumentType> getDocumentTypes() {
-    return <DocumentType>[
-      DocumentType(0, '<не выбран>', Icons.unfold_more),
-      DocumentType(1, 'Заказ внутренний', Icons.airport_shuttle),
-      DocumentType(2, 'Заказ поставщику', Icons.add_link),
-      DocumentType(3, 'Печать ценников', Icons.add_road_sharp),
+    return [
+      DocumentType(
+          0,
+          'Печать ценников',
+          Icons.sell_outlined,
+          ImageIcon(AssetImage("assets/icons/icon_price_tag.png"),
+              color: Colors.black)),
+      DocumentType(1, 'Заказ поставщику', Icons.menu_book_outlined, null),
+      DocumentType(2, 'Поступление товаров', Icons.add_box_outlined, null),
+      DocumentType(3, 'Заказ внутренний', Icons.airport_shuttle, null),
+      DocumentType(
+          4, 'Инвентаризация', Icons.account_balance_wallet_outlined, null),
     ];
   }
 }
