@@ -872,7 +872,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   : Colors.white70,
               size: 17),
           onPressed: () {
-            print('Pressed');
+            setState(() {
+              selectedDocumentType = docType;
+              saveSettingsHive(context);
+              saveProfileOnDCT(context);
+            });
           }),
     );
   }
