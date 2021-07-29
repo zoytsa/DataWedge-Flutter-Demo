@@ -124,10 +124,10 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
   return items;
 }
 
-List<DropdownMenuItem<String>> buildDropDownReports() {
-  List<DropdownMenuItem<String>> items = [];
-  var reports = ["report1", "report2", "report3", "report4", "report5"];
-  for (String report in reports) {
+List<DropdownMenuItem<Report>> buildDropDownReports() {
+  List<DropdownMenuItem<Report>> items = [];
+  //var reports = ["report1", "report2", "report3", "report4", "report5"];
+  for (Report report in reports) {
     items.add(
       DropdownMenuItem(
         value: report,
@@ -142,7 +142,7 @@ List<DropdownMenuItem<String>> buildDropDownReports() {
                 child: SizedBox(
                   width: 60,
                   child: Text(
-                    report,
+                    report.title,
                     style: TextStyle(color: Colors.blue.shade900),
                   ),
                 ))

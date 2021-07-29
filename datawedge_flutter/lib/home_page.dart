@@ -692,8 +692,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //       end: Alignment.topLeft,
           //     )))),
           listItemDocTypes(title: "Операции", icon: Icons.dock_outlined),
-          listItem(
-              title: "Отчеты", icon: Icons.assignment_outlined, isDCT: isDCT),
+          listItemReport(title: "Отчеты", icon: Icons.assignment_outlined),
           listItem(title: "Инструкции", icon: Icons.help_rounded, isDCT: isDCT),
           listItem(title: "Настройки", icon: Icons.settings, isDCT: isDCT),
           SizedBox(height: isDCT ? 0 : 0),
@@ -844,7 +843,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       margin: EdgeInsets.all(isDCT ? 2 : 3.0),
       width: MediaQuery.of(context).size.width * 0.55,
-      height: selectedDocumentType == docType ? 38.0 : 35,
+      height: selectedDocumentType == docType ? 35.0 : 33,
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.3),
         border: Border.all(
@@ -865,17 +864,102 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(
                   color: selectedDocumentType == docType
                       ? Colors.white
-                      : Colors.white70)),
+                      : Colors.white70,
+                  fontSize: 12)),
           icon: Icon(docType.icon,
               color: selectedDocumentType == docType
                   ? Colors.white
                   : Colors.white70,
-              size: 17),
+              size: 15),
           onPressed: () {
             setState(() {
               selectedDocumentType = docType;
               saveSettingsHive(context);
               saveProfileOnDCT(context);
+            });
+          }),
+    );
+  }
+
+  Widget listItemReport({int? index, String? title, icon}) {
+    final GlobalKey expansionTileKey = GlobalKey();
+    var items = <Widget>[];
+
+    if (starredReport1 != null) {
+      items.add(cardWidgetReport(starredReport1!));
+    }
+    if (starredReport2 != null) {
+      items.add(cardWidgetReport(starredReport2!));
+    }
+    if (starredReport3 != null) {
+      items.add(cardWidgetReport(starredReport3!));
+    }
+    if (starredReport4 != null) {
+      items.add(cardWidgetReport(starredReport4!));
+    }
+
+    items.add(cardWidgetReport(allReports));
+
+    return Material(
+      color: Colors.indigo,
+      child: Theme(
+        data: ThemeData(accentColor: Colors.black),
+        child: ExpansionTile(
+          key: expansionTileKey,
+          iconColor: Colors.white,
+          collapsedIconColor: Palette.greenSelected,
+          backgroundColor: Colors.blue.withOpacity(0.3),
+          onExpansionChanged: (value) {
+            if (value) {
+              _scrollToSelectedContent(expansionTileKey: expansionTileKey);
+            }
+          },
+          leading: GradientIcon(
+              icon,
+              isDCT ? 25.0 : 30,
+              LinearGradient(
+                colors: [Colors.lightGreen, Colors.green],
+                begin: Alignment.topRight,
+              )),
+          // Icon(
+          //   icon,
+          //   size: 40,
+          // ),
+          title: Text(
+            title!,
+            style: TextStyle(fontSize: 15, color: Colors.white),
+          ),
+          children: items,
+        ),
+      ),
+    );
+  }
+
+  Widget cardWidgetReport(Report report) {
+    return Container(
+      margin: EdgeInsets.all(isDCT ? 2 : 3.0),
+      width: MediaQuery.of(context).size.width * 0.55,
+      height: 33,
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.3),
+        border: Border.all(color: Colors.white, width: isDCT ? 1 : 1.5),
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: TextButton.icon(
+          label: Text(
+            report.title,
+            style: new TextStyle(fontSize: 12.0, color: Colors.white),
+          ),
+          icon: Icon(
+              report.reportID != 0
+                  ? Icons.star_rate
+                  : Icons.assessment_outlined,
+              color:
+                  report.reportID != 0 ? Colors.yellow : Palette.greenSelected,
+              size: 15),
+          onPressed: () {
+            setState(() {
+              selectedReport = report;
             });
           }),
     );

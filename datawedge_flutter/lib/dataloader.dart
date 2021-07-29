@@ -32,13 +32,15 @@ var selectedUser = users[0];
 var selectedMarket = markets[0];
 var selectedDocumentType = documentTypes[0];
 var selectedProfile = profiles[0]; //Profile.getDefaultProfile();
-var selectedReport = "report1";
+var selectedReport = null;
 var enteredPin = 111111;
 var enteredID = 111111;
-var starredReport1 = null;
-var starredReport2 = null;
-var starredReport3 = null;
-var starredReport4 = null;
+
+var allReports = reports[0];
+Report? starredReport1 = reports[1];
+Report? starredReport2 = reports[2];
+Report? starredReport3 = null; //reports[3];
+Report? starredReport4 = null; //reports[4];
 //
 var isRememberMe = true;
 var isAuthorized = false;
@@ -423,12 +425,13 @@ class Report {
 
   static List<Report> getReports() {
     return <Report>[
-      Report(0, 'Состояние обмена'),
-      Report(1, "Анализ продаж"),
-      Report(2, "Остатки товара"),
-      Report(3, "Анализ заказов"),
-      Report(4, "Анализ цен"),
-      Report(5, "Остатки и обороты товара"),
+      Report(0, 'Все отчеты...'),
+      Report(1, 'Состояние обмена'),
+      Report(2, "Список акций для ДДК"),
+      Report(3, "Остатки товара"),
+      Report(4, "Анализ заказов"),
+      Report(5, "Анализ цен"),
+      Report(6, "Остатки и обороты товара"),
     ];
   }
 }
