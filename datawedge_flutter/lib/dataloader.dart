@@ -10,22 +10,39 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
 enum FormatMarket { gipermarket, supermarket, express, gurme }
+enum ReportPeriodFormat {
+  forToday,
+  forThisWeek,
+  forThisMonth,
+  forThisYear,
+  forTodayAndYesterday,
+  forThisWeekAndLastWeek,
+  ForThisMonthAndLastMonth,
+  ForThisYearAndLastYear
+}
 
 var users = User.getUsers();
 var markets = Market.getMarkets();
 var documentTypes = DocumentType.getDocumentTypes();
 var profiles = Profile.getAvailableProfiles();
 var profileRoles = ProfileRole.getProfileRoles();
+var reports = Report.getReports();
+// selected
 var selectedUser = users[0];
 var selectedMarket = markets[0];
 var selectedDocumentType = documentTypes[0];
 var selectedProfile = profiles[0]; //Profile.getDefaultProfile();
+var selectedReport = "report1";
 var enteredPin = 111111;
 var enteredID = 111111;
+var starredReport1 = null;
+var starredReport2 = null;
+var starredReport3 = null;
+var starredReport4 = null;
+//
 var isRememberMe = true;
 var isAuthorized = false;
 var usingZebra = false;
-var selectedReport = "report1";
 
 class User {
   int id = 0;
@@ -323,7 +340,7 @@ class DocumentOrder {
         goodItems.add(GoodItem.fromJson(v));
       });
     }
-    print(goodItems.length);
+    //print(goodItems.length);
   }
 
   Map<String, dynamic> toJson() {
@@ -344,12 +361,6 @@ class DataHTML {
   String htmlContent = "";
 
   DataHTML();
-  //      this.profileID,
-  //     this.userID,
-  //     this.roleID,
-  //     this.marketID,
-  //     this.title,
-  //     this.htmlContent);
 
   DataHTML.fromJson(Map<String, dynamic> json) {
     profileID = json['profileID'];
@@ -369,6 +380,56 @@ class DataHTML {
     data['title'] = this.title;
     data['htmlContent'] = this.htmlContent;
     return data;
+  }
+}
+
+class Report {
+  int reportID = 0;
+  String title = "";
+  int profileID = 0;
+  int userID = 0;
+  int roleID = 0;
+  int marketID = 0;
+  FormatMarket? marketFormatID = null;
+  int regionID = 0;
+  int departmentID = 0;
+  int categoryID = 0;
+  String filter = '';
+
+  String htmlContent = "";
+  ReportPeriodFormat? reportPeriodFormatID = null;
+
+  Report(this.reportID, this.title);
+
+  Report.fromJson(Map<String, dynamic> json) {
+    profileID = json['profileID'];
+    userID = json['userID'];
+    roleID = json['roleID'];
+    marketID = json['marketID'];
+    title = json['title'];
+    htmlContent = json['htmlContent'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['profileID'] = this.profileID;
+    data['userID'] = this.userID;
+    data['roleID'] = this.roleID;
+    data['marketID'] = this.marketID;
+    data['title'] = this.title;
+    data['htmlContent'] = this.htmlContent;
+    return data;
+  }
+
+  static List<Report> getReports() {
+    return <Report>[
+      Report(0, 'Состояние обмена'),
+      Report(1, "Анализ продаж"),
+      Report(2, "Остатки товара"),
+      Report(3, "Анализ заказов"),
+      Report(4, "Анализ цен"),
+      Report(5, "Остатки и обороты товара"),
+    ];
   }
 }
 

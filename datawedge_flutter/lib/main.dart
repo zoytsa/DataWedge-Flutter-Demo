@@ -40,6 +40,8 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'DCT',
+      //showSemanticsDebugger: true,
+      //showPerformanceOverlay: true,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           centerTitle: true,
