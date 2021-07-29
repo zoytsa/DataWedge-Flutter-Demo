@@ -30,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // final GlobalKey expansionTileKey = GlobalKey();
-  static const Duration _kExpand = Duration(milliseconds: 200);
+  //static const Duration _kExpand = Duration(milliseconds: 200);
   static const MethodChannel methodChannel =
       MethodChannel('com.darryncampbell.datawedgeflutter/command');
   static const EventChannel scanChannel =
@@ -693,7 +693,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //     )))),
           listItemDocTypes(title: "Операции", icon: Icons.dock_outlined),
           listItem(
-              title: "Отчеты", icon: Icons.dashboard_rounded, isDCT: isDCT),
+              title: "Отчеты", icon: Icons.assignment_outlined, isDCT: isDCT),
           listItem(title: "Инструкции", icon: Icons.help_rounded, isDCT: isDCT),
           listItem(title: "Настройки", icon: Icons.settings, isDCT: isDCT),
           SizedBox(height: isDCT ? 0 : 0),
