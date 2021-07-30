@@ -7,6 +7,7 @@ import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/profile_page.dart';
 import 'package:datawedgeflutter/search_screen.dart';
 import 'package:datawedgeflutter/show_html_page2.dart';
+import 'package:datawedgeflutter/show_report.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
@@ -957,12 +958,26 @@ class _MyHomePageState extends State<MyHomePage> {
               color:
                   report.reportID != 0 ? Colors.yellow : Palette.greenSelected,
               size: 15),
-          onPressed: () {
-            setState(() {
-              selectedReport = report;
-            });
-          }),
+          onPressed: () => {
+                print(report.title),
+                selectedReport = report,
+                _loadAndShowReport(context, report)
+              }),
     );
+  }
+
+  _loadAndShowReport(BuildContext context, Report report) async {
+    selectedReport = report;
+    DataHTML? receivedHTML = await loadReport();
+    if (receivedHTML != null) {
+      DataHTML _dataHTML = receivedHTML;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowReport(
+                title: report.title, htmlContent: _dataHTML.htmlContent),
+          ));
+    }
   }
 
   Widget cardWidget() {
