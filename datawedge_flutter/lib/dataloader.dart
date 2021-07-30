@@ -857,3 +857,30 @@ Future<DataHTML> loadHTML(String title) async {
 
   return results;
 }
+
+Future<DataHTML?> loadReport() async {
+  bool noReport = true;
+
+  var myData = selectedReport.toJson();
+
+  print('myData: ${myData}');
+  var body = json.encode(myData);
+
+  final response = await http.post(
+    Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: body,
+  );
+
+  DataHTML? newResponse = null;
+
+  if (response.statusCode == 200) {
+    newResponse =
+        DataHTML.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    return newResponse;
+  } else {
+    return null;
+  }
+}
