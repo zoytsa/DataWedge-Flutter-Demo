@@ -357,7 +357,7 @@ class DocumentOrder {
 class DataHTML {
   int profileID = 0;
   int userID = 0;
-  int roleID = 0;
+  int reportID = 0;
   int marketID = 0;
   String title = "";
   String htmlContent = "";
@@ -367,7 +367,7 @@ class DataHTML {
   DataHTML.fromJson(Map<String, dynamic> json) {
     profileID = json['profileID'];
     userID = json['userID'];
-    roleID = json['roleID'];
+    reportID = json['reportID'];
     marketID = json['marketID'];
     title = json['title'];
     htmlContent = json['htmlContent'];
@@ -377,7 +377,7 @@ class DataHTML {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['profileID'] = this.profileID;
     data['userID'] = this.userID;
-    data['roleID'] = this.roleID;
+    data['reportID'] = this.reportID;
     data['marketID'] = this.marketID;
     data['title'] = this.title;
     data['htmlContent'] = this.htmlContent;
@@ -386,27 +386,28 @@ class DataHTML {
 }
 
 class Report {
-  int reportID = 0;
-  String title = "";
-  int profileID = 0;
   int userID = 0;
-  int roleID = 0;
+  int profileID = 0;
+  int reportID = 0;
   int marketID = 0;
+  String title = "";
+  String htmlContent = "";
+  int roleID = 0;
+
   FormatMarket? marketFormatID = null;
   int regionID = 0;
   int departmentID = 0;
   int categoryID = 0;
   String filter = '';
 
-  String htmlContent = "";
   ReportPeriodFormat? reportPeriodFormatID = null;
 
   Report(this.reportID, this.title);
 
   Report.fromJson(Map<String, dynamic> json) {
-    profileID = json['profileID'];
     userID = json['userID'];
-    roleID = json['roleID'];
+    profileID = json['profileID'];
+    reportID = json['reportID'];
     marketID = json['marketID'];
     title = json['title'];
     htmlContent = json['htmlContent'];
@@ -414,9 +415,9 @@ class Report {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['profileID'] = this.profileID;
     data['userID'] = this.userID;
-    data['roleID'] = this.roleID;
+    data['profileID'] = this.profileID;
+    data['reportID'] = this.reportID;
     data['marketID'] = this.marketID;
     data['title'] = this.title;
     data['htmlContent'] = this.htmlContent;
@@ -847,7 +848,7 @@ Future<DataHTML> loadHTML(String title) async {
   try {
     results.profileID = json["profileID"];
     results.userID = json["userID"];
-    results.roleID = json["roleID"];
+    results.reportID = json["reportID"];
     results.marketID = json["marketID"];
     results.title = json["title"];
     results.htmlContent = json["htmlContent"];
