@@ -21,6 +21,17 @@ enum ReportPeriodFormat {
   ForThisYearAndLastYear
 }
 
+final String dct_username = 'weblink';
+final String dct_password = 'weblinK312!';
+final String dct_basicAuth =
+    'Basic ' + base64Encode(utf8.encode('$dct_username:$dct_password'));
+
+final Map<String, String> dct_headers = {
+  'Content-Type': 'application/json; charset=UTF-8',
+  // 'accept': 'application/json',
+  'authorization': dct_basicAuth
+};
+
 var users = User.getUsers();
 var markets = Market.getMarkets();
 var documentTypes = DocumentType.getDocumentTypes();
@@ -438,8 +449,10 @@ class Report {
 }
 
 Future<Good> loadGoods(String barcode) async {
-  var response = await http.get(Uri.parse(
-      "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
+  var response = await http.get(
+      Uri.parse(
+          "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode),
+      headers: dct_headers);
 
   var json = jsonDecode(utf8.decode(response.bodyBytes));
   var jsonGood = json["data"];
@@ -473,9 +486,7 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   final response = await http.post(
     Uri.parse(
         'http://212.112.116.229:7788/weblink/hs/dct-goods/post_goods_doc'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
+    headers: dct_headers,
     body: body,
   );
 
@@ -719,9 +730,7 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
   final response = await http.post(
     Uri.parse(
         'http://212.112.116.229:7788/weblink/hs/dct-profile/post_profile'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
+    headers: dct_headers,
     body: body,
   );
 
@@ -838,9 +847,10 @@ Future<void> showError(BuildContext context, bool result) async {
 
 Future<DataHTML> loadHTML(String title) async {
   var response = await http.get(Uri.parse(
-      // "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
-      // "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
-      "http://212.112.116.229:7788/weblink/hs/dct-html/get_html/" + title));
+          // "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
+          // "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
+          "http://212.112.116.229:7788/weblink/hs/dct-html/get_html/" + title),
+      headers: dct_headers);
 
   var json = jsonDecode(utf8.decode(response.bodyBytes));
   print(title);
@@ -867,11 +877,17 @@ Future<DataHTML?> loadReport() async {
   print('myData: ${myData}');
   var body = json.encode(myData);
 
+  // final response = await http.post(
+  //   Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report/0'),
+  //   headers: <String, String>{
+  //     'Content-Type': 'application/json; charset=UTF-8',
+  //   },
+  //   body: body,
+  // );
+
   final response = await http.post(
     Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report/0'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
+    headers: dct_headers,
     body: body,
   );
 
