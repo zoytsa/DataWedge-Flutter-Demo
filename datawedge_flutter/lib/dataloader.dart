@@ -868,7 +868,7 @@ Future<DataHTML?> loadReport() async {
   var body = json.encode(myData);
 
   final response = await http.post(
-    Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report'),
+    Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report/0'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },

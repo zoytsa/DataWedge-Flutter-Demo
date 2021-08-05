@@ -41,8 +41,7 @@ class _ShowReportState extends State<ShowReport> {
         withZoom: true,
         displayZoomControls: true,
         useWideViewPort: true,
-        // withOverviewMode: true,
-
+        withOverviewMode: true,
         url: new Uri.dataFromString(widget.htmlContent,
                 mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
             .toString(),
