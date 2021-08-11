@@ -349,6 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget mainScanPage(BuildContext context) {
+    var heightDetails = MediaQuery.of(context).size.height - 258;
     Widget widget = Stack(children: [
       Align(
           alignment: Alignment.topCenter,
@@ -357,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
         SizedBox(height: isDCT ? 55 : 55),
         SizedBox(height: 85, child: addEnterBarcodeField(context)),
         SizedBox(
-            height: isDCT ? 270 : 550,
+            height: isDCT ? 270 : heightDetails, //550,
             //child: SizedBox(
             //   height: 600,
             child: addResultDataList(context, _resultDataList))
