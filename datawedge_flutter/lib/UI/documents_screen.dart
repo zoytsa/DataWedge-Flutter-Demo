@@ -266,7 +266,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
             title: Text('${index + 1}) Номер: ${document.number}'),
             subtitle: Text('Дата: ${document.date}'),
             trailing: PopupMenuButton(
-              icon: Icon(Icons.more_vert),
+              icon: Icon(Icons.more_vert, color: Colors.indigo),
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
@@ -291,42 +291,15 @@ class _DocumentsPageState extends State<DocumentsPage> {
           //   height: 1.0,
           // ),
           ListTile(
-            leading: Icon(Icons.description),
-            title: Text(document.operationId.toString()),
-            subtitle: Text('Товар 1: Кока-кола 1 л, 5 ед.'),
+            leading: Icon(Icons.description, color: Colors.indigo[400]),
+            title: Text(document.operationId.toString() +
+                ' Товар 1: Кока-кола 1 л, 5 ед.'),
+            subtitle: Text('Товар 17: Кока-кола 1 л, 5 ед.'),
           )
         ],
       ),
     );
   }
-
-  // Widget documentInfoListTile2(DocumentInfo document) {
-  //   return ListTile(
-  //     title: Text('Номер: ${document.number}'),
-  //     subtitle: Text('Дата: ${document.date}'),
-  //     trailing: PopupMenuButton(
-  //       icon: Icon(Icons.more_vert),
-  //       itemBuilder: (context) {
-  //         return [
-  //           PopupMenuItem(
-  //             value: 'open',
-  //             child: Text('Открыть'),
-  //           ),
-  //           PopupMenuItem(
-  //             value: 'edit',
-  //             child: Text('Редактировать'),
-  //           ),
-  //           PopupMenuItem(
-  //             value: 'delete',
-  //             child: Text('Удалить'),
-  //           )
-  //         ];
-  //       },
-  //       onSelected: (String value) =>
-  //           actionPopUpItemSelected(value, document.number),
-  //     ),
-  //   );
-  // }
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
