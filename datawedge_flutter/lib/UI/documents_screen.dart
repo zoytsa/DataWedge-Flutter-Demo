@@ -158,7 +158,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
         child: ListView.builder(
           itemBuilder: (context, index) {
             final document = documents[index];
-            return documentInfoListTile3(document);
+            return documentInfoListTile3(document, index);
             // return ListTile(
             //   title: Text(document.number),
             //   subtitle: Text(document.date),
@@ -246,24 +246,24 @@ class _DocumentsPageState extends State<DocumentsPage> {
 //               );
 //             }
 
-  Widget documentInfoListTile(DocumentInfo document) {
-    return ListTile(
-      title: Text(document.number),
-      subtitle: Text(document.date),
-      trailing: Text(
-        document.editedDate,
-        style: TextStyle(color: Colors.green),
-      ),
-    );
-    // return Container();
-  }
+  // Widget documentInfoListTile(DocumentInfo document) {
+  //   return ListTile(
+  //     title: Text(document.number),
+  //     subtitle: Text(document.date),
+  //     trailing: Text(
+  //       document.editedDate,
+  //       style: TextStyle(color: Colors.green),
+  //     ),
+  //   );
+  //   // return Container();
+  // }
 
-  Widget documentInfoListTile3(DocumentInfo document) {
+  Widget documentInfoListTile3(DocumentInfo document, int index) {
     return Card(
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text('Номер: ${document.number}'),
+            title: Text('${index + 1}) Номер: ${document.number}'),
             subtitle: Text('Дата: ${document.date}'),
             trailing: PopupMenuButton(
               icon: Icon(Icons.more_vert),
@@ -300,33 +300,33 @@ class _DocumentsPageState extends State<DocumentsPage> {
     );
   }
 
-  Widget documentInfoListTile2(DocumentInfo document) {
-    return ListTile(
-      title: Text('Номер: ${document.number}'),
-      subtitle: Text('Дата: ${document.date}'),
-      trailing: PopupMenuButton(
-        icon: Icon(Icons.more_vert),
-        itemBuilder: (context) {
-          return [
-            PopupMenuItem(
-              value: 'open',
-              child: Text('Открыть'),
-            ),
-            PopupMenuItem(
-              value: 'edit',
-              child: Text('Редактировать'),
-            ),
-            PopupMenuItem(
-              value: 'delete',
-              child: Text('Удалить'),
-            )
-          ];
-        },
-        onSelected: (String value) =>
-            actionPopUpItemSelected(value, document.number),
-      ),
-    );
-  }
+  // Widget documentInfoListTile2(DocumentInfo document) {
+  //   return ListTile(
+  //     title: Text('Номер: ${document.number}'),
+  //     subtitle: Text('Дата: ${document.date}'),
+  //     trailing: PopupMenuButton(
+  //       icon: Icon(Icons.more_vert),
+  //       itemBuilder: (context) {
+  //         return [
+  //           PopupMenuItem(
+  //             value: 'open',
+  //             child: Text('Открыть'),
+  //           ),
+  //           PopupMenuItem(
+  //             value: 'edit',
+  //             child: Text('Редактировать'),
+  //           ),
+  //           PopupMenuItem(
+  //             value: 'delete',
+  //             child: Text('Удалить'),
+  //           )
+  //         ];
+  //       },
+  //       onSelected: (String value) =>
+  //           actionPopUpItemSelected(value, document.number),
+  //     ),
+  //   );
+  // }
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
