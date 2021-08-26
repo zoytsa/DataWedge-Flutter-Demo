@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/extra_widgets.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
-import 'package:datawedgeflutter/profile_page.dart';
-import 'package:datawedgeflutter/search_screen.dart';
+import 'package:datawedgeflutter/UI/profile_screen.dart';
+import 'package:datawedgeflutter/UI/search_screen.dart';
 import 'package:datawedgeflutter/show_html_page2.dart';
-import 'package:datawedgeflutter/show_report.dart';
+import 'package:datawedgeflutter/UI/show_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';

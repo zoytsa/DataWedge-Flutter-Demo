@@ -1,14 +1,14 @@
-import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/home_page.dart';
 //import 'package:datawedgeflutter/open_iconic_flutter.dart';
-import 'package:datawedgeflutter/restore_pass_page.dart';
+import 'package:datawedgeflutter/UI/restore_pass_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_icons/flutter_icons.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 //import 'package:flutter/cupertino.dart' as cupertino;
-import 'model/settings.dart';
+import '../model/settings.dart';
 
 var loginEnteredID = 0;
 var loginEnteredPin = 0;

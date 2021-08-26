@@ -1,11 +1,11 @@
-import 'package:datawedgeflutter/dataloader.dart';
-import 'package:datawedgeflutter/details_screen.dart';
+import 'package:datawedgeflutter/model/dataloader.dart';
+import 'package:datawedgeflutter/UI/details_screen.dart';
 import 'package:datawedgeflutter/home_page.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/selected_products_couner.dart';
 import 'package:flutter/material.dart';
-import 'constants.dart';
-import 'model/palette.dart';
+import '../model/constants.dart';
+import '../model/palette.dart';
 
 var selectedCategory = categories[0];
 var enteredSearchString = "";

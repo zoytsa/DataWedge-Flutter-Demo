@@ -1,7 +1,7 @@
-import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
-import 'package:datawedgeflutter/show_html_page.dart';
+//import 'package:datawedgeflutter/show_html_page.dart';
 import 'package:datawedgeflutter/show_html_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

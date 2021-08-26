@@ -1,6 +1,6 @@
-import 'package:datawedgeflutter/dataloader.dart';
+import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/home_page.dart';
-import 'package:datawedgeflutter/login_signup.dart';
+import 'package:datawedgeflutter/UI/login_signup_screen.dart';
 //import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
