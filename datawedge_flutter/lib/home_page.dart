@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
 import 'package:hive/hive.dart';
 
+import 'UI/documents_screen.dart';
 import 'model/settings.dart';
 
 var enteredBarcode = "";
@@ -330,8 +331,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
               body: TabBarView(children: [
                 mainScanPage(context),
+
                 goodItemsPage(context, goodsList, currentDocument),
-                addResultDataList(context, _resultDataList),
+                DocumentsPage(),
+                //addResultDataList(context, _resultDataList),
                 profilePage(
                     vcbUsingZebraOnSelected: () {
                       print("vcb rules");
