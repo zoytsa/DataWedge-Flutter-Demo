@@ -1,11 +1,15 @@
 import 'package:datawedgeflutter/model/dataloader.dart';
-import 'package:datawedgeflutter/home_page.dart';
+import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/UI/login_signup_screen.dart';
 //import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import 'model/constants.dart';
+import 'presentation/cubit/profile_cubit.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +19,10 @@ Future main() async {
   Hive.registerAdapter(SettingsAdapter());
   await Hive.openBox<Settings>('settings');
 
-  runApp(MyApp());
+  runApp(BlocProvider(
+    create: (context) => ProfileCubit(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,9 +37,23 @@ class MyApp extends StatelessWidget {
     Settings? userIDSettings = box.get("userID");
     if (userIDSettings != null) {
       selectedUser = users[userIDSettings.value];
+      BlocProvider.of<ProfileCubit>(context).updateProfileState(
+          selectedUser,
+          selectedMarket,
+          selectedDocumentType,
+          selectedProfile,
+          usingZebra,
+          isAuthorized);
       if (selectedUser.id != 111111 && selectedUser.id != 0) {
         print(selectedUser.id);
         isAuthorized = true;
+        BlocProvider.of<ProfileCubit>(context).updateProfileState(
+            selectedUser,
+            selectedMarket,
+            selectedDocumentType,
+            selectedProfile,
+            usingZebra,
+            isAuthorized);
       }
     } else {
       selectedUser = users[0];

@@ -6,15 +6,18 @@ import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/UI/profile_screen.dart';
 import 'package:datawedgeflutter/UI/search_screen.dart';
+import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 import 'package:datawedgeflutter/show_html_page2.dart';
 import 'package:datawedgeflutter/UI/show_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 
-import 'UI/documents_screen.dart';
-import 'model/settings.dart';
+import 'documents_screen.dart';
+import '../model/constants.dart';
+import '../model/settings.dart';
 
 var enteredBarcode = "";
 
@@ -326,7 +329,7 @@ class _MyHomePageState extends State<MyHomePage> {
             initialIndex: tabIndex,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              drawer: myDrawer3(context),
+              drawer: mainDrawer(context),
               appBar: myAppBar(context, _goodsHeader, _profileHeaderIcon),
 
               body: TabBarView(children: [
@@ -406,7 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
-  Widget myDrawer(BuildContext context) {
+  Widget myDrawer_unused(BuildContext context) {
     return Drawer(
       child: Container(
         color: Colors.grey,
@@ -523,7 +526,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget myDrawer2(BuildContext context) {
+  Widget myDrawer2_unused(BuildContext context) {
     return Drawer(
       //backgroundColor: Colors.white,
       child: Container(
@@ -614,7 +617,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget myDrawer3(BuildContext context) {
+  Widget mainDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
         shrinkWrap: true,
@@ -647,11 +650,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: CircleAvatar(
                         radius: isDCT ? 19 : 30,
                         backgroundColor: Colors.indigo.withOpacity(0.6),
-                        child: Icon(
-                          selectedProfile.getIcon(),
-                          //  Icons.person,
-                          size: isDCT ? 28 : 45,
-                          color: Colors.green.withOpacity(0.99),
+                        child: BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            return Icon(
+                              state.selectedProfile.getIcon(),
+                              //  Icons.person,
+                              size: isDCT ? 28 : 45,
+                              color: Colors.green.withOpacity(0.99),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -664,20 +671,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 //   left: 30,
                 // ),
                 Positioned(
-                  child: Text(selectedUser.name,
-                      style: TextStyle(
-                        fontSize: isDCT ? 12 : 15,
-                        color: Colors.grey[200],
-                      )),
+                  child: BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      return Text(state.selectedUser.name,
+                          style: TextStyle(
+                            fontSize: isDCT ? 12 : 15,
+                            color: Colors.grey[200],
+                          ));
+                    },
+                  ),
                   top: isDCT ? 10 : 30,
                   right: 20,
                 ),
                 Positioned(
-                  child: Text(selectedProfile.getName(),
-                      style: TextStyle(
-                          fontSize: isDCT ? 12 : 15,
-                          color: Colors.grey[200],
-                          fontStyle: FontStyle.italic)),
+                  child: BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      return Text(state.selectedProfile.getName(),
+                          style: TextStyle(
+                              fontSize: isDCT ? 12 : 15,
+                              color: Colors.grey[200],
+                              fontStyle: FontStyle.italic));
+                    },
+                  ),
                   top: isDCT ? 29 : 55,
                   right: 20,
                 ),
@@ -834,9 +849,13 @@ class _MyHomePageState extends State<MyHomePage> {
           //   icon,
           //   size: 40,
           // ),
-          title: Text(
-            title!,
-            style: TextStyle(fontSize: 15, color: Colors.white),
+          title: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              return Text(
+                state.selectedDocumentType.name,
+                style: TextStyle(fontSize: 15, color: Colors.white),
+              );
+            },
           ),
           children: items,
         ),
@@ -845,44 +864,48 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget cardWidgetDocTypes(DocumentType docType) {
-    return Container(
-      margin: EdgeInsets.all(isDCT ? 2 : 3.0),
-      width: MediaQuery.of(context).size.width * 0.55,
-      height: selectedDocumentType == docType ? 35.0 : 33,
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.3),
-        border: Border.all(
-            color: selectedDocumentType == docType
-                ? Palette.greenSelected
-                : Colors.white70,
-            width: selectedDocumentType == docType
-                ? isDCT
-                    ? 2.5
-                    : 3
-                : isDCT
-                    ? 1
-                    : 1.5),
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: TextButton.icon(
-          label: Text(docType.name,
-              style: TextStyle(
-                  color: selectedDocumentType == docType
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Container(
+          margin: EdgeInsets.all(isDCT ? 2 : 3.0),
+          width: MediaQuery.of(context).size.width * 0.55,
+          height: state.selectedDocumentType == docType ? 35.0 : 33,
+          decoration: BoxDecoration(
+            color: Colors.blue.withOpacity(0.3),
+            border: Border.all(
+                color: state.selectedDocumentType == docType
+                    ? Palette.greenSelected
+                    : Colors.white70,
+                width: state.selectedDocumentType == docType
+                    ? isDCT
+                        ? 2.5
+                        : 3
+                    : isDCT
+                        ? 1
+                        : 1.5),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: TextButton.icon(
+              label: Text(docType.name,
+                  style: TextStyle(
+                      color: state.selectedDocumentType == docType
+                          ? Colors.white
+                          : Colors.white70,
+                      fontSize: 12)),
+              icon: Icon(docType.icon,
+                  color: state.selectedDocumentType == docType
                       ? Colors.white
                       : Colors.white70,
-                  fontSize: 12)),
-          icon: Icon(docType.icon,
-              color: selectedDocumentType == docType
-                  ? Colors.white
-                  : Colors.white70,
-              size: 15),
-          onPressed: () {
-            setState(() {
-              selectedDocumentType = docType;
-              saveSettingsHive(context);
-              saveProfileOnDCT(context);
-            });
-          }),
+                  size: 15),
+              onPressed: () {
+                // setState(() {
+                selectedDocumentType = docType;
+                saveSettingsHive(context);
+                saveProfileOnDCT(context);
+                // });
+              }),
+        );
+      },
     );
   }
 
@@ -891,13 +914,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var items = <Widget>[];
 
     if (starredReport1 != null) {
-      items.add(cardWidgetReport(starredReport1!));
+      items.add(cardWidgetReport(starredReport1));
     }
     if (starredReport2 != null) {
-      items.add(cardWidgetReport(starredReport2!));
+      items.add(cardWidgetReport(starredReport2));
     }
     if (starredReport3 != null) {
-      items.add(cardWidgetReport(starredReport3!));
+      items.add(cardWidgetReport(starredReport3));
     }
     if (starredReport4 != null) {
       items.add(cardWidgetReport(starredReport4!));

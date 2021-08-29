@@ -1,15 +1,11 @@
 import 'package:datawedgeflutter/model/dataloader.dart';
-import 'package:datawedgeflutter/UI/details_screen.dart';
-import 'package:datawedgeflutter/home_page.dart';
+import 'package:datawedgeflutter/UI/product_details_screen.dart';
+import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
-import 'package:datawedgeflutter/selected_products_couner.dart';
+import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
-
-var selectedCategory = categories[0];
-var enteredSearchString = "";
-List<Product> selectedProducts = [];
 
 class ItemCard extends StatefulWidget {
   final Product product;
@@ -210,6 +206,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(selectedUser.name); // = users[0];
+    print(selectedMarket.name); //  = markets[0];
+    print(selectedDocumentType.name); //  = documentTypes[0];
+    print(
+        selectedProfile.name); //  = profiles[0]; //Profile.getDefaultProfile();
+    // print(selectedReport.name); //  = null;
+
     return Scaffold(
       appBar: AppBarSearchWidget(
           key: _keyAppbar,

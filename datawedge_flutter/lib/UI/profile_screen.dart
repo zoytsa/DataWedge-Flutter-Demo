@@ -1,3 +1,4 @@
+import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
@@ -113,7 +114,7 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
                   width: 130,
                   child: Text(
                     profile.getName(),
-                    style: TextStyle(color: Colors.blue.shade900),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ))
           ],

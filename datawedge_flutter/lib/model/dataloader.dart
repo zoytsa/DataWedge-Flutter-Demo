@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:datawedgeflutter/home_page.dart';
+import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/UI/login_signup_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
+import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'constants.dart';
 
 enum FormatMarket { gipermarket, supermarket, express, gurme }
 enum ReportPeriodFormat {
@@ -20,42 +23,6 @@ enum ReportPeriodFormat {
   ForThisMonthAndLastMonth,
   ForThisYearAndLastYear
 }
-
-final String dct_username = 'weblink';
-final String dct_password = 'weblinK312!';
-final String dct_basicAuth =
-    'Basic ' + base64Encode(utf8.encode('$dct_username:$dct_password'));
-
-final Map<String, String> dct_headers = {
-  'Content-Type': 'application/json; charset=UTF-8',
-  // 'accept': 'application/json',
-  'authorization': dct_basicAuth
-};
-
-var users = User.getUsers();
-var markets = Market.getMarkets();
-var documentTypes = DocumentType.getDocumentTypes();
-var profiles = Profile.getAvailableProfiles();
-var profileRoles = ProfileRole.getProfileRoles();
-var reports = Report.getReports();
-// selected
-var selectedUser = users[0];
-var selectedMarket = markets[0];
-var selectedDocumentType = documentTypes[0];
-var selectedProfile = profiles[0]; //Profile.getDefaultProfile();
-var selectedReport = null;
-var enteredPin = 111111;
-var enteredID = 111111;
-
-var allReports = reports[0];
-Report? starredReport1 = reports[1];
-Report? starredReport2 = reports[2];
-Report? starredReport3 = null; //reports[3];
-Report? starredReport4 = null; //reports[4];
-//
-var isRememberMe = true;
-var isAuthorized = false;
-var usingZebra = false;
 
 class User {
   int id = 0;
@@ -131,7 +98,7 @@ class ProfileRole {
   static List<ProfileRole> getProfileRoles() {
     // get profile 'cars'
     return <ProfileRole>[
-      ProfileRole(0, '<не выбран>', Icons.unfold_more),
+      ProfileRole(0, '<Гость>', Icons.unfold_more),
       ProfileRole(1, 'root', Icons.airline_seat_recline_extra_sharp),
       ProfileRole(
           2, 'administrator', Icons.airline_seat_legroom_reduced_outlined),
@@ -235,21 +202,12 @@ class Profile {
     } else {
       return (profileRoles[this.roleID].name +
               " [" +
-              markets[this.marketID].name +
+              selectedMarket.name +
+              //markets[this.marketID].name +
               "]")
           .trim();
     }
   }
-  // Map<String, dynamic> toMapStringDynamic(Map<dynamic, dynamic> data) {
-  //   Map<String, dynamic> result = {};
-  //   data.forEach((k, v) => result[k.toString()] = v);
-  //   return result;
-  // }
-  // @override
-  // String toString() {
-  //   // TODO: implement toString
-  //   return this.name;
-  // }
 }
 
 class Good {
@@ -481,7 +439,6 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   DocumentOrder newDocOrder = DocumentOrder(goodItems);
   var myData = newDocOrder.toJson();
   var body = json.encode(myData);
-  //print(body);
 
   final response = await http.post(
     Uri.parse(
@@ -624,6 +581,14 @@ saveSettingsHive(BuildContext context) {
           padding: EdgeInsets.only(top: 3),
           child: Text("Saved!", textAlign: TextAlign.center)),
     ));
+
+    BlocProvider.of<ProfileCubit>(context).updateProfileState(
+        selectedUser,
+        selectedMarket,
+        selectedDocumentType,
+        selectedProfile,
+        usingZebra,
+        isAuthorized);
   }
 }
 
