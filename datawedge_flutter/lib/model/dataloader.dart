@@ -54,7 +54,8 @@ class Market {
 
   static List<Market> getMarkets() {
     return <Market>[
-      Market(0, '<не выбран>', FormatMarket.gipermarket, Icons.unfold_more),
+      Market(
+          0, '<маркет не выбран>', FormatMarket.gipermarket, Icons.unfold_more),
       Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
       Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
       Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),

@@ -37,6 +37,50 @@ class MyApp extends StatelessWidget {
     Settings? userIDSettings = box.get("userID");
     if (userIDSettings != null) {
       selectedUser = users[userIDSettings.value];
+
+      if (selectedUser.id != 111111 && selectedUser.id != 0) {
+        print(selectedUser.id);
+        isAuthorized = true;
+      }
+      //   Settings? userIDSettings = box.get("userID");
+      // if (userIDSettings != null) {
+      //   selectedUser = users[userIDSettings.value];
+      // } else {
+      //   selectedUser = users[0];
+      // }
+
+      Settings? documentTypeIDSettings = box.get("documentTypeID");
+      if (documentTypeIDSettings != null) {
+        selectedDocumentType = documentTypes[documentTypeIDSettings.value];
+      } else {
+        selectedDocumentType = documentTypes[0];
+      }
+
+      Settings? marketIDSettings = box.get("marketID");
+      if (marketIDSettings != null) {
+        selectedMarket = markets[marketIDSettings.value];
+      } else {
+        selectedMarket = markets[0];
+      }
+
+      Settings? profileIDSettings = box.get("profileID");
+      if (profileIDSettings != null) {
+        selectedProfile = profileIDSettings.value is int
+            ? profiles[profileIDSettings.value]
+            : selectedProfile = profiles[0];
+      } else {
+        selectedProfile = profiles[0];
+      }
+
+      // Settings? profileDataSettings = box.get("profileData");
+      // if (profileDataSettings != null) {
+      //   //converting map dynamic dynamic to map string dynamic
+      //   Map<String, dynamic> dataJson = {};
+      //   profileDataSettings.value.forEach((k, v) => dataJson[k.toString()] = v);
+      //   selectedProfile = Profile.fromJson(dataJson);
+      //   print(selectedProfile);
+      // }
+
       BlocProvider.of<ProfileCubit>(context).updateProfileState(
           selectedUser,
           selectedMarket,
@@ -44,17 +88,6 @@ class MyApp extends StatelessWidget {
           selectedProfile,
           usingZebra,
           isAuthorized);
-      if (selectedUser.id != 111111 && selectedUser.id != 0) {
-        print(selectedUser.id);
-        isAuthorized = true;
-        BlocProvider.of<ProfileCubit>(context).updateProfileState(
-            selectedUser,
-            selectedMarket,
-            selectedDocumentType,
-            selectedProfile,
-            usingZebra,
-            isAuthorized);
-      }
     } else {
       selectedUser = users[0];
     }

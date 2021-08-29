@@ -2,9 +2,11 @@ import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
+import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 //import 'package:datawedgeflutter/show_html_page.dart';
 import 'package:datawedgeflutter/show_html_page2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
 
@@ -26,7 +28,7 @@ List<DropdownMenuItem<User>> buildDropdownMenuItemsUser(List users) {
                   width: 130,
                   child: Text(
                     user.name,
-                    style: TextStyle(color: Colors.blue.shade900),
+                    style: TextStyle(color: Palette.textColor1),
                   ),
                 ))
           ],
@@ -55,7 +57,7 @@ List<DropdownMenuItem<Market>> buildDropdownMenuItemsMarket(List markets) {
                   width: 130,
                   child: Text(
                     market.name,
-                    style: TextStyle(color: Colors.blue.shade900),
+                    style: TextStyle(color: Palette.textColor1),
                   ),
                 ))
           ],
@@ -85,7 +87,7 @@ List<DropdownMenuItem<DocumentType>> buildDropdownMenuItemsDocumentTypes(
                   width: 130,
                   child: Text(
                     documentType.name,
-                    style: TextStyle(color: Colors.blue.shade900),
+                    style: TextStyle(color: Palette.textColor1),
                   ),
                 )),
           ],
@@ -114,7 +116,7 @@ List<DropdownMenuItem<Profile>> buildTest(List profiles) {
                   width: 130,
                   child: Text(
                     profile.getName(),
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Palette.textColor1),
                   ),
                 ))
           ],
@@ -279,65 +281,68 @@ class _profilePageState extends State<profilePage> {
                   SizedBox(
                       width: 220,
                       child: ListTile(
-                        title: DropdownButton(
-                            items: buildDropdownMenuItemsUser(users),
-                            style: TextStyle(color: Colors.blue[300]),
-                            value: selectedUser,
-                            onChanged: (valueSelectedByUser) {
-                              setState(() {
-                                debugPrint(
-                                    'User selected $valueSelectedByUser');
-                                // onChangeDropdownItem(valueSelectedByUser as Market);
-                                selectedUser = valueSelectedByUser as User;
-                                saveSettingsHive(context);
-                                saveProfileOnDCT(context);
-                              });
-                            }),
+                        title: BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            return DropdownButton(
+                                items: buildDropdownMenuItemsUser(users),
+                                style: TextStyle(color: Palette.textColor1),
+                                value: state.selectedUser,
+                                onChanged: (valueSelectedByUser) {
+                                  //  setState(() {
+                                  debugPrint('User selected ');
+                                  // onChangeDropdownItem(valueSelectedByUser as Market);
+                                  selectedUser = valueSelectedByUser as User;
+                                  saveSettingsHive(context);
+                                  saveProfileOnDCT(context);
+                                  //  });
+                                });
+                          },
+                        ),
                       )),
                   //buttonExit(context)
                 ])),
           ),
           buttonExit(context),
           SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Padding(
-                padding: EdgeInsets.only(top: 15.0, left: 15.0, right: 20.0),
-                child: Row(children: [
-                  // isDCT
-                  //     ? Icon(
-                  //         Icons.security_rounded,
-                  //         color: Palette.textColor1,
-                  //       )
-                  //     : SizedBox(),
-                  // !isDCT
-                  //     ? Text("Профиль:          ",
-                  //         style: TextStyle(color: Palette.textColor2))
-                  //     : SizedBox(),
-                  // SizedBox(
-                  //   height: 5.0,
-                  //   //          width: 100,
-                  // ),
-                  SizedBox(
-                      width: 120,
-                      child: ListTile(
-                        title: DropdownButton(
-                            items: buildDropDownReports(),
-                            style: TextStyle(color: Colors.blue[300]),
-                            value: selectedReport,
-                            onChanged: (valueSelectedByUser) {
-                              setState(() {
-                                debugPrint(
-                                    'User selected $valueSelectedByUser');
+          // Container(
+          //   padding: const EdgeInsets.only(right: 20.0),
+          //   child: Padding(
+          //       padding: EdgeInsets.only(top: 15.0, left: 15.0, right: 20.0),
+          //       child: Row(children: [
+          //         // isDCT
+          //         //     ? Icon(
+          //         //         Icons.security_rounded,
+          //         //         color: Palette.textColor1,
+          //         //       )
+          //         //     : SizedBox(),
+          //         // !isDCT
+          //         //     ? Text("Профиль:          ",
+          //         //         style: TextStyle(color: Palette.textColor2))
+          //         //     : SizedBox(),
+          //         // SizedBox(
+          //         //   height: 5.0,
+          //         //   //          width: 100,
+          //         // ),
+          //         SizedBox(
+          //             width: 120,
+          //             child: ListTile(
+          //               title: DropdownButton(
+          //                   items: buildDropDownReports(),
+          //                   style: TextStyle(color: Colors.blue[300]),
+          //                   value: selectedReport,
+          //                   onChanged: (valueSelectedByUser) {
+          //                     setState(() {
+          //                       debugPrint(
+          //                           'User selected $valueSelectedByUser');
 
-                                selectedReport = valueSelectedByUser as String;
-                              });
-                              ;
-                            }),
-                      )),
-                  buttonHTMLSample(context),
-                ])),
-          ),
+          //                       selectedReport = valueSelectedByUser as String;
+          //                     });
+          //                     ;
+          //                   }),
+          //             )),
+          //         buttonHTMLSample(context),
+          //       ])),
+          // ),
           Container(
             padding: const EdgeInsets.only(left: 10.0, right: 20.0),
             child: Padding(
@@ -360,22 +365,25 @@ class _profilePageState extends State<profilePage> {
                   SizedBox(
                       width: 220,
                       child: ListTile(
-                        title: DropdownButton(
-                            items: buildTest(profiles),
-                            style: TextStyle(color: Colors.blue[300]),
-                            value: selectedProfile,
-                            onChanged: (valueSelectedByUser) {
-                              setState(() {
-                                debugPrint(
-                                    'User selected $valueSelectedByUser');
-                                // onChangeDropdownItem(valueSelectedByUser as Market);
-                                selectedProfile =
-                                    valueSelectedByUser as Profile;
-                                saveSettingsHive(context);
-                                saveProfileOnDCT(context);
-                              });
-                              ;
-                            }),
+                        title: BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            return DropdownButton(
+                                items: buildTest(profiles),
+                                style: TextStyle(color: Palette.textColor1),
+                                value: state.selectedProfile,
+                                onChanged: (valueSelectedByUser) {
+                                  // setState(() {
+                                  debugPrint('User selected ');
+                                  // onChangeDropdownItem(valueSelectedByUser as Market);
+                                  selectedProfile =
+                                      valueSelectedByUser as Profile;
+                                  saveSettingsHive(context);
+                                  saveProfileOnDCT(context);
+                                  //  });
+                                  // ;
+                                });
+                          },
+                        ),
                       ))
                 ])),
           ),
@@ -397,20 +405,24 @@ class _profilePageState extends State<profilePage> {
                   SizedBox(
                       width: 220,
                       child: ListTile(
-                        title: DropdownButton(
-                            items: buildDropdownMenuItemsMarket(markets),
-                            style: TextStyle(color: Colors.blue[300]),
-                            value: selectedMarket,
-                            onChanged: (valueSelectedByUser) {
-                              setState(() {
-                                debugPrint(
-                                    'User selected $valueSelectedByUser');
-                                // onChangeDropdownItem(valueSelectedByUser as Market);
-                                selectedMarket = valueSelectedByUser as Market;
-                                saveSettingsHive(context);
-                                saveProfileOnDCT(context);
-                              });
-                            }),
+                        title: BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            return DropdownButton(
+                                items: buildDropdownMenuItemsMarket(markets),
+                                style: TextStyle(color: Palette.textColor1),
+                                value: state.selectedMarket,
+                                onChanged: (valueSelectedByUser) {
+                                  //  setState(() {
+                                  //debugPrint('User selected ');
+                                  // onChangeDropdownItem(valueSelectedByUser as Market);
+                                  selectedMarket =
+                                      valueSelectedByUser as Market;
+                                  saveSettingsHive(context);
+                                  saveProfileOnDCT(context);
+                                  //  });
+                                });
+                          },
+                        ),
                       ))
                 ])),
           ),
@@ -420,8 +432,7 @@ class _profilePageState extends State<profilePage> {
                 padding: EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Row(children: <Widget>[
                   isDCT
-                      ? Icon(Icons.document_scanner_outlined,
-                          color: Palette.textColor1)
+                      ? Icon(Icons.dock_outlined, color: Palette.textColor1)
                       : SizedBox(),
                   !isDCT
                       ? Text("Документ:        ",
@@ -431,51 +442,65 @@ class _profilePageState extends State<profilePage> {
                   SizedBox(
                       width: 220,
                       child: ListTile(
-                        title: DropdownButton(
-                            items: buildDropdownMenuItemsDocumentTypes(
-                                documentTypes),
-                            style: TextStyle(color: Colors.blue[300]),
-                            value: selectedDocumentType,
-                            onChanged: (valueSelectedByUser) {
-                              setState(() {
-                                debugPrint(
-                                    'User selected $valueSelectedByUser');
-                                // onChangeDropdownItem(valueSelectedByUser as Market);
-                                selectedDocumentType =
-                                    valueSelectedByUser as DocumentType;
-                                saveSettingsHive(context);
-                                saveProfileOnDCT(context);
-                              });
-                              ;
-                            }),
+                        title: BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            return DropdownButton(
+                                items: buildDropdownMenuItemsDocumentTypes(
+                                    documentTypes),
+                                style: TextStyle(color: Palette.textColor1),
+                                value: state.selectedDocumentType,
+                                onChanged: (valueSelectedByUser) {
+                                  //  setState(() {
+                                  debugPrint('User selected ');
+                                  // onChangeDropdownItem(valueSelectedByUser as Market);
+                                  selectedDocumentType =
+                                      valueSelectedByUser as DocumentType;
+                                  saveSettingsHive(context);
+                                  saveProfileOnDCT(context);
+                                  //  });
+                                  //  ;
+                                });
+                          },
+                        ),
                       ))
                 ])),
           ),
           Container(
             //width: 250,
 
-            padding: const EdgeInsets.only(right: 20.0),
+            padding: const EdgeInsets.only(right: 20.0, top: 5),
             child: Column(//crossAxisAlignment: CrossAxisAlignment.center,
                 // width: 250,
                 children: [
               Padding(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(left: 18.0, right: 20.0),
                   child: Row(
                     children: [
                       //SizedBox(width: 3),
-                      Checkbox(
-                        value: usingZebra,
-                        activeColor: Palette.textColor2,
-                        onChanged: (value) {
-                          setState(() {
-                            usingZebra = !usingZebra;
-                            saveSettingsHive(context);
-                            saveProfileOnDCT(context);
-                            widget.vcbUsinZebraOnChanged(usingZebra);
-                            widget.vcbUsingZebraOnSelected!();
-                            // my_vcbUsingZebraOnSelected();
-                            //  super.setState(() {});
-                          });
+                      BlocBuilder<ProfileCubit, ProfileState>(
+                        builder: (context, state) {
+                          return Checkbox(
+                            value: usingZebra,
+                            activeColor: Palette.textColor2,
+                            //  focusColor: Palette.textColor2,
+                            side: BorderSide(
+                              // ======> CHANGE THE BORDER COLOR HERE <======
+                              color: Palette.textColor2,
+                              // Give your checkbox border a custom width
+                              width: 1.5,
+                            ),
+                            onChanged: (value) {
+                              // setState(() {
+                              usingZebra = !usingZebra;
+                              saveSettingsHive(context);
+                              saveProfileOnDCT(context);
+                              // widget.vcbUsinZebraOnChanged(usingZebra);
+                              // widget.vcbUsingZebraOnSelected!();
+                              // my_vcbUsingZebraOnSelected();
+                              //  super.setState(() {});
+                              // });
+                            },
+                          );
                         },
                       ),
                       Container(
@@ -497,51 +522,59 @@ class _profilePageState extends State<profilePage> {
     // Flexible(flex: 5, child: addPhotoScanButton(context)),
   }
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
 
-    Box<Settings> box = Hive.box<Settings>('settings');
-    //  var box = await Hive.openBox<Settings>('settings');
-    Settings? userIDSettings = box.get("userID");
-    if (userIDSettings != null) {
-      selectedUser = users[userIDSettings.value];
-    } else {
-      selectedUser = users[0];
-    }
+  //   Box<Settings> box = Hive.box<Settings>('settings');
+  //   //  var box = await Hive.openBox<Settings>('settings');
+  //   Settings? userIDSettings = box.get("userID");
+  //   if (userIDSettings != null) {
+  //     selectedUser = users[userIDSettings.value];
+  //   } else {
+  //     selectedUser = users[0];
+  //   }
 
-    Settings? documentTypeIDSettings = box.get("documentTypeID");
-    if (documentTypeIDSettings != null) {
-      selectedDocumentType = documentTypes[documentTypeIDSettings.value];
-    } else {
-      selectedDocumentType = documentTypes[0];
-    }
+  //   Settings? documentTypeIDSettings = box.get("documentTypeID");
+  //   if (documentTypeIDSettings != null) {
+  //     selectedDocumentType = documentTypes[documentTypeIDSettings.value];
+  //   } else {
+  //     selectedDocumentType = documentTypes[0];
+  //   }
 
-    Settings? marketIDSettings = box.get("marketID");
-    if (marketIDSettings != null) {
-      selectedMarket = markets[marketIDSettings.value];
-    } else {
-      selectedMarket = markets[0];
-    }
+  //   Settings? marketIDSettings = box.get("marketID");
+  //   if (marketIDSettings != null) {
+  //     selectedMarket = markets[marketIDSettings.value];
+  //   } else {
+  //     selectedMarket = markets[0];
+  //   }
 
-    Settings? profileIDSettings = box.get("profileID");
-    if (profileIDSettings != null) {
-      selectedProfile = profileIDSettings.value is int
-          ? profiles[profileIDSettings.value]
-          : selectedProfile = profiles[0];
-    } else {
-      selectedProfile = profiles[0];
-    }
+  //   Settings? profileIDSettings = box.get("profileID");
+  //   if (profileIDSettings != null) {
+  //     selectedProfile = profileIDSettings.value is int
+  //         ? profiles[profileIDSettings.value]
+  //         : selectedProfile = profiles[0];
+  //   } else {
+  //     selectedProfile = profiles[0];
+  //   }
 
-    // Settings? profileDataSettings = box.get("profileData");
-    // if (profileDataSettings != null) {
-    //   //converting map dynamic dynamic to map string dynamic
-    //   Map<String, dynamic> dataJson = {};
-    //   profileDataSettings.value.forEach((k, v) => dataJson[k.toString()] = v);
-    //   selectedProfile = Profile.fromJson(dataJson);
-    //   print(selectedProfile);
-    // }
-  }
+  //   Settings? profileDataSettings = box.get("profileData");
+  //   if (profileDataSettings != null) {
+  //     //converting map dynamic dynamic to map string dynamic
+  //     Map<String, dynamic> dataJson = {};
+  //     profileDataSettings.value.forEach((k, v) => dataJson[k.toString()] = v);
+  //     selectedProfile = Profile.fromJson(dataJson);
+  //     print(selectedProfile);
+  //   }
+
+  //   // BlocProvider.of<ProfileCubit>(context).updateProfileState(
+  //   //     selectedUser,
+  //   //     selectedMarket,
+  //   //     selectedDocumentType,
+  //   //     selectedProfile,
+  //   //     usingZebra,
+  //   //     isAuthorized);
+  // }
 
   _loadAndShowHTML(BuildContext context) async {
     var receivedHTML = await loadHTML(selectedReport);

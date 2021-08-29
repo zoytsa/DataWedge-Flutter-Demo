@@ -343,9 +343,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       print("vcb rules");
                     },
                     vcbUsinZebraOnChanged: (bool val) {
-                      setState(() {
-                        usingZebra = val;
-                      });
+                      // setState(() {
+                      usingZebra = val;
+                      // });
                     },
                     vcbUsingZebra: usingZebra)
               ]),
@@ -380,30 +380,36 @@ class _MyHomePageState extends State<MyHomePage> {
       //         child: addResultDataList(context, _resultDataList))),
       // //SizedBox(height: 90),
 
-      Align(
-        alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
-        child: !usingZebra
-            ? //Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            //children: [
-            //   SizedBox(width: 40),
-            SizedBox(
-                height: isDCT ? 60 : 70,
-                // width: isDCT ? 180 : null,
-                child: addPhotoScanButton(context, isDCT))
-            // ])
-            : Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          return Align(
+            alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
+            child: !state.usingZebra
+                ? //Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                //children: [
+                //   SizedBox(width: 40),
                 SizedBox(
                     height: isDCT ? 60 : 70,
-                    width: isDCT ? 200 : 220,
-                    child: addPhotoScanButton(context, isDCT)),
-                usingZebra
-                    ? SizedBox(
-                        height: isDCT ? 60 : 70,
-                        child: addZebraScanButton(context, isDCT))
-                    : SizedBox(height: 60),
-              ]),
+                    // width: isDCT ? 180 : null,
+                    child: addPhotoScanButton(context, isDCT))
+                // ])
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                        SizedBox(
+                            height: isDCT ? 60 : 70,
+                            width: isDCT ? 200 : 220,
+                            child: addPhotoScanButton(context, isDCT)),
+                        state.usingZebra
+                            ? SizedBox(
+                                height: isDCT ? 60 : 70,
+                                child: addZebraScanButton(context, isDCT))
+                            : SizedBox(height: 60),
+                      ]),
+          );
+        },
       )
     ]);
     return widget;
