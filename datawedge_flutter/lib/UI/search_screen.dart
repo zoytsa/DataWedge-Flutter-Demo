@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/UI/product_details_screen.dart';
 import 'package:datawedgeflutter/UI/home_screen.dart';
@@ -6,6 +9,7 @@ import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
+import 'package:http/http.dart' as http;
 
 class ItemCard extends StatefulWidget {
   final Product product;
@@ -147,25 +151,128 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
+  ProductCategory? _myCategory;
   final GlobalKey<_AppBarSearchWidgetState> _keyAppbar = GlobalKey();
   var addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
+  List<ProductCategory> productCategories = [];
+
   // bool _showBackToTopButton = false;
   // ScrollController? _scrollController;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _scrollController = ScrollController()
-//       ..addListener(() {
-//         setState(() {
-//           if (_scrollController!.offset >= 300) {
-//             _showBackToTopButton = true; // show the back-to-top button
-//           } else {
-//             _showBackToTopButton = false; // hide the back-to-top button
-//           }
-//         });
-//       });
-//   }
+  @override
+  void initState() {
+    if (productCategories.length == 0) _getProductCategoriesList();
+    super.initState();
+  }
+
+  Future<void> _getProductCategoriesList() async {
+    final with_children = 1;
+
+    final Uri uri = Uri.parse(
+        "http://212.112.116.229:7788/weblink/hs/api/categories?with_children=$with_children&use_cache=0");
+
+    await http.get(uri, headers: dct_headers).then((response) {
+      if (response.statusCode == 200) {
+        //  var json = jsonDecode(utf8.decode(response.bodyBytes));
+        final result = listOfProductCategoriesFromJsonBytes(response.bodyBytes);
+
+        setState(() {
+          productCategories = result.data!;
+          if (productCategories.length > 0) {
+            _myCategory = productCategories[0];
+          }
+          //   ;
+        });
+      }
+    });
+  }
+
+  List<DropdownMenuItem<ProductCategory>> buildDropdownMenuItemsCategories2() {
+    List<DropdownMenuItem<ProductCategory>> items = [];
+    for (ProductCategory category in productCategories) {
+      items.add(
+        DropdownMenuItem(
+          value: category,
+          child: Row(
+            children: [
+              // Icon(
+              //   category.icon,
+              //   color: Colors.indigo[200],
+              // ),
+              SizedBox(
+                // width: 130,
+                child: Text(
+                  category.title!,
+                  style: TextStyle(
+                    color: Palette.textColor1,
+                    // fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+    print('items${items.length}');
+    return items;
+  }
+
+  List<DropdownMenuItem<ProductCategory>> getItems() {
+    List<DropdownMenuItem<ProductCategory>> items = [];
+    for (ProductCategory category in productCategories) {
+      items.add(DropdownMenuItem(
+        value: category,
+        child: Text(
+          category.title!, //.substring(0, 18),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: category == _myCategory ? Colors.white : Palette.textColor1,
+            // fontStyle: FontStyle.italic,
+            fontSize: category == _myCategory ? 15 : 14,
+          ),
+        ),
+      ));
+    }
+    print('items${items.length}');
+    return items;
+  }
+
+  Widget buildDropDown(BuildContext context) {
+    if (_myCategory == null) {
+      return Row(
+        children: [Expanded(child: Container()), CircularProgressIndicator()],
+      );
+    } else {
+      return SizedBox(
+        width: 130,
+        child: DropdownButton<ProductCategory>(
+          isExpanded: true,
+          value: _myCategory,
+          iconSize: 20,
+          iconEnabledColor: Colors.green.withOpacity(0.5),
+          // IconSizefocusColor: Colors.red,
+          dropdownColor: Colors.indigo.withOpacity(0.75),
+          icon: (null),
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 12,
+          ),
+          hint: Text('Выберите категорию...'),
+          onChanged: (ProductCategory? newValue) {
+            setState(() {
+              _myCategory = newValue;
+              //   _getCitiesList();
+              //   print(_myState);
+            });
+          },
+          items: getItems(),
+          // items: [],
+        ),
+      );
+    }
+  }
 
 //   @override
 //   void dispose() {
@@ -221,7 +328,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addEnterSearchField(context),
+          addEnterSearchField2(context),
 
           Row(
               // padding: const EdgeInsets.symmetric(
@@ -229,24 +336,27 @@ class _CatalogScreenState extends State<CatalogScreen> {
               children: [
                 SizedBox(width: kDefaultPaddin),
                 SizedBox(
-                    width: 230,
-                    child: DropdownButton(
-                        elevation: 0,
-                        isDense: true,
-                        isExpanded: true,
-                        items: buildDropdownMenuItemsCategories(categories),
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: kTextLightColor),
-                        value: selectedCategory,
-                        onChanged: (valueSelectedByUser) {
-                          setState(() {
-                            debugPrint('User selected $valueSelectedByUser');
+                  width: 250,
+                  child: buildDropDown(context),
+                  // child: DropdownButton(
+                  //     elevation: 0,
+                  //     isDense: true,
+                  //     isExpanded: true,
+                  //     //items: buildDropdownMenuItemsCategories(categories),
+                  //     items: buildDropdownMenuItemsCategories2(),
+                  //     style: Theme.of(context).textTheme.headline6!.copyWith(
+                  //         fontWeight: FontWeight.w500,
+                  //         color: kTextLightColor),
+                  //     value: selectedCategory,
+                  //     onChanged: (valueSelectedByUser) {
+                  //       setState(() {
+                  //         debugPrint('User selected $valueSelectedByUser');
 
-                            selectedCategory = valueSelectedByUser as Category;
-                            //saveSettingsHive(context);
-                          });
-                        })),
+                  //         selectedCategory = valueSelectedByUser as Category;
+                  //         //saveSettingsHive(context);
+                  //       });
+                  //     })
+                ),
                 Container(
                     child: Expanded(
                         child: SizedBox(
@@ -519,6 +629,7 @@ class _SubcategoriesWidgetState extends State<SubcategoriesWidget> {
   List<String> categories = ["Hand bag", "Jewellery", "Footwear", "Dresses"];
   // By default our first item will be selected
   int selectedIndex = 0;
+  //var _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -566,7 +677,8 @@ class _SubcategoriesWidgetState extends State<SubcategoriesWidget> {
   }
 }
 
-List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories(List items) {
+List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories_unused(
+    List items) {
   List<DropdownMenuItem<Category>> items = [];
   for (Category category in categories) {
     items.add(
@@ -583,7 +695,7 @@ List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories(List items) {
               child: Text(
                 category.title,
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: Palette.textColor1,
                   // fontStyle: FontStyle.italic,
                   fontSize: 16,
                 ),
@@ -597,7 +709,8 @@ List<DropdownMenuItem<Category>> buildDropdownMenuItemsCategories(List items) {
   return items;
 }
 
-Widget addEnterSearchField(BuildContext context) {
+Widget addEnterSearchField2(BuildContext context) {
+  var _textController = new TextEditingController();
   Widget widget = Container(
     // width: 250,
     height: 32,
@@ -608,15 +721,17 @@ Widget addEnterSearchField(BuildContext context) {
     // borderRadius: BorderRadius.circular(8.0)),
 
     child: Container(
-      // margin: const EdgeInsets.all(15.0),
+      margin: const EdgeInsets.only(right: 12),
       // padding: const EdgeInsets.all(23.0),
-      decoration: BoxDecoration(border: Border.all(color: Colors.white)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.indigo)),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          verticalDirection: VerticalDirection.up,
           children: [
             Expanded(
                 child:
+
                     // Text(
                     //   "ADD BARCODE:",
                     //   style: TextStyle(
@@ -626,34 +741,78 @@ Widget addEnterSearchField(BuildContext context) {
                     //   ),
                     // ),
                     TextField(
+              controller: _textController,
+              style: TextStyle(color: Colors.white),
+
               cursorColor: Colors.pinkAccent,
               // maxLength: 100,
               // keyboardType: TextInputType.number,
+
               decoration: InputDecoration(
-                //   // prefixIcon: Icon(
-                //   //   Icons.qr_code_sharp,
-                //   //   color: Palette.iconColor,
-                //   // ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    _textController.clear();
+                  },
+                  icon: Icon(
+                    Icons.clear,
+                    color: Colors.grey.withOpacity(0.5),
+                    size: 19,
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.green.withOpacity(0.5),
                 ),
-                contentPadding: EdgeInsets.only(left: 15),
-                hintText: "Введите код или наименование...",
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 0.0,
+                  horizontal: 0.0,
+                ),
+                fillColor: Colors.indigo,
+                filled: true,
+                hintText: 'Поиск по наименованию и штрихкоду...',
                 hintStyle: TextStyle(
                     fontSize: 14,
-                    color: Palette.textColor1,
+                    color: Palette.textColor1.withOpacity(0.5),
                     fontStyle: FontStyle.italic),
-                // suffixIcon: IconButton(
-                //   // onPressed: _controllerID.clear(),
-                //   onPressed: () => searchingGoods(enteredSearchString),
-                //   icon: Icon(Icons.search_rounded),
-                // ),
+                //    hasFloatingPlaceholder: false,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(width: 0.0, style: BorderStyle.none),
+                ),
               ),
+              //*** */
+              // decoration: InputDecoration(
+              //     //   // prefixIcon: Icon(
+              //     //   //   Icons.qr_code_sharp,
+              //     //   //   color: Palette.iconColor,
+              //     //   // ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.white10),
+              //       borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.white10),
+              //       borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              //     ),
+              //     contentPadding: EdgeInsets.only(left: 15),
+              //     hintText: "Поиск по наименованию и штрихкоду...",
+              //     hintStyle: TextStyle(
+              //         fontSize: 14,
+              //         color: Palette.textColor1.withOpacity(0.5),
+              //         fontStyle: FontStyle.italic),
+              //     // suffixIconConstraints: BoxConstraints(
+              //     //   minWidth: 25,
+              //     //   minHeight: 32,
+              //     // ),
+              //     prefixIcon: Padding(
+              //       padding: const EdgeInsetsDirectional.only(bottom: 12.0),
+              //       child: IconButton(
+              //         // onPressed: _controllerID.clear(),
+              //         onPressed: () => searchingGoods(enteredSearchString),
+              //         icon: Icon(Icons.search_outlined, color: Colors.white10),
+              //       ), // myIcon is a 48px-wide widget.
+              //     )),
+              //     //*** */
               onChanged: (String str) {
                 {
                   try {
@@ -668,17 +827,14 @@ Widget addEnterSearchField(BuildContext context) {
                 searchingGoods(text);
               },
             )),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 0),
-              child: IconButton(
-                // onPressed: _controllerID.clear(),
-                onPressed: () => searchingGoods(enteredSearchString),
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.black26,
-                ),
-              ),
-            ),
+            //   IconButton(
+            //     // onPressed: _controllerID.clear(),
+            //     onPressed: () => searchingGoods(enteredSearchString),
+            //     icon: Icon(
+            //       Icons.search,
+            //       color: Colors.black26,
+            //     ),
+            //   ),
           ]),
     ),
   );

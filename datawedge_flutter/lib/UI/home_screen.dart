@@ -875,7 +875,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return Container(
           margin: EdgeInsets.all(isDCT ? 2 : 3.0),
           width: MediaQuery.of(context).size.width * 0.55,
-          height: state.selectedDocumentType == docType ? 35.0 : 33,
+          height: state.selectedDocumentType == docType ? 35.0 : 35,
           decoration: BoxDecoration(
             color: Colors.blue.withOpacity(0.3),
             border: Border.all(
