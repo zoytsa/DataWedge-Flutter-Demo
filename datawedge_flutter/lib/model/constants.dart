@@ -9,6 +9,9 @@ var selectedReport = null;
 var selectedCategory = categories[0];
 var enteredSearchString = "";
 List<Product> selectedProducts = [];
+ProductCategory? selectedProductCategory;
+ProductChildCategory? selectedProductChildCategory;
+int selectedChildCategoryIndex = 0;
 
 // view
 const kTextColor = Color(0xFF535353);
@@ -23,6 +26,8 @@ var profiles = Profile.getAvailableProfiles();
 var profileRoles = ProfileRole.getProfileRoles();
 var reports = Report.getReports();
 var allReports = reports[0];
+List<ProductCategory> productCategories = [];
+List<ProductChildCategory> productChildCategories = [];
 
 // auth
 var enteredID = 111111;

@@ -16,70 +16,40 @@ final Map<String, String> _dct_headers = {
   'authorization': _dct_basicAuth
 };
 
-// void main() {
-//   //HttpOverrides.global = new MyHttpOverrides();
-
-//   runApp(MyApp());
-// }
-
-// class MyHttpOverrides extends HttpOverrides {
-//   @override
-//   HttpClient(SecurityContext? context) {
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback =
-//           (X509Certificate cert, String host, int port) => true;
-//   }
-// }
-
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//         title: 'Flutter Demo',
-//         theme: ThemeData(
-//           primarySwatch: Colors.blue,
-//         ),
-//         debugShowCheckedModeBanner: false,
-//         home: DocumentsPage());
-//   }
-// }
-
 class DocumentsPage extends StatefulWidget {
   @override
   _DocumentsPageState createState() => _DocumentsPageState();
 }
 
 class _DocumentsPageState extends State<DocumentsPage> {
-  int currentPage = 1;
-  String lastElementId = "";
-  String maxElementId = "";
+  int _currentPage = 1;
+  String _lastElementId = "";
+  String _maxElementId = "";
+  late int _totalPages;
+  final ScrollController _scrollController = ScrollController();
 
-  late int totalPages;
-  final ScrollController _scrollController = new ScrollController();
+  List<DocumentInfo> _documents = [];
 
-  List<DocumentInfo> documents = [];
-
-  final RefreshController refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: true);
 
-  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  //final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   Future<bool> getListOfDocuments({bool isRefresh = false}) async {
     if (isRefresh) {
-      currentPage = 1;
-      lastElementId = "";
+      _currentPage = 1;
+      _lastElementId = "";
     } else {
-      if (currentPage >= totalPages ||
-          lastElementId.compareTo(maxElementId) == 1) {
+      if (_currentPage >= _totalPages ||
+          _lastElementId.compareTo(_maxElementId) == 1) {
         // ???!!! str1.compareTo(str2) ==1
-        refreshController.loadNoData();
+        _refreshController.loadNoData();
         return false;
       }
     }
 
     final Uri uri = Uri.parse(
-        "http://212.112.116.229:7788/weblink/hs/api/documents/1?last_element_id=$lastElementId&size=50");
+        "http://212.112.116.229:7788/weblink/hs/api/documents/1?last_element_id=$_lastElementId&size=50");
 
     final response = await http.get(uri, headers: _dct_headers);
 
@@ -87,15 +57,15 @@ class _DocumentsPageState extends State<DocumentsPage> {
       final result = listOfDocumentsFromJson(response.body);
 
       if (isRefresh) {
-        documents = result.data;
+        _documents = result.data;
       } else {
-        documents.addAll(result.data);
+        _documents.addAll(result.data);
       }
 
-      currentPage++;
-      lastElementId = result.lastElementId;
-      totalPages = result.totalPages;
-      maxElementId = result.maxElementId;
+      _currentPage++;
+      _lastElementId = result.lastElementId;
+      _totalPages = result.totalPages;
+      _maxElementId = result.maxElementId;
 
       setState(() {});
       return true;
@@ -137,27 +107,27 @@ class _DocumentsPageState extends State<DocumentsPage> {
             );
           },
         ),
-        controller: refreshController,
+        controller: _refreshController,
         enablePullUp: true,
         onRefresh: () async {
           final result = await getListOfDocuments(isRefresh: true);
           if (result) {
-            refreshController.refreshCompleted();
+            _refreshController.refreshCompleted();
           } else {
-            refreshController.refreshFailed();
+            _refreshController.refreshFailed();
           }
         },
         onLoading: () async {
           final result = await getListOfDocuments();
           if (result) {
-            refreshController.loadComplete();
+            _refreshController.loadComplete();
           } else {
-            refreshController.loadFailed();
+            _refreshController.loadFailed();
           }
         },
         child: ListView.builder(
           itemBuilder: (context, index) {
-            final document = documents[index];
+            final document = _documents[index];
             return documentInfoListTile3(document, index);
             // return ListTile(
             //   title: Text(document.number),
@@ -169,7 +139,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
             // );
           },
           //  separatorBuilder: (context, index) => Divider(),
-          itemCount: documents.length,
+          itemCount: _documents.length,
           controller: _scrollController,
         ),
       ),
@@ -221,42 +191,6 @@ class _DocumentsPageState extends State<DocumentsPage> {
           ]),
     );
   }
-
-// Widget  footerBuilder (BuildContext context,LoadStatus mode)
-// {
-//               Widget body ;
-//               if(mode==LoadStatus.idle){
-//                 body =  Text("pull up load");
-//               }
-//               else if(mode==LoadStatus.loading){
-//                 body =  Container();
-//               }
-//               else if(mode == LoadStatus.failed){
-//                 body = Text("Load Failed!Click retry!");
-//               }
-//               else if(mode == LoadStatus.canLoading){
-//                 body = Text("release to load more");
-//               }
-//               else{
-//                 body = Text("No more Data");
-//               }
-//               return Container(
-//                 height: 55.0,
-//                 child: Center(child:body),
-//               );
-//             }
-
-  // Widget documentInfoListTile(DocumentInfo document) {
-  //   return ListTile(
-  //     title: Text(document.number),
-  //     subtitle: Text(document.date),
-  //     trailing: Text(
-  //       document.editedDate,
-  //       style: TextStyle(color: Colors.green),
-  //     ),
-  //   );
-  //   // return Container();
-  // }
 
   Widget documentInfoListTile3(DocumentInfo document, int index) {
     return Card(

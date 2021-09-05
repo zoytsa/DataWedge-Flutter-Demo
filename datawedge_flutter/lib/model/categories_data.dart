@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 
 import 'constants.dart';
 
-//var json = jsonDecode(utf8.decode(response.bodyBytes));
+ListOfProducts listOfProductsFromJsonBytes(bodyBytes) =>
+    ListOfProducts.fromJson(jsonDecode(utf8.decode(bodyBytes)));
+
 ListOfProductCategories listOfProductCategoriesFromJson(String str) =>
     ListOfProductCategories.fromJson(json.decode(str));
 
@@ -104,7 +106,7 @@ class ProductCategory {
   String? category0Title;
   bool? inactive;
   String? category0InnerGuid;
-  List<ChildCategory>? children;
+  List<ProductChildCategory>? children;
 
   ProductCategory(
       {this.id,
@@ -141,7 +143,7 @@ class ProductCategory {
     if (json['children'] != null) {
       children = [];
       json['children'].forEach((v) {
-        children!.add(ChildCategory.fromJson(v));
+        children!.add(ProductChildCategory.fromJson(v));
       });
     }
   }
@@ -169,7 +171,7 @@ class ProductCategory {
   }
 }
 
-class ChildCategory {
+class ProductChildCategory {
   int? id;
   String? title;
   int? category0Id;
@@ -185,7 +187,7 @@ class ChildCategory {
   bool? inactive;
   String? category0InnerGuid;
 
-  ChildCategory(
+  ProductChildCategory(
       {this.id,
       this.title,
       this.category0Id,
@@ -201,7 +203,7 @@ class ChildCategory {
       this.inactive,
       this.category0InnerGuid});
 
-  ChildCategory.fromJson(Map<String, dynamic> json) {
+  ProductChildCategory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     category0Id = json['category0_id'];
@@ -258,5 +260,130 @@ Future<bool> loadListOfProductCategories() async {
     return true;
   } else {
     return false;
+  }
+}
+
+class ListOfProducts {
+  int lastElementId = 0;
+  String lastElementTitle = '';
+  String firstElementId = '';
+  String firstElementTitle = '';
+  String isOffsetPagination = 'false';
+  String objectType = 'references-products';
+  String sessionId = '';
+  String filter = '';
+  int size = 25;
+  String useCache = 'false';
+  List<ProductInfo> data = [];
+  int totalElements = 0;
+  int totalPages = 0;
+  int maxElementId = 0;
+
+  ListOfProducts(
+      {required this.lastElementId,
+      required this.lastElementTitle,
+      required this.firstElementId,
+      required this.firstElementTitle,
+      required this.isOffsetPagination,
+      required this.objectType,
+      required this.sessionId,
+      required this.filter,
+      required this.size,
+      required this.useCache,
+      required this.totalElements,
+      required this.totalPages,
+      required this.maxElementId,
+      required this.data});
+
+  ListOfProducts.fromJson(Map<String, dynamic> json) {
+    lastElementId = json['last_element_id'];
+    lastElementTitle = json['last_element_title'];
+    firstElementId = json['first_element_id'];
+    firstElementTitle = json['first_element_title'];
+    isOffsetPagination = json['is_offset_pagination'];
+    objectType = json['object_type'];
+    sessionId = json['session_id'];
+    filter = json['filter'];
+    size = json['size'];
+    useCache = json['use_cache'];
+    totalElements = json['total_elements'];
+    totalPages = json['total_pages'];
+    maxElementId = json['max_element_id'];
+    if (json['data'] != null) {
+      data = [];
+      json['data'].forEach((v) {
+        data.add(ProductInfo.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['last_element_id'] = this.lastElementId;
+    data['last_element_title'] = this.lastElementTitle;
+    data['first_element_id'] = this.firstElementId;
+    data['first_element_title'] = this.firstElementTitle;
+    data['is_offset_pagination'] = this.isOffsetPagination;
+    data['object_type'] = this.objectType;
+    data['session_id'] = this.sessionId;
+    data['filter'] = this.filter;
+    data['size'] = this.size;
+    data['use_cache'] = this.useCache;
+    data['total_elements'] = this.totalElements;
+    data['total_pages'] = this.totalPages;
+    data['max_element_id'] = this.maxElementId;
+    if (this.data != null) {
+      data['data'] = this.data.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ProductInfo {
+  int id = 0;
+  String title = '';
+  String createdDate = '';
+  String editedDate = '';
+  int operationId = 1;
+  int productsCount = 0;
+  String number = '';
+  String date = '';
+  String parent0_Title = '';
+
+  ProductInfo(
+      {required this.id,
+      required this.title,
+      required this.createdDate,
+      required this.editedDate,
+      required this.operationId,
+      required this.productsCount,
+      required this.number,
+      required this.date});
+
+  ProductInfo.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    createdDate = json['created_date'];
+    editedDate = json['edited_date'];
+    operationId = json['operation_id'];
+    productsCount = json['products_count'];
+    number = json['number'];
+    date = json['date'];
+    parent0_Title = json['parent0_title'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> productInfo = Map<String, dynamic>();
+    productInfo['id'] = this.id;
+    productInfo['title'] = this.title;
+    productInfo['created_date'] = this.createdDate;
+    productInfo['edited_date'] = this.editedDate;
+    productInfo['operation_id'] = this.operationId;
+    productInfo['products_count'] = this.productsCount;
+    productInfo['number'] = this.number;
+    productInfo['date'] = this.date;
+    productInfo['parent0_title'] = this.parent0_Title;
+
+    return productInfo;
   }
 }

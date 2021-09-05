@@ -7,6 +7,7 @@ import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
 import 'package:http/http.dart' as http;
@@ -151,13 +152,107 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  ProductCategory? _myCategory;
+  List<ProductInfo> _products = [];
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  int _lastElementId = 0;
+  int _maxElementId = 0;
+  late int _totalPages;
+
   final GlobalKey<_AppBarSearchWidgetState> _keyAppbar = GlobalKey();
   var addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
-  List<ProductCategory> productCategories = [];
 
-  // bool _showBackToTopButton = false;
-  // ScrollController? _scrollController;
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: true);
+
+  Future<bool> getListOfProducts({bool isRefresh = false}) async {
+    if (isRefresh) {
+      _currentPage = 1;
+      _lastElementId = 0;
+    } else {
+      if (_currentPage >= _totalPages ||
+          _lastElementId.compareTo(_maxElementId) == 1) {
+        _refreshController.loadNoData();
+        return false;
+      }
+    }
+
+    final Uri uri = Uri.parse(
+        "http://212.112.116.229:7788/weblink/hs/api/products?last_element_id=$_lastElementId&size=50");
+
+    final response = await http.get(uri, headers: dct_headers);
+
+    if (response.statusCode == 200) {
+      final result = listOfProductsFromJsonBytes(response.bodyBytes);
+
+      if (isRefresh) {
+        _products = result.data;
+      } else {
+        _products.addAll(result.data);
+      }
+
+      _currentPage++;
+      _lastElementId = result.lastElementId;
+      _totalPages = result.totalPages;
+      _maxElementId = result.maxElementId;
+
+      setState(() {});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Widget productInfoListTile(ProductInfo productInfo, int index) {
+    return Card(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            title: Text('${index + 1}) ${productInfo.title}'),
+            subtitle: Text('Группа: ${productInfo.parent0_Title}'),
+            trailing: PopupMenuButton(
+              icon: Icon(Icons.more_vert, color: Colors.indigo),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    value: 'add_to_list',
+                    child: Text('✅ Выбрать'),
+                  ),
+                  PopupMenuItem(
+                    value: 'add_quantity',
+                    child: Text('🔢 Добавить количество'),
+                  ),
+                  PopupMenuItem(
+                    value: 'report',
+                    child: Text('📈 Отчет'),
+                  ),
+                  PopupMenuItem(
+                    value: 'find_in_list',
+                    child: Text('📜 Найти в списке'),
+                  ),
+                  PopupMenuItem(
+                    value: 'add_to_starred',
+                    child: Text('📌 Закрепить'),
+                  ),
+                  PopupMenuItem(
+                    value: 'open',
+                    child: Text('ℹ Подробно'),
+                  )
+                ];
+              },
+              onSelected: (String value) =>
+                  actionPopUpItemSelected(context, value),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.api, color: Colors.indigo[400]),
+            title: Text(productInfo.title),
+            subtitle: Text(productInfo.parent0_Title),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -178,8 +273,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
         setState(() {
           productCategories = result.data!;
+          productChildCategories = [];
+          selectedProductChildCategory = null;
           if (productCategories.length > 0) {
-            _myCategory = productCategories[0];
+            selectedProductCategory = productCategories[0];
+            if (selectedProductCategory!.children!.length > 0) {
+              productChildCategories = selectedProductCategory!.children!;
+              selectedProductChildCategory = productChildCategories[0];
+            }
           }
           //   ;
         });
@@ -228,9 +329,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
           category.title!, //.substring(0, 18),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: category == _myCategory ? Colors.white : Palette.textColor1,
+            color: category == selectedProductCategory
+                ? Colors.white
+                : Palette.textColor1,
             // fontStyle: FontStyle.italic,
-            fontSize: category == _myCategory ? 15 : 14,
+            fontSize: category == selectedProductCategory ? 15 : 14,
           ),
         ),
       ));
@@ -240,7 +343,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 
   Widget buildDropDown(BuildContext context) {
-    if (_myCategory == null) {
+    if (selectedProductCategory == null) {
       return Row(
         children: [Expanded(child: Container()), CircularProgressIndicator()],
       );
@@ -249,11 +352,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
         width: 130,
         child: DropdownButton<ProductCategory>(
           isExpanded: true,
-          value: _myCategory,
+          value: selectedProductCategory,
           iconSize: 20,
           iconEnabledColor: Colors.green.withOpacity(0.5),
           // IconSizefocusColor: Colors.red,
-          dropdownColor: Colors.indigo.withOpacity(0.75),
+          dropdownColor: Colors.indigo.withOpacity(0.8),
           icon: (null),
           style: TextStyle(
             color: Colors.black54,
@@ -262,9 +365,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
           hint: Text('Выберите категорию...'),
           onChanged: (ProductCategory? newValue) {
             setState(() {
-              _myCategory = newValue;
-              //   _getCitiesList();
-              //   print(_myState);
+              selectedProductCategory = newValue;
+              if (selectedProductCategory!.children!.length > 0) {
+                productChildCategories = selectedProductCategory!.children!;
+                selectedProductChildCategory = productChildCategories[0];
+                selectedChildCategoryIndex = 0;
+              }
             });
           },
           items: getItems(),
@@ -394,7 +500,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
           //         .copyWith(fontWeight: FontWeight.bold),
           //   ),
           // ),
-          SubcategoriesWidget(),
+          ProductChildCategoryWidget(),
           // SingleChildScrollView(
           //   controller: _scrollController,
           //   child: ConstrainedBox(
@@ -620,25 +726,28 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
   }
 }
 
-class SubcategoriesWidget extends StatefulWidget {
+class ProductChildCategoryWidget extends StatefulWidget {
   @override
-  _SubcategoriesWidgetState createState() => _SubcategoriesWidgetState();
+  _ProductChildCategoryWidgetState createState() =>
+      _ProductChildCategoryWidgetState();
 }
 
-class _SubcategoriesWidgetState extends State<SubcategoriesWidget> {
-  List<String> categories = ["Hand bag", "Jewellery", "Footwear", "Dresses"];
+class _ProductChildCategoryWidgetState
+    extends State<ProductChildCategoryWidget> {
+  //List<String> categories = ["Hand bag", "Jewellery", "Footwear", "Dresses"];
+
   // By default our first item will be selected
-  int selectedIndex = 0;
+  //int selectedChildCategoryIndex = 0;
   //var _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 2),
       child: SizedBox(
-        height: 25,
+        height: 30,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: categories.length,
+          itemCount: productChildCategories.length,
           itemBuilder: (context, index) => buildCategory(index),
         ),
       ),
@@ -649,26 +758,46 @@ class _SubcategoriesWidgetState extends State<SubcategoriesWidget> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedIndex = index;
+          selectedChildCategoryIndex = index;
         });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              categories[index],
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: selectedIndex == index ? kTextColor : kTextLightColor,
+            Container(
+              padding: const EdgeInsets.all(3.0),
+              decoration: productChildCategories[index].level == 1
+                  ? null
+                  : BoxDecoration(
+                      border: Border.all(color: kTextLightColor),
+                      borderRadius: BorderRadius.all(Radius.circular(
+                              5.0) //                 <--- border radius here
+                          ),
+                    ),
+              // color: productChildCategories[index].level == 1
+              //     ? Colors.transparent
+              //     : Colors.yellow[50],
+              child: Text(
+                productChildCategories[index].title!,
+                style: TextStyle(
+                  fontWeight: productChildCategories[index].level == 1
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  color: selectedChildCategoryIndex == index
+                      ? Colors.white70
+                      : kTextLightColor,
+                ),
               ),
             ),
             Container(
               margin: EdgeInsets.only(top: kDefaultPaddin / 4), //top padding 5
               height: 2,
-              width: 30,
-              color: selectedIndex == index ? Colors.black : Colors.transparent,
+              width: 45,
+              color: selectedChildCategoryIndex == index
+                  ? Colors.white70
+                  : Colors.transparent,
             )
           ],
         ),
@@ -845,4 +974,30 @@ Widget addEnterSearchField2(BuildContext context) {
 void searchingGoods(String text) {
   //Widget.
   print(selectedProducts);
+}
+
+void actionPopUpItemSelected(BuildContext context, String value) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  String message;
+  if (value == 'add_to_list') {
+    message = 'Товар выбран';
+  } else if (value == 'add_quantity') {
+    message = 'Введите количество товара';
+  } else if (value == 'report') {
+    message = 'Отчеты с отбором по товару';
+  } else if (value == 'find_in_list') {
+    message = 'Товар найден в списке!';
+  } else if (value == 'add_to_starred') {
+    message = 'Товар закреплен!';
+  } else if (value == 'open') {
+    message = 'Карточка товара.';
+  } else {
+    message = 'Нет действий!';
+  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.deepOrange[100],
+      content: Text(message),
+    ),
+  );
 }

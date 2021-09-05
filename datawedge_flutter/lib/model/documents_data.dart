@@ -112,14 +112,14 @@ class DocumentInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> DocumentInfo = new Map<String, dynamic>();
-    DocumentInfo['id'] = this.id;
-    DocumentInfo['created_date'] = this.createdDate;
-    DocumentInfo['edited_date'] = this.editedDate;
-    DocumentInfo['operation_id'] = this.operationId;
-    DocumentInfo['products_count'] = this.productsCount;
-    DocumentInfo['number'] = this.number;
-    DocumentInfo['date'] = this.date;
-    return DocumentInfo;
+    final Map<String, dynamic> documentInfo = Map<String, dynamic>();
+    documentInfo['id'] = this.id;
+    documentInfo['created_date'] = this.createdDate;
+    documentInfo['edited_date'] = this.editedDate;
+    documentInfo['operation_id'] = this.operationId;
+    documentInfo['products_count'] = this.productsCount;
+    documentInfo['number'] = this.number;
+    documentInfo['date'] = this.date;
+    return documentInfo;
   }
 }
