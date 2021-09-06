@@ -7,6 +7,7 @@ import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
@@ -165,6 +166,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: true);
 
+  bool useGridView = false;
+
   Future<bool> getListOfProducts({bool isRefresh = false}) async {
     if (isRefresh) {
       _currentPage = 1;
@@ -203,7 +206,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
   }
 
-  Widget productInfoListTile(ProductInfo productInfo, int index) {
+  Widget productInfoTile(ProductInfo productInfo, int index) {
     return Card(
       child: Column(
         children: <Widget>[
@@ -245,13 +248,29 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.api, color: Colors.indigo[400]),
-            title: Text(productInfo.title),
-            subtitle: Text(productInfo.parent0_Title),
+            leading: productInfo.image_url != ''
+                ? Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Image.network(productInfo.image_url))
+                : Icon(Icons.picture_in_picture),
+            title: Text(productInfo.barcode),
+            subtitle: Text('Цена: ${productInfo.price_sell}'),
           )
         ],
       ),
     );
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void _scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.minScrollExtent);
+    }
   }
 
   @override
@@ -420,10 +439,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   Widget build(BuildContext context) {
     print(selectedUser.name); // = users[0];
-    print(selectedMarket.name); //  = markets[0];
-    print(selectedDocumentType.name); //  = documentTypes[0];
-    print(
-        selectedProfile.name); //  = profiles[0]; //Profile.getDefaultProfile();
+    // print(selectedMarket.name); //  = markets[0];
+    // print(selectedDocumentType.name); //  = documentTypes[0];
+    // print(
+    //     selectedProfile.name); //  = profiles[0]; //Profile.getDefaultProfile();
     // print(selectedReport.name); //  = null;
 
     return Scaffold(
@@ -431,37 +450,131 @@ class _CatalogScreenState extends State<CatalogScreen> {
           key: _keyAppbar,
           appBarSearchTitle: addGoodsTitle2,
           onSelectedProductsAppBar: () => onSelectedProductsSearch()),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          addEnterSearchField2(context),
-
-          Row(
-              // padding: const EdgeInsets.symmetric(
-              //     horizontal: kDefaultPaddin, vertical: 0),
+      body: useGridView
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                addEnterSearchField2(context),
+
+                Row(
+                    // padding: const EdgeInsets.symmetric(
+                    //     horizontal: kDefaultPaddin, vertical: 0),
+                    children: [
+                      SizedBox(width: kDefaultPaddin),
+                      SizedBox(
+                        width: 250,
+                        child: buildDropDown(context),
+                        // child: DropdownButton(
+                        //     elevation: 0,
+                        //     isDense: true,
+                        //     isExpanded: true,
+                        //     //items: buildDropdownMenuItemsCategories(categories),
+                        //     items: buildDropdownMenuItemsCategories2(),
+                        //     style: Theme.of(context).textTheme.headline6!.copyWith(
+                        //         fontWeight: FontWeight.w500,
+                        //         color: kTextLightColor),
+                        //     value: selectedCategory,
+                        //     onChanged: (valueSelectedByUser) {
+                        //       setState(() {
+                        //         debugPrint('User selected $valueSelectedByUser');
+
+                        //         selectedCategory = valueSelectedByUser as Category;
+                        //         //saveSettingsHive(context);
+                        //       });
+                        //     })
+                      ),
+                      Container(
+                          child: Expanded(
+                              child: SizedBox(
+                                  // width: 165,
+                                  ))),
+                      Container(
+                        child: Center(
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.grid_view_outlined,
+                              size: 17,
+                            ),
+                            onPressed: () => {},
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: Center(
+                          child: IconButton(
+                            icon: Icon(Icons.list),
+                            onPressed: () => {},
+                          ),
+                        ),
+                      ),
+                    ]),
+
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //       horizontal: kDefaultPaddin, vertical: 10),
+                //   child: Text(
+                //     "Кулинария",
+                //     style: Theme.of(context)
+                //         .textTheme
+                //         .headline6!
+                //         .copyWith(fontWeight: FontWeight.bold),
+                //   ),
+                // ),
+                ProductChildCategoryWidget(),
+                // SingleChildScrollView(
+                //   controller: _scrollController,
+                //   child: ConstrainedBox(
+                //     constraints: BoxConstraints(maxHeight: 380),
+                //     child:
+
+                Expanded(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+                    child: GridView.builder(
+                        itemCount: products.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: kDefaultPaddin,
+                          crossAxisSpacing: kDefaultPaddin,
+                          childAspectRatio: 0.75,
+                        ),
+                        itemBuilder: (context, index) => ItemCard(
+                              product: products[index],
+                              // press: () => Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) => DetailsScreen(
+                              //         product: products[index],
+                              //       ),
+                              //     )),
+                              // longPress: () => products[index].check = false,
+
+                              doubleTap: () => {}, //Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) => MyHomePage(
+                              //         title: "we are back",
+                              //       ),
+                              //     )),
+                              vcbOnTap: () => _updateSelectedProductsTitle(),
+                              vcbOnlongPress: () =>
+                                  _updateSelectedProductsTitle(),
+                            )),
+                  ),
+                )
+
+                //  ),
+                //),
+              ],
+            )
+          : Column(children: [
+              addEnterSearchField2(context),
+              Row(children: [
                 SizedBox(width: kDefaultPaddin),
                 SizedBox(
                   width: 250,
                   child: buildDropDown(context),
-                  // child: DropdownButton(
-                  //     elevation: 0,
-                  //     isDense: true,
-                  //     isExpanded: true,
-                  //     //items: buildDropdownMenuItemsCategories(categories),
-                  //     items: buildDropdownMenuItemsCategories2(),
-                  //     style: Theme.of(context).textTheme.headline6!.copyWith(
-                  //         fontWeight: FontWeight.w500,
-                  //         color: kTextLightColor),
-                  //     value: selectedCategory,
-                  //     onChanged: (valueSelectedByUser) {
-                  //       setState(() {
-                  //         debugPrint('User selected $valueSelectedByUser');
-
-                  //         selectedCategory = valueSelectedByUser as Category;
-                  //         //saveSettingsHive(context);
-                  //       });
-                  //     })
                 ),
                 Container(
                     child: Expanded(
@@ -488,71 +601,134 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   ),
                 ),
               ]),
-
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: kDefaultPaddin, vertical: 10),
-          //   child: Text(
-          //     "Кулинария",
-          //     style: Theme.of(context)
-          //         .textTheme
-          //         .headline6!
-          //         .copyWith(fontWeight: FontWeight.bold),
-          //   ),
-          // ),
-          ProductChildCategoryWidget(),
-          // SingleChildScrollView(
-          //   controller: _scrollController,
-          //   child: ConstrainedBox(
-          //     constraints: BoxConstraints(maxHeight: 380),
-          //     child:
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
-              child: GridView.builder(
-                  itemCount: products.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: kDefaultPaddin,
-                    crossAxisSpacing: kDefaultPaddin,
-                    childAspectRatio: 0.75,
+              ProductChildCategoryWidget(),
+              Expanded(
+                child: SmartRefresher(
+                  footer: CustomFooter(
+                    builder: (BuildContext context, LoadStatus? mode) {
+                      Widget body;
+                      if (mode == LoadStatus.idle) {
+                        body = Text("Потяните вверх, чтобы загрузить еще...",
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontStyle: FontStyle.italic));
+                      } else if (mode == LoadStatus.loading) {
+                        body = Container();
+                      } else if (mode == LoadStatus.failed) {
+                        body = Text("Ошибка загрузки...");
+                      } else if (mode == LoadStatus.canLoading) {
+                        body = Text("Загрузить еще.", // "release to load more"
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontStyle: FontStyle.italic));
+                      } else {
+                        body = Text("Загрузка завершена.", // "No more Data"
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontStyle: FontStyle.italic));
+                      }
+                      return Container(
+                        height: 55.0,
+                        child: Center(child: body),
+                      );
+                    },
                   ),
-                  itemBuilder: (context, index) => ItemCard(
-                        product: products[index],
-                        // press: () => Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => DetailsScreen(
-                        //         product: products[index],
-                        //       ),
-                        //     )),
-                        // longPress: () => products[index].check = false,
-
-                        doubleTap: () => {}, //Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => MyHomePage(
-                        //         title: "we are back",
-                        //       ),
-                        //     )),
-                        vcbOnTap: () => _updateSelectedProductsTitle(),
-                        vcbOnlongPress: () => _updateSelectedProductsTitle(),
-                      )),
-            ),
-          ),
-          //  ),
-          //),
-        ],
-      ),
-      // floatingActionButton: _showBackToTopButton == true
-      //     ? null
-      //     : FloatingActionButton(
-      //         onPressed: _scrollToTop,
-      //         child: Icon(Icons.arrow_upward),
-      //       ),
+                  controller: _refreshController,
+                  enablePullUp: true,
+                  onRefresh: () async {
+                    final result = await getListOfProducts(isRefresh: true);
+                    if (result) {
+                      _refreshController.refreshCompleted();
+                    } else {
+                      _refreshController.refreshFailed();
+                    }
+                  },
+                  onLoading: () async {
+                    final result = await getListOfProducts();
+                    if (result) {
+                      _refreshController.loadComplete();
+                    } else {
+                      _refreshController.loadFailed();
+                    }
+                  },
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      final product = _products[index];
+                      return productInfoTile(product, index);
+                    },
+                    itemCount: _products.length,
+                    controller: _scrollController,
+                  ),
+                ),
+              ),
+            ]),
+      floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          shape: CircleBorder(),
+          //  childPadding: const EdgeInsets.symmetric(vertical: 5),
+          overlayOpacity: 0,
+          //childrenButtonSize: 60,
+          spacing: 6,
+          animationSpeed: 200, // openCloseDial: isDialOpen,
+          childPadding: EdgeInsets.all(5),
+          spaceBetweenChildren: 4,
+          //  icon: Icons.share,
+          backgroundColor: Colors.indigo[400],
+          children: [
+            SpeedDialChild(
+                //child: Icon(Icons.arrow_downward_sharp,
+                child: Icon(Icons.keyboard_arrow_down_outlined,
+                    color: Colors.indigo[400]),
+                // label: 'Social Network',
+                backgroundColor: Colors.white,
+                onTap: () {
+                  if (_scrollController.hasClients) {
+                    _scrollController
+                        .jumpTo(_scrollController.position.maxScrollExtent);
+                  }
+                }
+                //  foregroundColor: Colors.white70,
+                // onTap: () {/* Do someting */},
+                ),
+            SpeedDialChild(
+                child: Icon(Icons.keyboard_arrow_up_outlined,
+                    color: Colors.indigo[400]),
+                // label: 'Social Network',
+                backgroundColor: Colors.white,
+                onTap: () {
+                  if (_scrollController.hasClients) {
+                    _scrollController
+                        .jumpTo(_scrollController.position.minScrollExtent);
+                  }
+                }),
+            // SpeedDialChild(
+            //   child: Icon(Icons.chat),
+            //   label: 'Message',
+            //   backgroundColor: Colors.amberAccent,
+            //   onTap: () {/* Do something */},
+            // ),
+          ]),
     );
   }
 }
+
+//  : ListView.builder(
+//                     itemBuilder: (context, index) {
+//                       final product = _products[index];
+//                       return productInfoTile(product, index);
+//                       // return ListTile(
+//                       //   title: Text(document.number),
+//                       //   subtitle: Text(document.date),
+//                       //   trailing: Text(
+//                       //     document.editedDate,
+//                       //     style: TextStyle(color: Colors.green),
+//                       //   ),
+//                       // );
+//                     },
+//                     //  separatorBuilder: (context, index) => Divider(),
+//                     itemCount: _products.length,
+//                     controller: _scrollController,
+//                   ),
 
 class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(55);

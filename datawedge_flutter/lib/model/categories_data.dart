@@ -266,14 +266,14 @@ Future<bool> loadListOfProductCategories() async {
 class ListOfProducts {
   int lastElementId = 0;
   String lastElementTitle = '';
-  String firstElementId = '';
+  int firstElementId = 0;
   String firstElementTitle = '';
   String isOffsetPagination = 'false';
   String objectType = 'references-products';
   String sessionId = '';
   String filter = '';
   int size = 25;
-  String useCache = 'false';
+  int useCache = 0;
   List<ProductInfo> data = [];
   int totalElements = 0;
   int totalPages = 0;
@@ -344,31 +344,33 @@ class ProductInfo {
   String title = '';
   String createdDate = '';
   String editedDate = '';
-  int operationId = 1;
+  String image_url = '';
   int productsCount = 0;
-  String number = '';
-  String date = '';
+  String barcode = '';
+  String price_sell = '';
   String parent0_Title = '';
 
-  ProductInfo(
-      {required this.id,
-      required this.title,
-      required this.createdDate,
-      required this.editedDate,
-      required this.operationId,
-      required this.productsCount,
-      required this.number,
-      required this.date});
+  ProductInfo({
+    required this.id,
+    required this.title,
+    required this.createdDate,
+    required this.editedDate,
+    required this.image_url,
+    // required this.productsCount,
+    required this.barcode,
+    required this.price_sell,
+    required this.parent0_Title,
+  });
 
   ProductInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     createdDate = json['created_date'];
     editedDate = json['edited_date'];
-    operationId = json['operation_id'];
-    productsCount = json['products_count'];
-    number = json['number'];
-    date = json['date'];
+    image_url = json['image_url'];
+    //productsCount = json['products_count'];
+    barcode = json['barcode'];
+    price_sell = json['price_sell'];
     parent0_Title = json['parent0_title'];
   }
 
@@ -378,10 +380,10 @@ class ProductInfo {
     productInfo['title'] = this.title;
     productInfo['created_date'] = this.createdDate;
     productInfo['edited_date'] = this.editedDate;
-    productInfo['operation_id'] = this.operationId;
-    productInfo['products_count'] = this.productsCount;
-    productInfo['number'] = this.number;
-    productInfo['date'] = this.date;
+    productInfo['image_url'] = this.image_url;
+    //productInfo['products_count'] = this.productsCount;
+    productInfo['barcode'] = this.barcode;
+    productInfo['price_sell'] = this.price_sell;
     productInfo['parent0_title'] = this.parent0_Title;
 
     return productInfo;
