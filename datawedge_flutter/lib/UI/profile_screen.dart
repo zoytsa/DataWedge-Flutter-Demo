@@ -302,8 +302,8 @@ class _profilePageState extends State<profilePage> {
                   //buttonExit(context)
                 ])),
           ),
-          buttonExit(context),
-          SizedBox(height: 20),
+
+          //SizedBox(height: 20),
           // Container(
           //   padding: const EdgeInsets.only(right: 20.0),
           //   child: Padding(
@@ -516,6 +516,8 @@ class _profilePageState extends State<profilePage> {
                   )),
             ]),
           ),
+          SizedBox(height: 40),
+          buttonExit(context),
         ]))));
 
     // Container(child: addSaveSettingsButton(context)),

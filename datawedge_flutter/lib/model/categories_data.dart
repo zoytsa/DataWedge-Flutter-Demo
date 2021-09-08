@@ -240,7 +240,7 @@ class ProductChildCategory {
   }
 }
 
-Future<bool> loadListOfProductCategories() async {
+Future<bool> loadListOfProductCategories_unused() async {
   final with_children = 1;
 
   final Uri uri = Uri.parse(
@@ -250,7 +250,7 @@ Future<bool> loadListOfProductCategories() async {
 
   if (response.statusCode == 200) {
 //  var json = jsonDecode(utf8.decode(response.bodyBytes));
-    final result = listOfProductCategoriesFromJson(response.body);
+    final result = listOfProductCategoriesFromJsonBytes(response.bodyBytes);
 
 //if (isRefresh) {
     //  productCategories = result.data!;
@@ -345,7 +345,7 @@ class ProductInfo {
   String createdDate = '';
   String editedDate = '';
   String image_url = '';
-  int productsCount = 0;
+  String inner_extra_code = '';
   String barcode = '';
   String price_sell = '';
   String parent0_Title = '';
@@ -356,7 +356,7 @@ class ProductInfo {
     required this.createdDate,
     required this.editedDate,
     required this.image_url,
-    // required this.productsCount,
+    required this.inner_extra_code,
     required this.barcode,
     required this.price_sell,
     required this.parent0_Title,
@@ -368,7 +368,7 @@ class ProductInfo {
     createdDate = json['created_date'];
     editedDate = json['edited_date'];
     image_url = json['image_url'];
-    //productsCount = json['products_count'];
+    inner_extra_code = json['inner_extra_code'];
     barcode = json['barcode'];
     price_sell = json['price_sell'];
     parent0_Title = json['parent0_title'];
@@ -381,7 +381,7 @@ class ProductInfo {
     productInfo['created_date'] = this.createdDate;
     productInfo['edited_date'] = this.editedDate;
     productInfo['image_url'] = this.image_url;
-    //productInfo['products_count'] = this.productsCount;
+    productInfo['inner_extra_code'] = this.inner_extra_code;
     productInfo['barcode'] = this.barcode;
     productInfo['price_sell'] = this.price_sell;
     productInfo['parent0_title'] = this.parent0_Title;

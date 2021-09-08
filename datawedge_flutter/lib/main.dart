@@ -96,6 +96,7 @@ class MyApp extends StatelessWidget {
       title: 'DCT',
       //showSemanticsDebugger: true,
       //showPerformanceOverlay: true,
+
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           centerTitle: true,

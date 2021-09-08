@@ -357,7 +357,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ),
       ));
     }
-    print('items${items.length}');
+    //print('items${items.length}');
     return items;
   }
 
@@ -368,7 +368,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       );
     } else {
       return SizedBox(
-        width: 130,
+        // width: 110,
         child: DropdownButton<ProductCategory>(
           isExpanded: true,
           value: selectedProductCategory,
@@ -569,11 +569,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
               ],
             )
           : Column(children: [
-              addEnterSearchField2(context),
+              //   addEnterSearchField2(context),   ВРЕМЕННО!!!
               Row(children: [
                 SizedBox(width: kDefaultPaddin),
                 SizedBox(
-                  width: 250,
+                  width: 249,
                   child: buildDropDown(context),
                 ),
                 Container(
@@ -731,7 +731,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
 //                   ),
 
 class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
-  Size get preferredSize => const Size.fromHeight(55);
+  Size get preferredSize => const Size.fromHeight(40);
   //Function(List<Product>) onSelectedProductsAppBar;
   Function() onSelectedProductsAppBar;
 
@@ -755,7 +755,7 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
   }
 
   void _addNewGoodsFromSearch() {
-    print('go to items 1');
+    // print('go to items 1');
     // print(selectedProducts);
     //widget.onSelectedProductsAppBar(selectedProducts);
     widget.onSelectedProductsAppBar();
@@ -857,9 +857,9 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
             //padding: const EdgeInsets.only(right: 8),
             child: Container(
           margin: isDCT
-              ? EdgeInsets.only(top: 11, bottom: 11, left: 10, right: 10)
-              : EdgeInsets.all(8.5),
-          padding: EdgeInsets.all(isDCT ? 9.0 : 12),
+              ? EdgeInsets.only(top: 6, bottom: 6, left: 10, right: 10)
+              : EdgeInsets.all(6),
+          padding: EdgeInsets.only(left: 10, right: 10),
           decoration: BoxDecoration(
               gradient: LinearGradient(
                 // colors: [
@@ -887,13 +887,13 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
               },
               child: Row(children: [
                 // Icon(Icons.list, size: 14),
-                Icon(Icons.document_scanner_outlined, size: 14),
+                //  Icon(Icons.document_scanner_outlined, size: 11),
                 Text(
-                  "   В СПИСОК  ",
+                  " +  В СПИСОК ",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      fontSize: isDCT ? 12 : 13),
+                      fontSize: isDCT ? 10 : 10),
                 ),
               ])),
         ))
