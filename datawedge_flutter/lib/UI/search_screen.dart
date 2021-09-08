@@ -253,7 +253,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     padding: const EdgeInsets.all(2.0),
                     child: Image.network(productInfo.image_url))
                 : Icon(Icons.picture_in_picture),
-            title: Text(productInfo.barcode),
+            title: Text(
+                'Артикул: ${productInfo.inner_extra_code}, ШК: ${productInfo.barcode}'),
             subtitle: Text('Цена: ${productInfo.price_sell}'),
           )
         ],
