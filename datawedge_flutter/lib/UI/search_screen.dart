@@ -5,8 +5,10 @@ import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/UI/product_details_screen.dart';
 import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
+import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
 import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../model/constants.dart';
@@ -226,6 +228,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     child: Text('🔢 Добавить количество'),
                   ),
                   PopupMenuItem(
+                    value: 'remove_from_list',
+                    child: Text('❕ Отменить выбор'),
+                  ),
+                  PopupMenuItem(
                     value: 'report',
                     child: Text('📈 Отчет'),
                   ),
@@ -233,10 +239,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     value: 'find_in_list',
                     child: Text('📜 Найти в списке'),
                   ),
-                  PopupMenuItem(
-                    value: 'add_to_starred',
-                    child: Text('📌 Закрепить'),
-                  ),
+                  // PopupMenuItem(
+                  //   value: 'add_to_starred',
+                  //   child: Text('📌 Закрепить'),
+                  // ),
                   PopupMenuItem(
                     value: 'open',
                     child: Text('ℹ Подробно'),
@@ -244,7 +250,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 ];
               },
               onSelected: (String value) =>
-                  actionPopUpItemSelected(context, value),
+                  actionPopUpItemSelected(context, value, productInfo),
             ),
           ),
           ListTile(
@@ -777,8 +783,15 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
           SizedBox(
               width: 100,
               child: Container(
-                child: Text(widget.appBarSearchTitle, //title, // addGoodsTitle2
-                    style: TextStyle(fontSize: isDCT ? 12 : 13)),
+                child:
+                    BlocBuilder<SelectedProductsCubit, SelectedProductsState>(
+                  builder: (context, state) {
+                    return Text(
+                        //padding: const EdgeInsets.
+                        'Выбрано: ${selectedProducts2.length}',
+                        style: TextStyle(fontSize: isDCT ? 12 : 13));
+                  },
+                ),
               )),
 
           // ButtonBar(
@@ -1153,13 +1166,20 @@ void searchingGoods(String text) {
   print(selectedProducts);
 }
 
-void actionPopUpItemSelected(BuildContext context, String value) {
+void actionPopUpItemSelected(
+    BuildContext context, String value, ProductInfo productInfo) {
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   String message;
   if (value == 'add_to_list') {
+    BlocProvider.of<SelectedProductsCubit>(context)
+        .addProductToSelected2(productInfo);
     message = 'Товар выбран';
   } else if (value == 'add_quantity') {
     message = 'Введите количество товара';
+  } else if (value == 'remove_from_list') {
+    BlocProvider.of<SelectedProductsCubit>(context)
+        .removeProductFromSelected2(productInfo);
+    message = 'Удален из выбранных';
   } else if (value == 'report') {
     message = 'Отчеты с отбором по товару';
   } else if (value == 'find_in_list') {
