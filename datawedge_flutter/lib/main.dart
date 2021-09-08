@@ -10,6 +10,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'model/constants.dart';
 import 'presentation/cubit/profile_cubit.dart';
+import 'presentation/cubit/selected_products_cubit.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +20,15 @@ Future main() async {
   Hive.registerAdapter(SettingsAdapter());
   await Hive.openBox<Settings>('settings');
 
-  runApp(BlocProvider(
-    create: (context) => ProfileCubit(),
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(
+        create: (context) => ProfileCubit(),
+      ),
+      BlocProvider(
+        create: (context) => SelectedProductsCubit(),
+      ),
+    ],
     child: MyApp(),
   ));
 }
