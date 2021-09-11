@@ -40,8 +40,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
       _currentPage = 1;
       _lastElementId = "";
     } else {
-      if (_currentPage >= _totalPages ||
-          _lastElementId.compareTo(_maxElementId) == 1) {
+      if (_lastElementId.compareTo(_maxElementId) == 1) {
         // ???!!! str1.compareTo(str2) ==1
         _refreshController.loadNoData();
         return false;

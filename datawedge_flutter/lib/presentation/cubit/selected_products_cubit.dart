@@ -35,4 +35,11 @@ class SelectedProductsCubit extends Cubit<SelectedProductsState> {
       selectedProducts: selectedProducts2,
     ));
   }
+
+  clearProductsSelected() {
+    selectedProducts2.clear();
+    emit(SelectedProductsState(
+      selectedProducts: selectedProducts2,
+    ));
+  }
 }

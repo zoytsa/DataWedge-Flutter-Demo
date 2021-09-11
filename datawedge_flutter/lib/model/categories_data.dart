@@ -186,6 +186,7 @@ class ProductChildCategory {
   String? category0Title;
   bool? inactive;
   String? category0InnerGuid;
+  int? total_elements;
 
   ProductChildCategory(
       {this.id,
@@ -201,7 +202,8 @@ class ProductChildCategory {
       this.dateKey,
       this.category0Title,
       this.inactive,
-      this.category0InnerGuid});
+      this.category0InnerGuid,
+      this.total_elements});
 
   ProductChildCategory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -218,6 +220,7 @@ class ProductChildCategory {
     category0Title = json['category0_title'];
     inactive = json['inactive'];
     category0InnerGuid = json['category0_inner_guid'];
+    total_elements = json['total_elements'];
   }
 
   Map<String, dynamic> toJson() {
@@ -236,6 +239,7 @@ class ProductChildCategory {
     data['category0_title'] = this.category0Title;
     data['inactive'] = this.inactive;
     data['category0_inner_guid'] = this.category0InnerGuid;
+    data['total_elements'] = this.total_elements;
     return data;
   }
 }
@@ -349,18 +353,20 @@ class ProductInfo {
   String barcode = '';
   String price_sell = '';
   String parent0_Title = '';
+  bool isSelected = false;
 
-  ProductInfo({
-    required this.id,
-    required this.title,
-    required this.createdDate,
-    required this.editedDate,
-    required this.image_url,
-    required this.inner_extra_code,
-    required this.barcode,
-    required this.price_sell,
-    required this.parent0_Title,
-  });
+  ProductInfo(
+      {required this.id,
+      required this.title,
+      required this.createdDate,
+      required this.editedDate,
+      required this.image_url,
+      required this.inner_extra_code,
+      required this.barcode,
+      required this.price_sell,
+      required this.parent0_Title
+//    required this.isSelected,
+      });
 
   ProductInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];

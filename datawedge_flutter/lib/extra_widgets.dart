@@ -1,4 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import 'UI/search_screen.dart';
+import 'model/categories_data.dart';
+import 'model/constants.dart';
+import 'model/palette.dart';
 
 class GradientIcon extends StatelessWidget {
   GradientIcon(
