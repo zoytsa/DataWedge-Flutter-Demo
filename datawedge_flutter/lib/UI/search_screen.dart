@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../extra_widgets.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
@@ -224,9 +225,32 @@ class _CatalogScreenState extends State<CatalogScreen> {
     return GestureDetector(
       onHorizontalDragEnd: (DragEndDetails details) {
         if (details.primaryVelocity! > 0) {
-          print('User swiped Right');
+          //   print('User swiped Left');
+          if (selectedProductCategory!.children!.length > 0 &&
+              selectedProductChildCategoryIndex > 0) {
+            selectedProductChildCategoryIndex--;
+            selectedProductChildCategory = selectedProductCategory!
+                .children![selectedProductChildCategoryIndex];
+
+            _refreshBodyOnSelectedProductCategory();
+            BlocProvider.of<SelectedProductsCubit>(context)
+                .selectedProductChildCategoryChanged(
+                    selectedProductChildCategoryIndex);
+          }
         } else if (details.primaryVelocity! < 0) {
-          print('User swiped Left');
+          //   print('User swiped Right');
+          if (selectedProductCategory!.children!.length > 0 &&
+              selectedProductChildCategoryIndex <
+                  (selectedProductCategory!.children!.length - 1)) {
+            selectedProductChildCategoryIndex++;
+            selectedProductChildCategory = selectedProductCategory!
+                .children![selectedProductChildCategoryIndex];
+
+            _refreshBodyOnSelectedProductCategory();
+            BlocProvider.of<SelectedProductsCubit>(context)
+                .selectedProductChildCategoryChanged(
+                    selectedProductChildCategoryIndex);
+          }
         }
       },
       onTap: () {
@@ -547,10 +571,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
               if (selectedProductCategory!.children!.length > 0) {
                 productChildCategories = selectedProductCategory!.children!;
                 selectedProductChildCategory = productChildCategories[0];
-                selectedChildCategoryIndex = 0;
+                selectedProductChildCategoryIndex = 0;
               }
             });
-            _refreshBodyOnSelectedProduct();
+            _refreshBodyOnSelectedProductCategory();
           },
           items: getItems(),
           // items: [],
@@ -578,7 +602,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     addGoodsTitle2 = "Выбрано: " + selectedProducts.length.toString();
     //});
     // _keyAppbar.currentState!.title = addGoodsTitle2;
-    _keyAppbar.currentState!.widget.appBarSearchTitle = addGoodsTitle2;
+    //_keyAppbar.currentState!.widget.appBarSearchTitle = addGoodsTitle2;
     _keyAppbar.currentState!.updateAppbarWidget();
   }
 
@@ -596,20 +620,20 @@ class _CatalogScreenState extends State<CatalogScreen> {
     //   _keyAppbar.currentState!.updateAppbarWidget();
   }
 
-  Future<void> _refreshBodyOnSelectedProduct() async {
+  Future<void> _refreshBodyOnSelectedProductCategory() async {
     // print('refreshing body');
     //  async {
     final result = await getListOfProducts(isRefresh: true);
     if (result) {
       _refreshController.refreshCompleted();
       BlocProvider.of<SelectedProductsCubit>(context).clearProductsSelected();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green[200],
-          // behavior: SnackBarBehavior.floating,
-          content: Text('Список товаров обновлен!'),
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: Colors.green[200],
+      //     // behavior: SnackBarBehavior.floating,
+      //     content: Text('Список товаров обновлен!'),
+      //   ),
+      // );
     } else {
       _refreshController.refreshFailed();
     }
@@ -702,7 +726,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   // ),
                   ProductChildCategoryWidget(
                       onSelectedChildCategory: () =>
-                          _refreshBodyOnSelectedProduct()),
+                          _refreshBodyOnSelectedProductCategory()),
                   // SingleChildScrollView(
                   //   controller: _scrollController,
                   //   child: ConstrainedBox(
@@ -814,7 +838,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     flexibleSpace: Column(children: [
                       ProductChildCategoryWidget(
                           onSelectedChildCategory: () =>
-                              _refreshBodyOnSelectedProduct()),
+                              _refreshBodyOnSelectedProductCategory()),
                     ])),
                 SliverFillRemaining(
                   child: SmartRefresher(
@@ -955,7 +979,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
 class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(40);
   //Function(List<Product>) onSelectedProductsAppBar;
-  Function() onSelectedProductsAppBar;
+  final Function() onSelectedProductsAppBar;
 
   //const AppBarSearchWidget({Key? key, required this.appBarSearchTitle})
   AppBarSearchWidget(
@@ -964,7 +988,7 @@ class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
       required this.onSelectedProductsAppBar})
       : super(key: key);
 
-  String appBarSearchTitle;
+  final String appBarSearchTitle;
   @override
   _AppBarSearchWidgetState createState() => _AppBarSearchWidgetState();
 
@@ -999,6 +1023,9 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 child: Container(
                   child:
                       BlocBuilder<SelectedProductsCubit, SelectedProductsState>(
+                    buildWhen: (previous, current) =>
+                        previous.selectedProducts.length !=
+                        current.selectedProducts.length,
                     builder: (context, state) {
                       return
                           // Text(
@@ -1207,24 +1234,49 @@ class ProductChildCategoryWidget extends StatefulWidget {
 class _ProductChildCategoryWidgetState
     extends State<ProductChildCategoryWidget> {
   //List<String> categories = ["Hand bag", "Jewellery", "Footwear", "Dresses"];
-
+  final ItemScrollController _scrollControllerChildCategory =
+      ItemScrollController();
   void _refreshBodyOnChildCategorySelected() {
     widget.onSelectedChildCategory();
   }
 
+  Future _scrollToPosition(_index) async {
+    // if (_scrollControllerChildCategory.hasClients) {
+    //   _scrollControllerChildCategory.animateTo(
+    //       _scrollControllerChildCategory.position.minScrollExtent,
+    //       duration: Duration(milliseconds: 1000),
+    //       curve: Curves.ease);
+    // }
+    _scrollControllerChildCategory.scrollTo(
+      index: _index,
+      alignment: 0.2,
+      duration: Duration(milliseconds: 1200),
+    );
+  }
+
   // By default our first item will be selected
-  //int selectedChildCategoryIndex = 0;
+  //int selectedProductChildCategoryIndex = 0;
   //var _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 2),
-      child: SizedBox(
-        height: 30,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: productChildCategories.length,
-          itemBuilder: (context, index) => buildCategory(index),
+    return BlocListener<SelectedProductsCubit, SelectedProductsState>(
+      listenWhen: (previous, current) {
+        return previous.selectedProductChildCategoryIndex !=
+            current.selectedProductChildCategoryIndex;
+      },
+      listener: (context, state) {
+        _scrollToPosition(state.selectedProductChildCategoryIndex);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 2),
+        child: SizedBox(
+          height: 30,
+          child: ScrollablePositionedList.builder(
+            itemScrollController: _scrollControllerChildCategory,
+            scrollDirection: Axis.horizontal,
+            itemCount: productChildCategories.length,
+            itemBuilder: (context, index) => buildCategory(index),
+          ),
         ),
       ),
     );
@@ -1234,13 +1286,13 @@ class _ProductChildCategoryWidgetState
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedChildCategoryIndex = index;
+          selectedProductChildCategoryIndex = index;
           selectedProductChildCategory = productChildCategories[index];
         });
         _refreshBodyOnChildCategorySelected();
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -1260,10 +1312,11 @@ class _ProductChildCategoryWidgetState
               child: Text(
                 '${productChildCategories[index].title!} (${productChildCategories[index].total_elements.toString()})',
                 style: TextStyle(
+                  fontSize: 13,
                   fontWeight: productChildCategories[index].level == 1
                       ? FontWeight.bold
                       : FontWeight.normal,
-                  color: selectedChildCategoryIndex == index
+                  color: selectedProductChildCategoryIndex == index
                       ? Colors.white70
                       : kTextLightColor,
                 ),
@@ -1273,7 +1326,7 @@ class _ProductChildCategoryWidgetState
               margin: EdgeInsets.only(top: kDefaultPaddin / 4), //top padding 5
               height: 2,
               width: 45,
-              color: selectedChildCategoryIndex == index
+              color: selectedProductChildCategoryIndex == index
                   ? Colors.white70
                   : Colors.transparent,
             )

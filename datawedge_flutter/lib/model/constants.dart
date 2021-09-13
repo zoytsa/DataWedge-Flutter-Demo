@@ -11,7 +11,7 @@ var enteredSearchString = "";
 List<Product> selectedProducts = [];
 ProductCategory? selectedProductCategory;
 ProductChildCategory? selectedProductChildCategory;
-int selectedChildCategoryIndex = 0;
+int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
 
 // view

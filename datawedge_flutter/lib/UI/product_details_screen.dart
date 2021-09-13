@@ -2,6 +2,7 @@ import 'package:datawedgeflutter/model/categories_data.dart';
 //import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'package:google_fonts/google_fonts.dart';
 
@@ -25,9 +26,11 @@ class ProductDeatailsPage extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+    //  final isDCT = MediaQuery.of(context).size.height < 600;
     return Scaffold(
-      backgroundColor: Palette.facebookColor,
-      //backgroundColor: Colors.indigo,
+      // backgroundColor: Palette.facebookColor,
+      //backgroundColor: Palette.textColor1,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 40,
         // preferredSize:30,
@@ -109,7 +112,7 @@ class ProductContent extends StatelessWidget {
   final ProductInfo product;
 
   Widget buildProductInfoLine(
-      BuildContext context, String _text, _color, double _size) {
+      String _text, _color, double _size, FontWeight _fontWeight) {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 4.0,
@@ -119,7 +122,64 @@ class ProductContent extends StatelessWidget {
         _text,
         style: TextStyle(
           fontSize: _size,
-          color: _color, //Colors.white,
+          color: _color,
+          fontWeight: _fontWeight, //Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget buildProductInfoLineStandart(
+      String _header, String _text, bool isDCT, FontWeight _textFontWeight) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 4.0,
+            horizontal: 30.0,
+          ),
+          child: RichText(
+            text: TextSpan(
+              text: _header,
+              style: TextStyle(
+                  //fontSize: isDCT ? 13 : 15, color: Palette.textColor1),
+                  fontSize: isDCT ? 13 : 15,
+                  color: Colors.grey),
+              //color: Colors.grey),
+              children: <TextSpan>[
+                TextSpan(
+                  text: _text,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: _textFontWeight), //Colors.black,
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget buildHeader(String _text) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          radius: 5,
+          //  colors: [Palette.orange, Palette.darkOrange, Palette.darkGrey],
+          colors: [Colors.grey, Colors.grey, Palette.facebookColor],
+          stops: const [0, 0.4, 1.0],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            _text,
+            style: GoogleFonts.inconsolata(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -127,46 +187,26 @@ class ProductContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDCT = MediaQuery.of(context).size.height < 600;
     return Column(
       children: [
-        buildProductInfoLine(
-            context, 'Штрихкод: ${product.barcode}', Colors.white, 16),
-        buildProductInfoLine(
-            context, 'Артикул: ${product.inner_extra_code}', Colors.green, 18),
-        buildProductInfoLine(
-            context, 'Цена продажи: ${product.price_sell}', Colors.white, 16),
-        buildProductInfoLine(
-            context, 'Выбран: ${product.isSelected}', Colors.white, 16),
-        buildProductInfoLine(
-            context, 'Категория: ${product.category0_title}', Colors.white, 16),
-        buildProductInfoLine(context,
-            'Группа товаров: ${product.parent0_Title}', Colors.white, 16),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              radius: 5,
-              //  colors: [Palette.orange, Palette.darkOrange, Palette.darkGrey],
-              colors: [Colors.grey, Colors.grey, Palette.facebookColor],
-              stops: const [0, 0.4, 1.0],
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Text(
-                'АНАЛИТИКА',
-                style: GoogleFonts.inconsolata(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
+        buildProductInfoLineStandart(
+            'Наименование: ', '${product.title}', isDCT, FontWeight.bold),
+        buildProductInfoLine('Артикул: ${product.inner_extra_code}',
+            Colors.green, 18, FontWeight.bold),
+        buildProductInfoLineStandart(
+            'Штрихкод: ', '${product.barcode}', isDCT, FontWeight.normal),
+        buildProductInfoLineStandart('Цена продажи: ', '${product.price_sell}',
+            isDCT, FontWeight.normal),
+        buildProductInfoLineStandart(
+            'Выбран: ', '${product.isSelected}', isDCT, FontWeight.normal),
+        buildProductInfoLineStandart('Категория: ',
+            '${product.category0_title}', isDCT, FontWeight.normal),
+        buildProductInfoLineStandart('Группа товаров: ',
+            '${product.parent0_Title}', isDCT, FontWeight.normal),
+        buildHeader('АНАЛИТИКА'),
+        buildProductInfoLineStandart(
+            'Отчетсность: ',
             """Движения по складу...
 Последние документы с данным товаром.
 Остатки по складам.
@@ -185,17 +225,13 @@ class ProductContent extends StatelessWidget {
 Последние документы с данным товаром.
 Остатки по складам.
 """,
-            style: TextStyle(
-              fontSize: 16.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
+            isDCT,
+            FontWeight.normal),
         buildProductInfoLine(
-            context,
             'Дата внесения информации о товаре в базу данных: ${product.createdDate}',
             Colors.grey,
-            12),
+            12,
+            FontWeight.normal),
       ],
     );
   }

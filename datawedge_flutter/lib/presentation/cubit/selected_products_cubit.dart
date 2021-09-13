@@ -8,23 +8,21 @@ part 'selected_products_state.dart';
 
 class SelectedProductsCubit extends Cubit<SelectedProductsState> {
   SelectedProductsCubit()
-      : super(SelectedProductsState(selectedProducts: selectedProducts2));
+      : super(SelectedProductsState(
+            selectedProducts2, selectedProductChildCategoryIndex));
 
   void updateSelectedProductsState(_selectedProducts2) =>
       emit(SelectedProductsState(
-        selectedProducts: _selectedProducts2,
-      ));
+          _selectedProducts2, state.selectedProductChildCategoryIndex));
 
   addProductToSelected2(ProductInfo product) {
     ProductInfo? result = selectedProducts2
         .firstWhereOrNull((element) => element.id == product.id);
-    //print('called addProductToSelected');
 
     if (result == null) {
       selectedProducts2.add(product);
       emit(SelectedProductsState(
-        selectedProducts: selectedProducts2,
-      ));
+          selectedProducts2, state.selectedProductChildCategoryIndex));
     }
     ;
   }
@@ -32,14 +30,17 @@ class SelectedProductsCubit extends Cubit<SelectedProductsState> {
   removeProductFromSelected2(ProductInfo product) {
     selectedProducts2.remove(product);
     emit(SelectedProductsState(
-      selectedProducts: selectedProducts2,
-    ));
+        selectedProducts2, state.selectedProductChildCategoryIndex));
   }
 
   clearProductsSelected() {
     selectedProducts2.clear();
     emit(SelectedProductsState(
-      selectedProducts: selectedProducts2,
-    ));
+        selectedProducts2, state.selectedProductChildCategoryIndex));
+  }
+
+  selectedProductChildCategoryChanged(_selectedProductChildCategoryIndex) {
+    emit(SelectedProductsState(
+        state.selectedProducts, _selectedProductChildCategoryIndex));
   }
 }
