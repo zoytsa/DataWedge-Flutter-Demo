@@ -222,6 +222,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
   Widget productInfoTile(ProductInfo productInfo, int index, bool isDCT) {
     // print('builded ${productInfo.title}');
     return GestureDetector(
+      onHorizontalDragEnd: (DragEndDetails details) {
+        if (details.primaryVelocity! > 0) {
+          print('User swiped Right');
+        } else if (details.primaryVelocity! < 0) {
+          print('User swiped Left');
+        }
+      },
       onTap: () {
         if (productInfo.image_url != '') {
           Navigator.of(context).push(
