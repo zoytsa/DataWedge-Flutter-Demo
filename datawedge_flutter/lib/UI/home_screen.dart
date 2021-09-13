@@ -1234,7 +1234,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: Container(
         //margin: EdgeInsets.all(1.0),
-        padding: EdgeInsets.all(10.0),
+        padding: EdgeInsets.all(8.0),
 
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -1249,7 +1249,7 @@ class _MyHomePageState extends State<MyHomePage> {
               begin: Alignment.bottomRight,
               //end: Alignment.topLeft,
             ),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                   color: Colors.black.withOpacity(.15),

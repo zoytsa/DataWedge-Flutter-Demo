@@ -1,10 +1,6 @@
-import 'dart:math';
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
-import 'UI/search_screen.dart';
-import 'model/categories_data.dart';
-import 'model/constants.dart';
 import 'model/palette.dart';
 
 class GradientIcon extends StatelessWidget {
@@ -78,4 +74,130 @@ class TabBarWidget extends StatelessWidget {
           body: TabBarView(children: children),
         ),
       );
+}
+
+/// {@template hero_dialog_route}
+/// Custom [PageRoute] that creates an overlay dialog (popup effect).
+///
+/// Best used with a [Hero] animation.
+/// {@endtemplate}
+class HeroDialogRoute<T> extends PageRoute<T> {
+  /// {@macro hero_dialog_route}
+  HeroDialogRoute({
+    WidgetBuilder? builder,
+    RouteSettings? settings,
+    bool fullscreenDialog = false,
+  })  : _builder = builder!,
+        super(settings: settings, fullscreenDialog: fullscreenDialog);
+
+  final WidgetBuilder _builder;
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Color get barrierColor => Colors.black54;
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return child;
+  }
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return _builder(context);
+  }
+
+  @override
+  String get barrierLabel => 'Popup dialog open';
+}
+
+/// {@template custom_rect_tween}
+/// Linear RectTween with a [Curves.easeOut] curve.
+///
+/// Less dramatic that the regular [RectTween] used in [Hero] animations.
+/// {@endtemplate}
+class CustomRectTween extends RectTween {
+  /// {@macro custom_rect_tween}
+  CustomRectTween({
+    Rect? begin,
+    Rect? end,
+  }) : super(begin: begin, end: end);
+
+  @override
+  Rect lerp(double t) {
+    double elasticCurveValue = Curves.easeOut.transform(t);
+    return Rect.fromLTRB(
+      lerpDouble(begin!.left, end!.left, elasticCurveValue)!,
+      lerpDouble(begin!.top, end!.top, elasticCurveValue)!,
+      lerpDouble(begin!.right, end!.right, elasticCurveValue)!,
+      lerpDouble(begin!.bottom, end!.bottom, elasticCurveValue)!,
+    );
+  }
+}
+
+/// {@template todo_popup_card}
+/// Popup card to expand the content of a [Todo] card.
+///
+/// Activated from [_TodoCard].
+/// {@endtemplate}
+class PopupImageCard extends StatelessWidget {
+  const PopupImageCard({Key? key, this.image_url, this.title})
+      : super(key: key);
+  final String? image_url;
+  final String? title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Hero(
+      tag: image_url!,
+      createRectTween: (begin, end) {
+        return CustomRectTween(begin: begin, end: end);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(16),
+          color: Palette.facebookColor.withOpacity(0.7),
+          child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(title!,
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black12,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Image.network(image_url!,
+                          width: 320, height: 320, fit: BoxFit.scaleDown),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -25,14 +25,15 @@ dependencies:
   webview_flutter: ^2.0.10
   flutter_webview_plugin: ^0.4.0
   flutter_barcode_scanner: ^2.0.0
+  google_fonts:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   #cupertino_icons: ^0.1.3
   async:
-  http: ^0.13.3
+  http: #^0.13.3
   utf: 0.9.0+5
-  
+
   # hive database
   hive: ^2.0.3
   hive_flutter: ^1.0.0
@@ -42,20 +43,20 @@ dependencies:
   flutter_bloc: ^7.2.0
   #flutter_launcher_icons: ^0.9.0
   #flutter_native_splash: ^1.2.0
-  
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
+    sdk:
+      flutter
 
-     # hive database generators
+      # hive database generators
   build_runner: ^1.12.2
   hive_generator: ^1.0.1
 
- # flutter_icon:
- #   image_path: "images/playstore.png"
- #   android: true
- #   ios: false
+  # flutter_icon:
+  #   image_path: "images/playstore.png"
+  #   android: true
+  #   ios: false
 
 flutter_icons:
   android: "launcher_icon"
@@ -64,18 +65,17 @@ flutter_icons:
   adaptive_icon_background: "images/playstore_back.png"
   adaptive_icon_foreground: "images/playstore2.png"
 #flutter_native_splash:
- # android: true
-  #background_image: "images/background_qr.jpg"
-  #image: images/background_qr.jpg
-  #android_gravity: center 
+# android: true
+#background_image: "images/background_qr.jpg"
+#image: images/background_qr.jpg
+#android_gravity: center
 #  color: “42a5f5”
- # android_disable_fullscreen: true
+# android_disable_fullscreen: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

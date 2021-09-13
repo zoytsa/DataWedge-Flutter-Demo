@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:datawedgeflutter/UI/product_details_screen.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
-import 'package:datawedgeflutter/UI/product_details_screen.dart';
+import 'package:datawedgeflutter/UI/product_details_screen_unused.dart';
 import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
@@ -218,10 +219,29 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
   }
 
-  Widget productInfoTile(ProductInfo productInfo, int index) {
+  Widget productInfoTile(ProductInfo productInfo, int index, bool isDCT) {
     // print('builded ${productInfo.title}');
     return GestureDetector(
       onTap: () {
+        if (productInfo.image_url != '') {
+          Navigator.of(context).push(
+            HeroDialogRoute(
+              builder: (context) => Center(
+                child: PopupImageCard(
+                    image_url: productInfo.image_url, title: productInfo.title),
+              ),
+            ),
+          );
+        }
+      },
+      onLongPress: () => {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDeatailsPage(product: productInfo),
+            ))
+      },
+      onDoubleTap: () {
         setState(() {
           productInfo.isSelected = !productInfo.isSelected;
 
@@ -239,12 +259,34 @@ class _CatalogScreenState extends State<CatalogScreen> {
             Container(
               decoration: new BoxDecoration(
                   color: productInfo.isSelected
-                      ? Colors.green.withOpacity(0.5)
+                      //? Colors.blue.withOpacity(0.4)
+                      //? Palette.facebookColor.withOpacity(0.55)
+                      //? Palette.blue.withOpacity(0.45)
+                      ? Palette.lightBlue.withOpacity(0.6)
                       : null),
               child: ListTile(
                   // backgroundColor: Colors.Green,
                   title: Text('${index + 1}) ${productInfo.title}'),
-                  subtitle: Text('Группа: ${productInfo.parent0_Title}'),
+                  //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
+
+                  subtitle: RichText(
+                    text: TextSpan(
+                      text: 'Артикул: ',
+                      style: TextStyle(
+                          fontSize: isDCT ? 12 : 13,
+                          color: productInfo.isSelected
+                              ? Colors.black54
+                              : Palette.textColor1),
+                      //color: Colors.grey),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: productInfo.inner_extra_code,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green)),
+                      ],
+                    ),
+                  ),
                   trailing: PopupMenuButton(
                       icon: Icon(Icons.more_vert, color: Colors.indigo),
                       itemBuilder: productInfo.isSelected
@@ -263,10 +305,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                   value: 'add_quantity',
                                   child: Text('🔢 Добавить количество'),
                                 ),
+                                // PopupMenuItem(
+                                //   value: 'report',
+                                //   child: Text('📈 Отчет'),
+
+                                // ),
+
                                 PopupMenuItem(
-                                  value: 'report',
-                                  child: Text('📈 Отчет'),
+                                  value: 'photo',
+                                  child: Text('📷 Фото'),
                                 ),
+
                                 PopupMenuItem(
                                   value: 'find_in_list',
                                   child: Text('📜 Найти в списке'),
@@ -296,9 +345,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                 //   child: Text('❕ Отменить выбор'),
                                 // ),
                                 PopupMenuItem(
-                                  value: 'report',
-                                  child: Text('📈 Отчет'),
+                                  value: 'photo',
+                                  child: Text('📷 Фото'),
                                 ),
+                                //    PopupMenuItem(
+                                //   value: 'report',
+                                //   child: Text('📈 Отчет'),
+                                // ),
                                 PopupMenuItem(
                                   value: 'find_in_list',
                                   child: Text('📜 Найти в списке'),
@@ -331,7 +384,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
             Container(
               decoration: new BoxDecoration(
                   color: productInfo.isSelected
-                      ? Colors.green.withOpacity(0.5)
+                      // ? Colors.blue.withOpacity(0.4)
+                      //? Palette.facebookColor.withOpacity(0.55)
+                      //? Palette.blue.withOpacity(0.45)
+                      ? Palette.lightBlue.withOpacity(0.6)
                       : null),
               child: ListTile(
                 leading: productInfo.image_url != ''
@@ -543,6 +599,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green[200],
+          // behavior: SnackBarBehavior.floating,
           content: Text('Список товаров обновлен!'),
         ),
       );
@@ -812,10 +869,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         final product = _products[index];
-                        return productInfoTile(product, index);
+                        return productInfoTile(product, index, isDCT);
                       },
                       itemCount: _products.length,
                       controller: _scrollController,
+                      physics: BouncingScrollPhysics(),
                     ),
                   ),
                 ),
@@ -928,76 +986,38 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
       title: Column(children: [
         Container(
           //padding: const EdgeInsets.only(right: 0),
-          child: Row(children: [
-            // Align(
-            //     alignment: Alignment.topLeft,
+          child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             SizedBox(
-                width: 100,
+                width: 131,
                 child: Container(
                   child:
                       BlocBuilder<SelectedProductsCubit, SelectedProductsState>(
                     builder: (context, state) {
-                      return Text(
-                          //padding: const EdgeInsets.
-                          'Выбрано: ${selectedProducts2.length}',
-                          style: TextStyle(fontSize: isDCT ? 12 : 13));
+                      return
+                          // Text(
+                          //     //padding: const EdgeInsets.
+                          //     'Выбрано товаров: ${selectedProducts2.length}',
+                          //     style: TextStyle(fontSize: isDCT ? 12 : 13));
+
+                          RichText(
+                        text: TextSpan(
+                          text: 'Выбрано товаров: ',
+                          style: TextStyle(
+                              fontSize: isDCT ? 12 : 13,
+                              color: Palette.textColor1),
+                          //color: Colors.grey),
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: selectedProducts2.length.toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 )),
-
-            // ButtonBar(
-            //     // onTapDown: (TapDownDetails) {
-            //     //   _addNewGoodsFromSearch();
-            //     children: [
-            //       // Text(
-            //       //   " +  В СПИСОК ",
-            //       //   style: TextStyle(fontSize: 13),
-            //       // )
-            //     ]),
-
-            // // Align(
-            // //   alignment: Alignment.topRight,
-            // Container(
-            //   //margin: EdgeInsets.all(1.0),
-            //   padding: EdgeInsets.all(isDCT ? 6.0 : 8),
-
-            //   decoration: BoxDecoration(
-            //       gradient: LinearGradient(
-            //         // colors: [
-            //         //   Colors.green,
-            //         //   Colors.tealAccent,
-            //         //   Colors.green,
-            //         //   Colors.black54
-            //         // ],
-            //         // colors: [Colors.black87, Colors.green],
-            //         colors: [Colors.green, Colors.lightGreen],
-            //         begin: Alignment.bottomRight,
-            //         //end: Alignment.topLeft,
-            //       ),
-            //       borderRadius: BorderRadius.circular(8),
-            //       boxShadow: [
-            //         BoxShadow(
-            //             color: Colors.black.withOpacity(.3),
-            //             spreadRadius: 1,
-            //             blurRadius: 2,
-            //             offset: Offset(0, 1))
-            //       ]),
-            //   child:
-            //       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            //     // Icon(
-            //     //   Icons.turned_in_not_outlined,
-            //     //   color: Colors.white,
-            //     // ),
-            //     // GestureDetector(
-            //     //   onTapDown: (TapDownDetails) {
-            //     //     _addNewGoodsFromSearch();
-            //     // Text(
-            //     //   " +  В СПИСОК ",
-            //     //   style: TextStyle(fontSize: 13),
-            //     // ),
-            //     // },
-            //   ]),
-            // ),
           ]),
           //SizedBox(width: 10)
         ),
@@ -1040,7 +1060,7 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 begin: Alignment.bottomRight,
                 //end: Alignment.topLeft,
               ),
-              borderRadius: BorderRadius.circular(isDCT ? 8 : 8),
+              borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withOpacity(.3),
@@ -1056,7 +1076,7 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 // Icon(Icons.list, size: 14),
                 //  Icon(Icons.document_scanner_outlined, size: 11),
                 Text(
-                  " +  В СПИСОК ",
+                  " +   В СПИСОК  ",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -1443,21 +1463,38 @@ void actionPopUpItemSelected(
         .removeProductFromSelected2(productInfo);
     message = 'Удален из выбранных';
     productInfo.isSelected = false;
-  } else if (value == 'report') {
-    message = 'Отчеты с отбором по товару';
+  } else if (value == 'photo') {
+    message = 'Фото товара';
+
+    if (productInfo.image_url != '') {
+      Navigator.of(context).push(
+        HeroDialogRoute(
+          builder: (context) => Center(
+            child: PopupImageCard(
+                image_url: productInfo.image_url, title: productInfo.title),
+          ),
+        ),
+      );
+    }
   } else if (value == 'find_in_list') {
     message = 'Товар найден в списке!';
   } else if (value == 'add_to_starred') {
     message = 'Товар закреплен!';
   } else if (value == 'open') {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDeatailsPage(product: productInfo),
+        ));
+
     message = 'Карточка товара.';
   } else {
     message = 'Нет действий!';
   }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: Colors.deepOrange[100],
-      content: Text(message),
-    ),
-  );
+  // ScaffoldMessenger.of(context).showSnackBar(
+  //   SnackBar(
+  //     backgroundColor: Colors.deepOrange[100],
+  //     content: Text(message),
+  //   ),
+  //);
 }

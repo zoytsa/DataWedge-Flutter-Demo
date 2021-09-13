@@ -353,6 +353,7 @@ class ProductInfo {
   String barcode = '';
   String price_sell = '';
   String parent0_Title = '';
+  String category0_title = '';
   bool isSelected = false;
 
   ProductInfo(
@@ -364,7 +365,8 @@ class ProductInfo {
       required this.inner_extra_code,
       required this.barcode,
       required this.price_sell,
-      required this.parent0_Title
+      required this.parent0_Title,
+      required this.category0_title
 //    required this.isSelected,
       });
 
@@ -378,6 +380,7 @@ class ProductInfo {
     barcode = json['barcode'];
     price_sell = json['price_sell'];
     parent0_Title = json['parent0_title'];
+    category0_title = json['category0_title'];
   }
 
   Map<String, dynamic> toJson() {
@@ -391,6 +394,7 @@ class ProductInfo {
     productInfo['barcode'] = this.barcode;
     productInfo['price_sell'] = this.price_sell;
     productInfo['parent0_title'] = this.parent0_Title;
+    productInfo['category0_title'] = this.category0_title;
 
     return productInfo;
   }
