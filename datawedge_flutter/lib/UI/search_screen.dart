@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:transparent_image/transparent_image.dart';
 import '../extra_widgets.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
@@ -232,10 +233,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
             selectedProductChildCategory = selectedProductCategory!
                 .children![selectedProductChildCategoryIndex];
 
-            _refreshBodyOnSelectedProductCategory();
             BlocProvider.of<SelectedProductsCubit>(context)
                 .selectedProductChildCategoryChanged(
                     selectedProductChildCategoryIndex);
+            _refreshBodyOnSelectedProductCategory();
           }
         } else if (details.primaryVelocity! < 0) {
           //   print('User swiped Right');
@@ -246,10 +247,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
             selectedProductChildCategory = selectedProductCategory!
                 .children![selectedProductChildCategoryIndex];
 
-            _refreshBodyOnSelectedProductCategory();
             BlocProvider.of<SelectedProductsCubit>(context)
                 .selectedProductChildCategoryChanged(
                     selectedProductChildCategoryIndex);
+
+            _refreshBodyOnSelectedProductCategory();
           }
         }
       },
@@ -424,12 +426,53 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 leading: productInfo.image_url != ''
                     ? Padding(
                         padding: const EdgeInsets.all(2.0),
-                        child: Image.network(productInfo.image_url,
-                            width: 100, height: 50, fit: BoxFit.fitHeight))
+
+                        child: FadeInImage.memoryNetwork(
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 100.0,
+                              height: 50.0,
+                              child: Image.asset('assets/icons/no-photo.png'),
+                            );
+                          },
+
+                          // (BuildContext? context,
+                          //     Object? exception, StackTrace? stackTrace) {
+                          //   // print('Error Handler');
+                          //   return Container(
+                          //     width: 100.0,
+                          //     height: 50.0,
+                          //     child: Image.asset('assets/icons/no-photo.png'),
+                          //   );
+                          // },
+                          placeholder: kTransparentImage,
+                          // AssetImage('assets/icons/nophoto.gif'),
+                          image: productInfo.image_url,
+                          fit: BoxFit.fitHeight,
+                          width: 100.0,
+                          height: 50.0,
+                        ),
+                        // child: Image.network(
+                        //   productInfo.image_url,
+                        //   width: 100,
+                        //   height: 50,
+                        //   fit: BoxFit.fitHeight,
+                        //   errorBuilder: (BuildContext? context,
+                        //       Object? exception, StackTrace? stackTrace) {
+                        //     // return Text('NO PHOTO');
+                        //     return Image.asset(
+                        //       'assets/icons/no-photo.png',
+                        //       width: 100,
+                        //       height: 50,
+                        //       //   fit: BoxFit.fitHeight,
+                        //     );
+                        //   },
+                        // ),
+                      )
                     : Image.asset(
                         'assets/icons/no-photo.png',
                         width: 100,
-                        height: 40,
+                        height: 50,
                         //   fit: BoxFit.fitHeight,
                       ),
                 //Icon(Icons.picture_in_picture),
@@ -1250,7 +1293,7 @@ class _ProductChildCategoryWidgetState
     _scrollControllerChildCategory.scrollTo(
       index: _index,
       alignment: 0.2,
-      duration: Duration(milliseconds: 1200),
+      duration: Duration(milliseconds: 800),
     );
   }
 
@@ -1260,26 +1303,25 @@ class _ProductChildCategoryWidgetState
   @override
   Widget build(BuildContext context) {
     return BlocListener<SelectedProductsCubit, SelectedProductsState>(
-      listenWhen: (previous, current) {
-        return previous.selectedProductChildCategoryIndex !=
-            current.selectedProductChildCategoryIndex;
-      },
-      listener: (context, state) {
-        _scrollToPosition(state.selectedProductChildCategoryIndex);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 2),
-        child: SizedBox(
-          height: 30,
-          child: ScrollablePositionedList.builder(
-            itemScrollController: _scrollControllerChildCategory,
-            scrollDirection: Axis.horizontal,
-            itemCount: productChildCategories.length,
-            itemBuilder: (context, index) => buildCategory(index),
+        listenWhen: (previous, current) {
+          return previous.selectedProductChildCategoryIndex !=
+              current.selectedProductChildCategoryIndex;
+        },
+        listener: (context, state) {
+          _scrollToPosition(state.selectedProductChildCategoryIndex);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin / 2),
+          child: SizedBox(
+            height: 30,
+            child: ScrollablePositionedList.builder(
+              itemScrollController: _scrollControllerChildCategory,
+              scrollDirection: Axis.horizontal,
+              itemCount: productChildCategories.length,
+              itemBuilder: (context, index) => buildCategory(index),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget buildCategory(int index) {
