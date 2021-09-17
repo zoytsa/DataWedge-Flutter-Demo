@@ -290,18 +290,25 @@ class _CatalogScreenState extends State<CatalogScreen> {
         child: Column(
           children: <Widget>[
             Container(
-              decoration: new BoxDecoration(
-                  color: productInfo.isSelected
-                      //? Colors.blue.withOpacity(0.4)
-                      //? Palette.facebookColor.withOpacity(0.55)
-                      //? Palette.blue.withOpacity(0.45)
-                      ? Palette.lightBlue.withOpacity(0.6)
-                      : null),
+              // decoration: new BoxDecoration(
+              //     color: productInfo.isSelected
+              //         //? Colors.blue.withOpacity(0.4)
+              //         //? Palette.facebookColor.withOpacity(0.55)
+              //         //? Palette.blue.withOpacity(0.45)
+              //         ? Palette.lightBlue.withOpacity(0.6)
+              //         : null),
               child: ListTile(
                   // backgroundColor: Colors.Green,
-                  title: Text('${index + 1}) ${productInfo.title}'),
+                  title: Text('${index + 1}) ${productInfo.title}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: !productInfo.isSelected
+                              ? Colors.black54
+                              : Colors.white)),
                   //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
-
+                  tileColor: productInfo.isSelected
+                      ? Palette.lightBlue.withOpacity(0.6)
+                      : null,
                   subtitle: RichText(
                     text: TextSpan(
                       text: 'Артикул: ',
@@ -316,12 +323,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             text: productInfo.inner_extra_code,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.green)),
+                                color: productInfo.isSelected
+                                    ? Colors.green[800]
+                                    : Colors.green)),
                       ],
                     ),
                   ),
                   trailing: PopupMenuButton(
-                      icon: Icon(Icons.more_vert, color: Colors.indigo),
+                      icon: Icon(Icons.more_vert,
+                          color: productInfo.isSelected
+                              ? Colors.white
+                              : Colors.indigo),
                       itemBuilder: productInfo.isSelected
                           ? (context) {
                               return [
@@ -476,8 +488,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         //   fit: BoxFit.fitHeight,
                       ),
                 //Icon(Icons.picture_in_picture),
-                title: Text(
-                    'Артикул: ${productInfo.inner_extra_code}, ШК: ${productInfo.barcode}'),
+                title: Text('${productInfo.barcode}'),
                 subtitle: Text('Цена: ${productInfo.price_sell}'),
               ),
             )
