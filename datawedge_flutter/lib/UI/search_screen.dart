@@ -239,6 +239,101 @@ class _CatalogScreenState extends State<CatalogScreen>
     }
   }
 
+  Widget popupMenuButton(ProductInfo productInfo) {
+    return PopupMenuButton(
+        icon: Icon(Icons.more_vert,
+            color: productInfo.isSelected ? Colors.white : Colors.indigo),
+        itemBuilder: productInfo.isSelected
+            ? (context) {
+                return [
+                  //  PopupMenuItem(
+                  //   value: 'add_to_list',
+                  //   child: Text('✅ Выбрать'),
+                  // ),
+                  PopupMenuItem(
+                    value: 'remove_from_list',
+                    child: Text('❕ Отменить выбор'),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'add_quantity',
+                    child: Text('🔢 Добавить количество'),
+                  ),
+                  // PopupMenuItem(
+                  //   value: 'report',
+                  //   child: Text('📈 Отчет'),
+
+                  // ),
+
+                  PopupMenuItem(
+                    value: 'photo',
+                    child: Text('📷 Фото'),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'find_in_list',
+                    child: Text('📜 Найти в списке'),
+                  ),
+                  // PopupMenuItem(
+                  //   value: 'add_to_starred',
+                  //   child: Text('📌 Закрепить'),
+                  // ),
+                  PopupMenuItem(
+                    value: 'open',
+                    child: Text('ℹ Подробно'),
+                  )
+                ];
+              }
+            : (context) {
+                return [
+                  PopupMenuItem(
+                    value: 'add_to_list',
+                    child: Text('✅ Выбрать'),
+                  ),
+                  PopupMenuItem(
+                    value: 'add_quantity',
+                    child: Text('🔢 Добавить количество'),
+                  ),
+                  // PopupMenuItem(
+                  //   value: 'remove_from_list',
+                  //   child: Text('❕ Отменить выбор'),
+                  // ),
+                  PopupMenuItem(
+                    value: 'photo',
+                    child: Text('📷 Фото'),
+                  ),
+                  //    PopupMenuItem(
+                  //   value: 'report',
+                  //   child: Text('📈 Отчет'),
+                  // ),
+                  PopupMenuItem(
+                    value: 'find_in_list',
+                    child: Text('📜 Найти в списке'),
+                  ),
+                  // PopupMenuItem(
+                  //   value: 'add_to_starred',
+                  //   child: Text('📌 Закрепить'),
+                  // ),
+                  PopupMenuItem(
+                    value: 'open',
+                    child: Text('ℹ Подробно'),
+                  )
+                ];
+              },
+        onSelected: (String value) => {
+              actionPopUpItemSelected(context, value, productInfo),
+              if (value == 'add_to_list' || value == 'remove_from_list')
+                {setState(() {})}
+
+              // setState(
+              //   () {
+              //     actionPopUpItemSelected(
+              //         context, value, productInfo);
+              //   },
+              // )
+            });
+  }
+
   Widget productInfoTile(ProductInfo productInfo, int index, bool isDCT) {
     // print('builded ${productInfo.title}');
     return GestureDetector(
@@ -305,147 +400,58 @@ class _CatalogScreenState extends State<CatalogScreen>
         });
       },
       child: Card(
-        child: Column(
-          children: [
-            Container(
-              // decoration: new BoxDecoration(
-              //     color: productInfo.isSelected
-              //         //? Colors.blue.withOpacity(0.4)
-              //         //? Palette.facebookColor.withOpacity(0.55)
-              //         //? Palette.blue.withOpacity(0.45)
-              //         ? Palette.lightBlue.withOpacity(0.6)
-              //         : null),
-              child: ListTile(
-                  // backgroundColor: Colors.Green,
-                  title: Text('${index + 1}) ${productInfo.title}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: !productInfo.isSelected
-                              ? Colors.black54
-                              : Colors.white)),
-                  //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
-                  tileColor: productInfo.isSelected
-                      ? Palette.lightBlue.withOpacity(0.6)
-                      : null,
-                  subtitle: RichText(
-                    text: TextSpan(
-                      text: 'Артикул: ',
-                      style: TextStyle(
-                          fontSize: isDCT ? 12 : 13,
-                          color: productInfo.isSelected
-                              ? Colors.black54
-                              : Palette.textColor1),
-                      //color: Colors.grey),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: productInfo.inner_extra_code,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: productInfo.isSelected
-                                    ? Colors.green[800]
-                                    : Colors.green)),
-                      ],
+        margin: EdgeInsets.all(isDCT ? 1 : 2),
+        child: !isGridView // grid
+            ? Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(0.0),
+                    margin: EdgeInsets.all(isDCT ? 0 : 0.0),
+                    // decoration: new BoxDecoration(
+                    //     color: productInfo.isSelected
+                    //         //? Colors.blue.withOpacity(0.4)
+                    //         //? Palette.facebookColor.withOpacity(0.55)
+                    //         //? Palette.blue.withOpacity(0.45)
+                    //         ? Palette.lightBlue.withOpacity(0.6)
+                    //         : null),
+                    child: ListTile(
+                      // backgroundColor: Colors.Green,
+                      title: Text('${index + 1}) ${productInfo.title}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: !productInfo.isSelected
+                                  ? Colors.black54
+                                  : Colors.white)),
+                      //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
+                      tileColor: productInfo.isSelected
+                          ? Palette.lightBlue.withOpacity(0.6)
+                          : null,
+                      subtitle: RichText(
+                        text: TextSpan(
+                          text: 'Артикул: ',
+                          style: TextStyle(
+                              fontSize: isDCT ? 12 : 13,
+                              color: productInfo.isSelected
+                                  ? Colors.yellow[100]
+                                  : Palette.textColor1),
+                          //color: Colors.grey),
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: productInfo.inner_extra_code,
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: productInfo.isSelected
+                                        ? Colors.yellow[400]
+                                        : Colors.green)),
+                          ],
+                        ),
+                      ),
+                      trailing: popupMenuButton(productInfo),
                     ),
                   ),
-                  trailing: PopupMenuButton(
-                      icon: Icon(Icons.more_vert,
-                          color: productInfo.isSelected
-                              ? Colors.white
-                              : Colors.indigo),
-                      itemBuilder: productInfo.isSelected
-                          ? (context) {
-                              return [
-                                //  PopupMenuItem(
-                                //   value: 'add_to_list',
-                                //   child: Text('✅ Выбрать'),
-                                // ),
-                                PopupMenuItem(
-                                  value: 'remove_from_list',
-                                  child: Text('❕ Отменить выбор'),
-                                ),
-
-                                PopupMenuItem(
-                                  value: 'add_quantity',
-                                  child: Text('🔢 Добавить количество'),
-                                ),
-                                // PopupMenuItem(
-                                //   value: 'report',
-                                //   child: Text('📈 Отчет'),
-
-                                // ),
-
-                                PopupMenuItem(
-                                  value: 'photo',
-                                  child: Text('📷 Фото'),
-                                ),
-
-                                PopupMenuItem(
-                                  value: 'find_in_list',
-                                  child: Text('📜 Найти в списке'),
-                                ),
-                                // PopupMenuItem(
-                                //   value: 'add_to_starred',
-                                //   child: Text('📌 Закрепить'),
-                                // ),
-                                PopupMenuItem(
-                                  value: 'open',
-                                  child: Text('ℹ Подробно'),
-                                )
-                              ];
-                            }
-                          : (context) {
-                              return [
-                                PopupMenuItem(
-                                  value: 'add_to_list',
-                                  child: Text('✅ Выбрать'),
-                                ),
-                                PopupMenuItem(
-                                  value: 'add_quantity',
-                                  child: Text('🔢 Добавить количество'),
-                                ),
-                                // PopupMenuItem(
-                                //   value: 'remove_from_list',
-                                //   child: Text('❕ Отменить выбор'),
-                                // ),
-                                PopupMenuItem(
-                                  value: 'photo',
-                                  child: Text('📷 Фото'),
-                                ),
-                                //    PopupMenuItem(
-                                //   value: 'report',
-                                //   child: Text('📈 Отчет'),
-                                // ),
-                                PopupMenuItem(
-                                  value: 'find_in_list',
-                                  child: Text('📜 Найти в списке'),
-                                ),
-                                // PopupMenuItem(
-                                //   value: 'add_to_starred',
-                                //   child: Text('📌 Закрепить'),
-                                // ),
-                                PopupMenuItem(
-                                  value: 'open',
-                                  child: Text('ℹ Подробно'),
-                                )
-                              ];
-                            },
-                      onSelected: (String value) => {
-                            actionPopUpItemSelected(
-                                context, value, productInfo),
-                            if (value == 'add_to_list' ||
-                                value == 'remove_from_list')
-                              {setState(() {})}
-
-                            // setState(
-                            //   () {
-                            //     actionPopUpItemSelected(
-                            //         context, value, productInfo);
-                            //   },
-                            // )
-                          })),
-            ),
-            !isGridView
-                ? Container(
+                  Container(
                     decoration: new BoxDecoration(
                         color: productInfo.isSelected
                             // ? Colors.blue.withOpacity(0.4)
@@ -457,7 +463,6 @@ class _CatalogScreenState extends State<CatalogScreen>
                       leading: productInfo.image_url != ''
                           ? Padding(
                               padding: const EdgeInsets.all(2.0),
-
                               child: FadeInImage.memoryNetwork(
                                 imageErrorBuilder:
                                     (context, error, stackTrace) {
@@ -485,22 +490,6 @@ class _CatalogScreenState extends State<CatalogScreen>
                                 width: 100.0,
                                 height: 50.0,
                               ),
-                              // child: Image.network(
-                              //   productInfo.image_url,
-                              //   width: 100,
-                              //   height: 50,
-                              //   fit: BoxFit.fitHeight,
-                              //   errorBuilder: (BuildContext? context,
-                              //       Object? exception, StackTrace? stackTrace) {
-                              //     // return Text('NO PHOTO');
-                              //     return Image.asset(
-                              //       'assets/icons/no-photo.png',
-                              //       width: 100,
-                              //       height: 50,
-                              //       //   fit: BoxFit.fitHeight,
-                              //     );
-                              //   },
-                              // ),
                             )
                           : Image.asset(
                               'assets/icons/no-photo.png',
@@ -509,13 +498,74 @@ class _CatalogScreenState extends State<CatalogScreen>
                               //   fit: BoxFit.fitHeight,
                             ),
                       //Icon(Icons.picture_in_picture),
-                      title: Text('${productInfo.barcode}'),
-                      subtitle: Text('Цена: ${productInfo.price_sell}'),
+                      title: Text(
+                        '${productInfo.barcode}',
+                        style: TextStyle(
+                            fontSize: 13,
+                            //fontWeight: FontWeight.bold,
+                            color: productInfo.isSelected
+                                ? Colors.yellow[100]
+                                : Colors.black),
+                      ),
+                      subtitle: Text('Цена: ${productInfo.price_sell}',
+                          style: TextStyle(
+                              fontSize: 13,
+                              //fontWeight: FontWeight.bold,
+                              color: productInfo.isSelected
+                                  ? Colors.yellow[100]
+                                  : Colors.black)),
                     ),
                   )
-                : SizedBox()
-          ],
-        ),
+                ],
+              )
+            : Container(
+                // list non-grid
+                padding: const EdgeInsets.all(0.0),
+                margin: EdgeInsets.all(isDCT ? 0 : 0.0),
+
+                child: ListTile(
+                  title: Text(
+                      productInfo.image_url == ''
+                          ? '${index + 1}) ${productInfo.title}'
+                          : ' 📷 ${index + 1}) ${productInfo.title}',
+                      //         productInfo.image_url ==
+                      //     ''
+                      // ? '📷'
+                      // : '',
+                      style: TextStyle(
+                          //fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: !productInfo.isSelected
+                              ? Colors.black54
+                              : Colors.white)),
+                  //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
+                  tileColor: productInfo.isSelected
+                      ? Palette.lightBlue.withOpacity(0.6)
+                      : null,
+                  subtitle: RichText(
+                    text: TextSpan(
+                      text: 'Артикул: ',
+                      style: TextStyle(
+                          fontSize: isDCT ? 12 : 13,
+                          color: productInfo.isSelected
+                              ? Colors.yellow[100]
+                              : Palette.textColor1),
+                      //color: Colors.grey),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: productInfo.inner_extra_code,
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: productInfo.isSelected
+                                    ? Colors.yellow[400]
+                                    : Colors.green)),
+                      ],
+                    ),
+                  ),
+                  trailing: popupMenuButton(productInfo),
+                ),
+              ),
       ),
     );
   }
