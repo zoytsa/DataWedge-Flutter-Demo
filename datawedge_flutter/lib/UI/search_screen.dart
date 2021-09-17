@@ -159,7 +159,11 @@ class CatalogScreen extends StatefulWidget {
   _CatalogScreenState createState() => _CatalogScreenState();
 }
 
-class _CatalogScreenState extends State<CatalogScreen> {
+class _CatalogScreenState extends State<CatalogScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController?
+      _animationController; // = AnimationController(vsync: vsync);
+  bool isGridView = false;
   List<ProductInfo> _products = [];
   final ScrollController _scrollController = ScrollController();
   int _currentPage = 1;
@@ -174,6 +178,20 @@ class _CatalogScreenState extends State<CatalogScreen> {
       RefreshController(initialRefresh: true);
 
   bool useGridView = false;
+
+  @override
+  void initState() {
+    if (productCategories.length == 0) _getProductCategoriesList();
+    super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController!.dispose();
+  }
 
   Future<bool> getListOfProducts({bool isRefresh = false}) async {
     if (isRefresh) {
@@ -288,7 +306,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       },
       child: Card(
         child: Column(
-          children: <Widget>[
+          children: [
             Container(
               // decoration: new BoxDecoration(
               //     color: productInfo.isSelected
@@ -426,72 +444,76 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             // )
                           })),
             ),
-            Container(
-              decoration: new BoxDecoration(
-                  color: productInfo.isSelected
-                      // ? Colors.blue.withOpacity(0.4)
-                      //? Palette.facebookColor.withOpacity(0.55)
-                      //? Palette.blue.withOpacity(0.45)
-                      ? Palette.lightBlue.withOpacity(0.6)
-                      : null),
-              child: ListTile(
-                leading: productInfo.image_url != ''
-                    ? Padding(
-                        padding: const EdgeInsets.all(2.0),
+            !isGridView
+                ? Container(
+                    decoration: new BoxDecoration(
+                        color: productInfo.isSelected
+                            // ? Colors.blue.withOpacity(0.4)
+                            //? Palette.facebookColor.withOpacity(0.55)
+                            //? Palette.blue.withOpacity(0.45)
+                            ? Palette.lightBlue.withOpacity(0.6)
+                            : null),
+                    child: ListTile(
+                      leading: productInfo.image_url != ''
+                          ? Padding(
+                              padding: const EdgeInsets.all(2.0),
 
-                        child: FadeInImage.memoryNetwork(
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 100.0,
-                              height: 50.0,
-                              child: Image.asset('assets/icons/no-photo.png'),
-                            );
-                          },
+                              child: FadeInImage.memoryNetwork(
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Container(
+                                    width: 100.0,
+                                    height: 50.0,
+                                    child: Image.asset(
+                                        'assets/icons/no-photo.png'),
+                                  );
+                                },
 
-                          // (BuildContext? context,
-                          //     Object? exception, StackTrace? stackTrace) {
-                          //   // print('Error Handler');
-                          //   return Container(
-                          //     width: 100.0,
-                          //     height: 50.0,
-                          //     child: Image.asset('assets/icons/no-photo.png'),
-                          //   );
-                          // },
-                          placeholder: kTransparentImage,
-                          // AssetImage('assets/icons/nophoto.gif'),
-                          image: productInfo.image_url,
-                          fit: BoxFit.fitHeight,
-                          width: 100.0,
-                          height: 50.0,
-                        ),
-                        // child: Image.network(
-                        //   productInfo.image_url,
-                        //   width: 100,
-                        //   height: 50,
-                        //   fit: BoxFit.fitHeight,
-                        //   errorBuilder: (BuildContext? context,
-                        //       Object? exception, StackTrace? stackTrace) {
-                        //     // return Text('NO PHOTO');
-                        //     return Image.asset(
-                        //       'assets/icons/no-photo.png',
-                        //       width: 100,
-                        //       height: 50,
-                        //       //   fit: BoxFit.fitHeight,
-                        //     );
-                        //   },
-                        // ),
-                      )
-                    : Image.asset(
-                        'assets/icons/no-photo.png',
-                        width: 100,
-                        height: 50,
-                        //   fit: BoxFit.fitHeight,
-                      ),
-                //Icon(Icons.picture_in_picture),
-                title: Text('${productInfo.barcode}'),
-                subtitle: Text('Цена: ${productInfo.price_sell}'),
-              ),
-            )
+                                // (BuildContext? context,
+                                //     Object? exception, StackTrace? stackTrace) {
+                                //   // print('Error Handler');
+                                //   return Container(
+                                //     width: 100.0,
+                                //     height: 50.0,
+                                //     child: Image.asset('assets/icons/no-photo.png'),
+                                //   );
+                                // },
+                                placeholder: kTransparentImage,
+                                // AssetImage('assets/icons/nophoto.gif'),
+                                image: productInfo.image_url,
+                                fit: BoxFit.fitHeight,
+                                width: 100.0,
+                                height: 50.0,
+                              ),
+                              // child: Image.network(
+                              //   productInfo.image_url,
+                              //   width: 100,
+                              //   height: 50,
+                              //   fit: BoxFit.fitHeight,
+                              //   errorBuilder: (BuildContext? context,
+                              //       Object? exception, StackTrace? stackTrace) {
+                              //     // return Text('NO PHOTO');
+                              //     return Image.asset(
+                              //       'assets/icons/no-photo.png',
+                              //       width: 100,
+                              //       height: 50,
+                              //       //   fit: BoxFit.fitHeight,
+                              //     );
+                              //   },
+                              // ),
+                            )
+                          : Image.asset(
+                              'assets/icons/no-photo.png',
+                              width: 100,
+                              height: 50,
+                              //   fit: BoxFit.fitHeight,
+                            ),
+                      //Icon(Icons.picture_in_picture),
+                      title: Text('${productInfo.barcode}'),
+                      subtitle: Text('Цена: ${productInfo.price_sell}'),
+                    ),
+                  )
+                : SizedBox()
           ],
         ),
       ),
@@ -508,12 +530,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.minScrollExtent);
     }
-  }
-
-  @override
-  void initState() {
-    if (productCategories.length == 0) _getProductCategoriesList();
-    super.initState();
   }
 
   Future<void> _getProductCategoriesList() async {
@@ -693,6 +709,26 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
   }
 
+  void _changeGridState(BuildContext context) {
+    isGridView = !isGridView;
+    setState(() {
+      isGridView
+          ? _animationController!.forward()
+          : _animationController!.reverse();
+    });
+    // BlocProvider.of<SelectedProductsCubit>(context)
+    //     .changeGridView(isGridView)();
+    // BlocProvider.of<SelectedProductsCubit>(context)
+    //     .changeGridView(isGridView)();
+    //       setState(() {
+    //     isPlaying = !isPlaying;
+    //     isPlaying
+    //         ? _animationController.forward()
+    //         : _animationController.reverse();
+    //   });
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDCT = MediaQuery.of(context).size.height < 600;
@@ -859,24 +895,34 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                 child: SizedBox(
                                     // width: 165,
                                     ))),
-                        Container(
-                          child: Center(
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.grid_view_outlined,
-                                size: 17,
-                              ),
-                              onPressed: () => {},
-                            ),
+                        // Container(
+                        //   child: Center(
+                        //     child: IconButton(
+                        //       icon: Icon(
+                        //         Icons.grid_view_outlined,
+                        //         size: 17,
+                        //       ),
+                        //       onPressed: () => {},
+                        //     ),
+                        //   ),
+                        // ),
+                        // Container(
+                        //   child: IconButton(
+                        //     icon: Icon(Icons.list, color: Colors.white),
+                        //     onPressed: () => {},
+                        //   ),
+                        // ),
+                        IconButton(
+                          iconSize: 20,
+                          splashColor: Colors.greenAccent,
+                          icon: AnimatedIcon(
+                            icon: AnimatedIcons.list_view,
+                            progress: _animationController!,
+                            color: Colors.green,
                           ),
-                        ),
-                        Container(
-                          child: Center(
-                            child: IconButton(
-                              icon: Icon(Icons.list),
-                              onPressed: () => {},
-                            ),
-                          ),
+                          onPressed: () => {
+                            _changeGridState(context),
+                          },
                         ),
                       ]),
                     ])),

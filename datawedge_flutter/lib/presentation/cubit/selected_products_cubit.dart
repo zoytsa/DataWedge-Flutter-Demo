@@ -9,11 +9,11 @@ part 'selected_products_state.dart';
 class SelectedProductsCubit extends Cubit<SelectedProductsState> {
   SelectedProductsCubit()
       : super(SelectedProductsState(
-            selectedProducts2, selectedProductChildCategoryIndex));
+            selectedProducts2, selectedProductChildCategoryIndex, true));
 
   void updateSelectedProductsState(_selectedProducts2) =>
-      emit(SelectedProductsState(
-          _selectedProducts2, state.selectedProductChildCategoryIndex));
+      emit(SelectedProductsState(_selectedProducts2,
+          state.selectedProductChildCategoryIndex, state.isGridView));
 
   addProductToSelected2(ProductInfo product) {
     ProductInfo? result = selectedProducts2
@@ -21,26 +21,31 @@ class SelectedProductsCubit extends Cubit<SelectedProductsState> {
 
     if (result == null) {
       selectedProducts2.add(product);
-      emit(SelectedProductsState(
-          selectedProducts2, state.selectedProductChildCategoryIndex));
+      emit(SelectedProductsState(selectedProducts2,
+          state.selectedProductChildCategoryIndex, state.isGridView));
     }
     ;
   }
 
   removeProductFromSelected2(ProductInfo product) {
     selectedProducts2.remove(product);
-    emit(SelectedProductsState(
-        selectedProducts2, state.selectedProductChildCategoryIndex));
+    emit(SelectedProductsState(selectedProducts2,
+        state.selectedProductChildCategoryIndex, state.isGridView));
   }
 
   clearProductsSelected() {
     selectedProducts2.clear();
-    emit(SelectedProductsState(
-        selectedProducts2, state.selectedProductChildCategoryIndex));
+    emit(SelectedProductsState(selectedProducts2,
+        state.selectedProductChildCategoryIndex, state.isGridView));
   }
 
   selectedProductChildCategoryChanged(_selectedProductChildCategoryIndex) {
-    emit(SelectedProductsState(
-        state.selectedProducts, _selectedProductChildCategoryIndex));
+    emit(SelectedProductsState(state.selectedProducts,
+        _selectedProductChildCategoryIndex, state.isGridView));
+  }
+
+  changeGridView(bool _isGridView) {
+    emit(SelectedProductsState(state.selectedProducts,
+        state.selectedProductChildCategoryIndex, _isGridView));
   }
 }
