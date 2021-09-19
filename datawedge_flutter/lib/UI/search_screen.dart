@@ -407,15 +407,8 @@ class _CatalogScreenState extends State<CatalogScreen>
                   Container(
                     padding: const EdgeInsets.all(0.0),
                     margin: EdgeInsets.all(isDCT ? 0 : 0.0),
-                    // decoration: new BoxDecoration(
-                    //     color: productInfo.isSelected
-                    //         //? Colors.blue.withOpacity(0.4)
-                    //         //? Palette.facebookColor.withOpacity(0.55)
-                    //         //? Palette.blue.withOpacity(0.45)
-                    //         ? Palette.lightBlue.withOpacity(0.6)
-                    //         : null),
                     child: ListTile(
-                      // backgroundColor: Colors.Green,
+                      isThreeLine: productInfo.image_url == '' ? true : false,
                       title: Text('${index + 1}) ${productInfo.title}',
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -427,95 +420,139 @@ class _CatalogScreenState extends State<CatalogScreen>
                       tileColor: productInfo.isSelected
                           ? Palette.lightBlue.withOpacity(0.6)
                           : null,
-                      subtitle: RichText(
-                        text: TextSpan(
-                          text: 'Артикул: ',
-                          style: TextStyle(
-                              fontSize: isDCT ? 12 : 13,
-                              color: productInfo.isSelected
-                                  ? Colors.yellow[100]
-                                  : Palette.textColor1),
-                          //color: Colors.grey),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: productInfo.inner_extra_code,
+                      subtitle: productInfo.image_url != ''
+                          ? RichText(
+                              text: TextSpan(
+                                text: 'Артикул: ',
                                 style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: isDCT ? 12 : 13,
                                     color: productInfo.isSelected
-                                        ? Colors.yellow[400]
-                                        : Colors.green)),
-                          ],
-                        ),
-                      ),
+                                        ? Colors.yellow[100]
+                                        : Palette.textColor1),
+                                //color: Colors.grey),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: productInfo.inner_extra_code,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: productInfo.isSelected
+                                              ? Colors.yellow[400]
+                                              : Colors.green)),
+                                ],
+                              ),
+                            )
+                          : RichText(
+                              text: TextSpan(
+                                text: 'Артикул: ',
+                                style: TextStyle(
+                                    fontSize: isDCT ? 12 : 13,
+                                    color: productInfo.isSelected
+                                        ? Colors.yellow[100]
+                                        : Palette.textColor1),
+                                //color: Colors.grey),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: productInfo.inner_extra_code,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: productInfo.isSelected
+                                              ? Colors.yellow[400]
+                                              : Colors.green)),
+                                  TextSpan(
+                                      text:
+                                          '\n${productInfo.barcode}', //productInfo.inner_extra_code,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          //  fontWeight: FontWeight.bold,
+                                          color: productInfo.isSelected
+                                              ? Colors.yellow[400]
+                                              : Colors.black87)),
+                                  TextSpan(
+                                      text:
+                                          '     Цена: ${productInfo.price_sell}', //productInfo.inner_extra_code,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          //  fontWeight: FontWeight.bold,
+                                          color: productInfo.isSelected
+                                              ? Colors.yellow[400]
+                                              : Colors.black87)),
+                                ],
+                              ),
+                            ),
+                      //   Text("Second One Text \nThis is Line Third Text"),
+
                       trailing: popupMenuButton(productInfo),
                     ),
                   ),
-                  Container(
-                    decoration: new BoxDecoration(
-                        color: productInfo.isSelected
-                            // ? Colors.blue.withOpacity(0.4)
-                            //? Palette.facebookColor.withOpacity(0.55)
-                            //? Palette.blue.withOpacity(0.45)
-                            ? Palette.lightBlue.withOpacity(0.6)
-                            : null),
-                    child: ListTile(
-                      leading: productInfo.image_url != ''
-                          ? Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: FadeInImage.memoryNetwork(
-                                imageErrorBuilder:
-                                    (context, error, stackTrace) {
-                                  return Container(
-                                    width: 100.0,
-                                    height: 50.0,
-                                    child: Image.asset(
-                                        'assets/icons/no-photo.png'),
-                                  );
-                                },
-
-                                // (BuildContext? context,
-                                //     Object? exception, StackTrace? stackTrace) {
-                                //   // print('Error Handler');
-                                //   return Container(
-                                //     width: 100.0,
-                                //     height: 50.0,
-                                //     child: Image.asset('assets/icons/no-photo.png'),
-                                //   );
-                                // },
-                                placeholder: kTransparentImage,
-                                // AssetImage('assets/icons/nophoto.gif'),
-                                image: productInfo.image_url,
-                                fit: BoxFit.fitHeight,
-                                width: 100.0,
-                                height: 50.0,
-                              ),
-                            )
-                          : Image.asset(
-                              'assets/icons/no-photo.png',
-                              width: 100,
-                              height: 50,
-                              //   fit: BoxFit.fitHeight,
-                            ),
-                      //Icon(Icons.picture_in_picture),
-                      title: Text(
-                        '${productInfo.barcode}',
-                        style: TextStyle(
-                            fontSize: 13,
-                            //fontWeight: FontWeight.bold,
-                            color: productInfo.isSelected
-                                ? Colors.yellow[100]
-                                : Colors.black),
-                      ),
-                      subtitle: Text('Цена: ${productInfo.price_sell}',
-                          style: TextStyle(
-                              fontSize: 13,
-                              //fontWeight: FontWeight.bold,
+                  productInfo.image_url == ''
+                      ? Container()
+                      : Container(
+                          decoration: new BoxDecoration(
                               color: productInfo.isSelected
-                                  ? Colors.yellow[100]
-                                  : Colors.black)),
-                    ),
-                  )
+                                  // ? Colors.blue.withOpacity(0.4)
+                                  //? Palette.facebookColor.withOpacity(0.55)
+                                  //? Palette.blue.withOpacity(0.45)
+                                  ? Palette.lightBlue.withOpacity(0.6)
+                                  : null),
+                          child: ListTile(
+                            leading: productInfo.image_url != ''
+                                ? Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: FadeInImage.memoryNetwork(
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          width: 100.0,
+                                          height: 50.0,
+                                          child: Image.asset(
+                                              'assets/icons/no-photo.png'),
+                                        );
+                                      },
+
+                                      // (BuildContext? context,
+                                      //     Object? exception, StackTrace? stackTrace) {
+                                      //   // print('Error Handler');
+                                      //   return Container(
+                                      //     width: 100.0,
+                                      //     height: 50.0,
+                                      //     child: Image.asset('assets/icons/no-photo.png'),
+                                      //   );
+                                      // },
+                                      placeholder: kTransparentImage,
+                                      // AssetImage('assets/icons/nophoto.gif'),
+                                      image: productInfo.image_url,
+                                      fit: BoxFit.fitHeight,
+                                      width: 100.0,
+                                      height: 50.0,
+                                    ),
+                                  )
+                                : Image.asset(
+                                    'assets/icons/no-photo.png',
+                                    width: 100,
+                                    height: 40,
+                                    //   fit: BoxFit.fitHeight,
+                                  ),
+                            //Icon(Icons.picture_in_picture),
+                            title: Text(
+                              '${productInfo.barcode}',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  //fontWeight: FontWeight.bold,
+                                  color: productInfo.isSelected
+                                      ? Colors.yellow[100]
+                                      : Colors.black),
+                            ),
+                            subtitle: Text('Цена: ${productInfo.price_sell}',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    //fontWeight: FontWeight.bold,
+                                    color: productInfo.isSelected
+                                        ? Colors.yellow[100]
+                                        : Colors.black)),
+                          ),
+                        )
                 ],
               )
             : Container(
@@ -1188,7 +1225,7 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                           text: 'Выбрано товаров: ',
                           style: TextStyle(
                               fontSize: isDCT ? 12 : 13,
-                              color: Palette.textColor1),
+                              color: Palette.iconColor),
                           //color: Colors.grey),
                           children: <TextSpan>[
                             TextSpan(
