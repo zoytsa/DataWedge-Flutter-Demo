@@ -13,7 +13,7 @@ class ProductDeatailsPage extends StatelessWidget {
 
   Widget _getBackGroundImage(BuildContext context) {
     if (product.image_url == '')
-      return Image.asset('assets/icons/no-photo.png');
+      return SizedBox(); //Image.asset('assets/icons/no-photo.png');
     else
       return Image.network(
         product.image_url,
@@ -52,7 +52,7 @@ class ProductDeatailsPage extends StatelessWidget {
           SliverAppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Palette.textColor1,
-            expandedHeight: 300,
+            expandedHeight: product.image_url == '' ? 120 : 300,
             stretch: true,
             // onStretchTrigger: () {
             //   print('stretch trigger');
@@ -63,8 +63,9 @@ class ProductDeatailsPage extends StatelessWidget {
               title: Text(
                 product.title,
                 // style: GoogleFonts.inconsolata(
-                style:
-                    GoogleFonts.jost(fontWeight: FontWeight.w600, fontSize: 18),
+                style: GoogleFonts.jost(
+                    fontWeight: FontWeight.w600,
+                    fontSize: product.image_url == '' ? 14 : 18),
               ),
               centerTitle: true,
               stretchModes: const [
@@ -72,28 +73,61 @@ class ProductDeatailsPage extends StatelessWidget {
                 StretchMode.fadeTitle,
                 //   StretchMode.blurBackground,
               ],
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  _getBackGroundImage(context),
-                  // Image.network(
-                  //   product.image_url,
-                  //   fit: BoxFit.cover,
-                  // ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0.0, 0.5),
-                        end: Alignment(0.0, 0.0),
-                        colors: <Color>[
-                          Color(0x60000000),
-                          Color(0x00000000),
-                        ],
-                      ),
+              background: product.image_url != ''
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _getBackGroundImage(context),
+                        // Image.network(
+                        //   product.image_url,
+                        //   fit: BoxFit.cover,
+                        // ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.0, 0.5),
+                              end: Alignment(0.0, 0.0),
+                              colors:
+
+                                  // colors: [Colors.grey, Colors.grey, Palette.facebookColor],
+
+                                  <Color>[
+                                Color(0x60000000),
+                                Color(0x00000000),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _getBackGroundImage(context),
+                        // Image.network(
+                        //   product.image_url,
+                        //   fit: BoxFit.cover,
+                        // ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              // begin: Alignment(0.0, 0.5),
+                              // end: Alignment(0.0, 0.0),
+                              colors: [
+                                Palette.facebookColor,
+                                Colors.grey,
+                                Palette.facebookColor
+                              ],
+
+                              //  <Color>[
+                              //   Color(0x60000000),
+                              //   Color(0x00000000),
+                              // ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ),
           SliverList(

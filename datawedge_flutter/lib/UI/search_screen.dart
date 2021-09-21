@@ -573,7 +573,7 @@ class _CatalogScreenState extends State<CatalogScreen>
                           //fontWeight: FontWeight.w500,
                           fontSize: 14,
                           color: !productInfo.isSelected
-                              ? Colors.black54
+                              ? Colors.black87
                               : Colors.white)),
                   //subtitle: Text('Группа: ${productInfo.parent0_Title}'),
                   tileColor: productInfo.isSelected
@@ -1091,7 +1091,7 @@ class _CatalogScreenState extends State<CatalogScreen>
                       },
                       itemCount: _products.length,
                       controller: _scrollController,
-                      physics: BouncingScrollPhysics(),
+                      //  physics: BouncingScrollPhysics(),
                     ),
                   ),
                 ),
