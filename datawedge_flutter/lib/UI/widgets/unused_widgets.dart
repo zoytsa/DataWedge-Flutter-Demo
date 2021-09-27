@@ -1,11 +1,11 @@
 import 'package:datawedgeflutter/UI/product_details_screen.dart';
-import 'package:datawedgeflutter/extra_widgets.dart';
+import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
-import 'package:datawedgeflutter/selected_products_counter.dart';
+//import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -132,6 +132,10 @@ class _ItemCardState extends State<ItemCard> {
       ),
     );
   }
+
+  addProductToSelected(Product product, List<Product> selectedProducts) {}
+
+  removeProductFromSelected(Product product, List<Product> selectedProducts) {}
 }
 
 class AppBarSearchWidget2_unused extends StatelessWidget

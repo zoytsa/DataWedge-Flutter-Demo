@@ -4,7 +4,7 @@ import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 //import 'package:datawedgeflutter/show_html_page.dart';
-import 'package:datawedgeflutter/show_html_page2.dart';
+import 'package:datawedgeflutter/UI/show_html_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';

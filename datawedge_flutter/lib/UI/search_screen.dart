@@ -1,27 +1,14 @@
-//import 'dart:convert';
-//import 'dart:math';
-
-//import 'package:datawedgeflutter/UI/product_details_screen.dart';
 import 'package:datawedgeflutter/UI/widgets/widget_appbar_search_screen.dart';
 import 'package:datawedgeflutter/UI/widgets/widget_product_card.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
-import 'package:datawedgeflutter/model/dataloader.dart';
-//import 'package:datawedgeflutter/UI/product_details_screen_unused.dart';
-//import 'package:datawedgeflutter/UI/home_screen.dart';
-//import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
-//import 'package:datawedgeflutter/selected_products_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-//import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-//import 'package:transparent_image/transparent_image.dart';
-//import '../extra_widgets.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
 import 'package:http/http.dart' as http;
-
 import 'widgets/widget_product_category_and_child_category.dart';
 
 class CatalogScreen extends StatefulWidget {
@@ -37,7 +24,7 @@ class _CatalogScreenState extends State<CatalogScreen>
     with SingleTickerProviderStateMixin {
   AnimationController?
       _animationController; // = AnimationController(vsync: vsync);
-  bool isGridView = false;
+  bool isGridView = true;
   List<ProductInfo> _products = [];
   final ScrollController _scrollController = ScrollController();
   int _currentPage = 1;
