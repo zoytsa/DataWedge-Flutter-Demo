@@ -732,8 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CatalogScreen(
-                        title: "Searching...",
-                        selectedUser: selectedUser,
+
                         // onProductSelection: addGoodItemsFromSelected(
                         //     selectedProducts)
                         onProductSelection: () => addGoodItemsFromSelected()
@@ -1151,8 +1150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CatalogScreen(
-                        title: "Searching...",
-                        selectedUser: selectedUser,
+
                         // onProductSelection: addGoodItemsFromSelected(
                         //     selectedProducts)
                         onProductSelection: () => addGoodItemsFromSelected()
