@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:datawedgeflutter/UI/product_details_screen.dart';
+import 'package:datawedgeflutter/UI/widgets/widget_product_card.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
-import 'package:datawedgeflutter/UI/product_details_screen_unused.dart';
+//import 'package:datawedgeflutter/UI/product_details_screen_unused.dart';
 import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
@@ -19,130 +20,6 @@ import '../extra_widgets.dart';
 import '../model/constants.dart';
 import '../model/palette.dart';
 import 'package:http/http.dart' as http;
-
-class ItemCard extends StatefulWidget {
-  final Product product;
-
-  final VoidCallback doubleTap;
-  final VoidCallback vcbOnTap;
-  final VoidCallback vcbOnlongPress;
-
-  const ItemCard(
-      {required this.product,
-      required this.doubleTap,
-      required this.vcbOnTap,
-      required this.vcbOnlongPress});
-
-  @override
-  _ItemCardState createState() => _ItemCardState();
-}
-
-class _ItemCardState extends State<ItemCard> {
-  void _onCheck(bool? newValue) {
-    setState(() {
-      widget.product.check = newValue!;
-    });
-  }
-
-  void _onTap() {
-    !widget.product.check
-        ? addProductToSelected(widget.product, selectedProducts)
-        : removeProductFromSelected(widget.product, selectedProducts);
-    setState(() {
-      widget.product.check = !widget.product.check;
-    });
-    // update parent widget Appbar via Void Callback
-    widget.vcbOnTap();
-  }
-
-  void _onLongPress() {
-    !widget.product.check
-        ? addProductToSelected(widget.product, selectedProducts)
-        : removeProductFromSelected(widget.product, selectedProducts);
-    setState(() {
-      widget.product.check = !widget.product.check;
-    });
-    // update parent widget Appbar via Void Callback
-    widget.vcbOnlongPress();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // print('called build ItemCard: ${widget.product.title}');
-    return GestureDetector(
-      onTap: _onTap,
-      onLongPress: _onLongPress,
-      onDoubleTap: widget.doubleTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(kDefaultPaddin),
-              // For  demo we use fixed height  and width
-              // Now we dont need them
-              // height: 180,
-              // width: 160,
-              decoration: BoxDecoration(
-                color: widget.product.color,
-                borderRadius: BorderRadius.circular(16),
-                border: widget.product.inTheList
-                    ? Border.all(color: Colors.lightBlue, width: 5)
-                    : widget.product.check
-                        ? Border.all(color: Colors.green, width: 5)
-                        : null,
-              ),
-              child: Hero(
-                tag: "${widget.product.id}",
-                child: Image.asset(widget.product.image),
-              ),
-            ),
-          ),
-          // SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              // products is out demo list
-              widget.product.title,
-              style: TextStyle(color: kTextLightColor),
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(
-                "\$${widget.product.price}",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-          // SizedBox(
-          //   height: 25,
-          //   child: Row(
-          //       // crossAxisAlignment: CrossAxisAlignment.stretch,
-          //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //       children: [
-          //         Expanded(
-          //           child: Padding(
-          //               padding: const EdgeInsets.symmetric(vertical: 0),
-          //               child: Text(
-          //                 "\$${widget.product.price}",
-          //                 style: TextStyle(fontWeight: FontWeight.bold),
-          //               )),
-          //         ),
-          //         // Checkbox(
-          //         //     // checkColor: Colors.green[200],
-          //         //     //hoverColor: Colors.green,
-          //         //     side: BorderSide(
-          //         //       color: Colors.grey,
-          //         //     ),
-          //         //     activeColor: Colors.green.withOpacity(0.80),
-          //         //     value: widget.product.check,
-          //         //     onChanged: (bool? newValue) => _onCheck(newValue)),
-          //       ]),
-          // ),
-        ],
-      ),
-    );
-  }
-}
 
 class CatalogScreen extends StatefulWidget {
   CatalogScreen(
@@ -334,7 +211,8 @@ class _CatalogScreenState extends State<CatalogScreen>
             });
   }
 
-  Widget productInfoTile(ProductInfo productInfo, int index, bool isDCT) {
+  Widget productInfoTile_unused(
+      ProductInfo productInfo, int index, bool isDCT) {
     // print('builded ${productInfo.title}');
     return GestureDetector(
       onHorizontalDragEnd: (DragEndDetails details) {
@@ -852,273 +730,279 @@ class _CatalogScreenState extends State<CatalogScreen>
             key: _keyAppbar,
             appBarSearchTitle: addGoodsTitle2,
             onSelectedProductsAppBar: () => onSelectedProductsSearch()),
-        body: useGridView
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  addEnterSearchField2(context),
+        body:
+            // useGridView
+            //     ? Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           addEnterSearchField2(context),
 
-                  Row(
-                      // padding: const EdgeInsets.symmetric(
-                      //     horizontal: kDefaultPaddin, vertical: 0),
-                      children: [
-                        SizedBox(width: kDefaultPaddin),
-                        SizedBox(
-                          width: 250,
-                          child: buildDropDown(context),
-                          // child: DropdownButton(
-                          //     elevation: 0,
-                          //     isDense: true,
-                          //     isExpanded: true,
-                          //     //items: buildDropdownMenuItemsCategories(categories),
-                          //     items: buildDropdownMenuItemsCategories2(),
-                          //     style: Theme.of(context).textTheme.headline6!.copyWith(
-                          //         fontWeight: FontWeight.w500,
-                          //         color: kTextLightColor),
-                          //     value: selectedCategory,
-                          //     onChanged: (valueSelectedByUser) {
-                          //       setState(() {
-                          //         debugPrint('User selected $valueSelectedByUser');
+            //           Row(
+            //               // padding: const EdgeInsets.symmetric(
+            //               //     horizontal: kDefaultPaddin, vertical: 0),
+            //               children: [
+            //                 SizedBox(width: kDefaultPaddin),
+            //                 SizedBox(
+            //                   width: 250,
+            //                   child: buildDropDown(context),
+            //                   // child: DropdownButton(
+            //                   //     elevation: 0,
+            //                   //     isDense: true,
+            //                   //     isExpanded: true,
+            //                   //     //items: buildDropdownMenuItemsCategories(categories),
+            //                   //     items: buildDropdownMenuItemsCategories2(),
+            //                   //     style: Theme.of(context).textTheme.headline6!.copyWith(
+            //                   //         fontWeight: FontWeight.w500,
+            //                   //         color: kTextLightColor),
+            //                   //     value: selectedCategory,
+            //                   //     onChanged: (valueSelectedByUser) {
+            //                   //       setState(() {
+            //                   //         debugPrint('User selected $valueSelectedByUser');
 
-                          //         selectedCategory = valueSelectedByUser as Category;
-                          //         //saveSettingsHive(context);
-                          //       });
-                          //     })
-                        ),
-                        Container(
-                            child: Expanded(
-                                child: SizedBox(
-                                    // width: 165,
-                                    ))),
-                        Container(
-                          child: Center(
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.grid_view_outlined,
-                                size: 17,
-                              ),
-                              onPressed: () => {},
-                            ),
-                          ),
-                        ),
-                        Container(
-                          child: Center(
-                            child: IconButton(
-                              icon: Icon(Icons.list),
-                              onPressed: () => {},
-                            ),
-                          ),
-                        ),
-                      ]),
+            //                   //         selectedCategory = valueSelectedByUser as Category;
+            //                   //         //saveSettingsHive(context);
+            //                   //       });
+            //                   //     })
+            //                 ),
+            //                 Container(
+            //                     child: Expanded(
+            //                         child: SizedBox(
+            //                             // width: 165,
+            //                             ))),
+            //                 Container(
+            //                   child: Center(
+            //                     child: IconButton(
+            //                       icon: Icon(
+            //                         Icons.grid_view_outlined,
+            //                         size: 17,
+            //                       ),
+            //                       onPressed: () => {},
+            //                     ),
+            //                   ),
+            //                 ),
+            //                 Container(
+            //                   child: Center(
+            //                     child: IconButton(
+            //                       icon: Icon(Icons.list),
+            //                       onPressed: () => {},
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ]),
 
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //       horizontal: kDefaultPaddin, vertical: 10),
-                  //   child: Text(
-                  //     "Кулинария",
-                  //     style: Theme.of(context)
-                  //         .textTheme
-                  //         .headline6!
-                  //         .copyWith(fontWeight: FontWeight.bold),
+            //           // Padding(
+            //           //   padding: const EdgeInsets.symmetric(
+            //           //       horizontal: kDefaultPaddin, vertical: 10),
+            //           //   child: Text(
+            //           //     "Кулинария",
+            //           //     style: Theme.of(context)
+            //           //         .textTheme
+            //           //         .headline6!
+            //           //         .copyWith(fontWeight: FontWeight.bold),
+            //           //   ),
+            //           // ),
+            //           ProductChildCategoryWidget(
+            //               onSelectedChildCategory: () =>
+            //                   _refreshBodyOnSelectedProductCategory()),
+            //           // SingleChildScrollView(
+            //           //   controller: _scrollController,
+            //           //   child: ConstrainedBox(
+            //           //     constraints: BoxConstraints(maxHeight: 380),
+            //           //     child:
+
+            //           Expanded(
+            //             child: Padding(
+            //               padding: const EdgeInsets.symmetric(
+            //                   horizontal: kDefaultPaddin),
+            //               child: GridView.builder(
+            //                   itemCount: products.length,
+            //                   gridDelegate:
+            //                       SliverGridDelegateWithFixedCrossAxisCount(
+            //                     crossAxisCount: 2,
+            //                     mainAxisSpacing: kDefaultPaddin,
+            //                     crossAxisSpacing: kDefaultPaddin,
+            //                     childAspectRatio: 0.75,
+            //                   ),
+            //                   itemBuilder: (context, index) => ItemCard(
+            //                         product: products[index],
+            //                         // press: () => Navigator.push(
+            //                         //     context,
+            //                         //     MaterialPageRoute(
+            //                         //       builder: (context) => DetailsScreen(
+            //                         //         product: products[index],
+            //                         //       ),
+            //                         //     )),
+            //                         // longPress: () => products[index].check = false,
+
+            //                         doubleTap: () => {}, //Navigator.push(
+            //                         //     context,
+            //                         //     MaterialPageRoute(
+            //                         //       builder: (context) => MyHomePage(
+            //                         //         title: "we are back",
+            //                         //       ),
+            //                         //     )),
+            //                         vcbOnTap: () => _updateSelectedProductsTitle(),
+            //                         vcbOnlongPress: () =>
+            //                             _updateSelectedProductsTitle(),
+            //                       )),
+            //             ),
+            //           )
+
+            //           //  ),
+            //           //),
+            //         ],
+            //       )
+            //     :
+            CustomScrollView(slivers: [
+          SliverAppBar(
+              backgroundColor: Colors.indigo,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 48, //59 с кол. товаров,  //80 с поиском,
+              // collapsedHeight: 56,
+              primary: false,
+              floating: false,
+              // pinned: true,
+              // brightness: Brightness.light,
+              elevation: 0.0,
+              flexibleSpace: Column(children: [
+                //    addEnterSearchField2(context), // ВРЕМЕННО!!!
+                // SizedBox(
+                //   height: 11,
+                //   child: Row(children: [
+                //     Text(' ${productChildCategories.length} товаров',
+                //         style: TextStyle(fontSize: 11, color: Colors.grey)),
+                //   ]),
+                // ),
+                Row(children: [
+                  SizedBox(width: kDefaultPaddin),
+                  SizedBox(
+                    width: 249,
+                    child: buildDropDown(context),
+                  ),
+                  Container(
+                      child: Expanded(
+                          child: SizedBox(
+                              // width: 165,
+                              ))),
+                  // Container(
+                  //   child: Center(
+                  //     child: IconButton(
+                  //       icon: Icon(
+                  //         Icons.grid_view_outlined,
+                  //         size: 17,
+                  //       ),
+                  //       onPressed: () => {},
+                  //     ),
                   //   ),
                   // ),
-                  ProductChildCategoryWidget(
-                      onSelectedChildCategory: () =>
-                          _refreshBodyOnSelectedProductCategory()),
-                  // SingleChildScrollView(
-                  //   controller: _scrollController,
-                  //   child: ConstrainedBox(
-                  //     constraints: BoxConstraints(maxHeight: 380),
-                  //     child:
-
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultPaddin),
-                      child: GridView.builder(
-                          itemCount: products.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: kDefaultPaddin,
-                            crossAxisSpacing: kDefaultPaddin,
-                            childAspectRatio: 0.75,
-                          ),
-                          itemBuilder: (context, index) => ItemCard(
-                                product: products[index],
-                                // press: () => Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (context) => DetailsScreen(
-                                //         product: products[index],
-                                //       ),
-                                //     )),
-                                // longPress: () => products[index].check = false,
-
-                                doubleTap: () => {}, //Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (context) => MyHomePage(
-                                //         title: "we are back",
-                                //       ),
-                                //     )),
-                                vcbOnTap: () => _updateSelectedProductsTitle(),
-                                vcbOnlongPress: () =>
-                                    _updateSelectedProductsTitle(),
-                              )),
+                  // Container(
+                  //   child: IconButton(
+                  //     icon: Icon(Icons.list, color: Colors.white),
+                  //     onPressed: () => {},
+                  //   ),
+                  // ),
+                  IconButton(
+                    iconSize: 20,
+                    splashColor: Colors.greenAccent,
+                    icon: AnimatedIcon(
+                      icon: AnimatedIcons.list_view,
+                      progress: _animationController!,
+                      color: Colors.green,
                     ),
-                  )
-
-                  //  ),
-                  //),
-                ],
-              )
-            : CustomScrollView(slivers: [
-                SliverAppBar(
-                    backgroundColor: Colors.indigo,
-                    automaticallyImplyLeading: false,
-                    toolbarHeight: 48, //59 с кол. товаров,  //80 с поиском,
-                    // collapsedHeight: 56,
-                    primary: false,
-                    floating: false,
-                    // pinned: true,
-                    // brightness: Brightness.light,
-                    elevation: 0.0,
-                    flexibleSpace: Column(children: [
-                      //    addEnterSearchField2(context), // ВРЕМЕННО!!!
-                      // SizedBox(
-                      //   height: 11,
-                      //   child: Row(children: [
-                      //     Text(' ${productChildCategories.length} товаров',
-                      //         style: TextStyle(fontSize: 11, color: Colors.grey)),
-                      //   ]),
-                      // ),
-                      Row(children: [
-                        SizedBox(width: kDefaultPaddin),
-                        SizedBox(
-                          width: 249,
-                          child: buildDropDown(context),
-                        ),
-                        Container(
-                            child: Expanded(
-                                child: SizedBox(
-                                    // width: 165,
-                                    ))),
-                        // Container(
-                        //   child: Center(
-                        //     child: IconButton(
-                        //       icon: Icon(
-                        //         Icons.grid_view_outlined,
-                        //         size: 17,
-                        //       ),
-                        //       onPressed: () => {},
-                        //     ),
-                        //   ),
-                        // ),
-                        // Container(
-                        //   child: IconButton(
-                        //     icon: Icon(Icons.list, color: Colors.white),
-                        //     onPressed: () => {},
-                        //   ),
-                        // ),
-                        IconButton(
-                          iconSize: 20,
-                          splashColor: Colors.greenAccent,
-                          icon: AnimatedIcon(
-                            icon: AnimatedIcons.list_view,
-                            progress: _animationController!,
-                            color: Colors.green,
-                          ),
-                          onPressed: () => {
-                            _changeGridState(context),
-                          },
-                        ),
-                      ]),
-                    ])),
-                SliverAppBar(
-                    backgroundColor: Colors.indigo,
-                    automaticallyImplyLeading: false,
-                    toolbarHeight: 46,
-                    // collapsedHeight: 56,
-                    primary: false,
-                    floating: false,
-                    pinned: true,
-                    // brightness: Brightness.light,
-                    elevation: 0.0,
-                    flexibleSpace: Column(children: [
-                      ProductChildCategoryWidget(
-                          onSelectedChildCategory: () =>
-                              _refreshBodyOnSelectedProductCategory()),
-                    ])),
-                SliverFillRemaining(
-                  child: SmartRefresher(
-                    footer: CustomFooter(
-                      builder: (BuildContext context, LoadStatus? mode) {
-                        Widget body;
-                        if (mode == LoadStatus.idle) {
-                          body = Text("Потяните вверх, чтобы загрузить еще...",
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic));
-                        } else if (mode == LoadStatus.loading) {
-                          body = Container();
-                        } else if (mode == LoadStatus.failed) {
-                          body = Text("Окончание показа...");
-                        } else if (mode == LoadStatus.canLoading) {
-                          body = Text("Показать еще.", // "release to load more"
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic));
-                        } else {
-                          body = Text("Вывод завершен.", // "No more Data"
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic));
-                        }
-                        return Container(
-                          height: 55.0,
-                          child: Center(child: body),
-                        );
-                      },
-                    ),
-                    controller: _refreshController,
-                    enablePullUp: true,
-                    onRefresh: () async {
-                      final result = await getListOfProducts(isRefresh: true);
-                      if (result) {
-                        _refreshController.refreshCompleted();
-                        BlocProvider.of<SelectedProductsCubit>(context)
-                            .clearProductsSelected();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.green[200],
-                            content: Text('Список товаров обновлен!'),
-                          ),
-                        );
-                      } else {
-                        _refreshController.refreshFailed();
-                      }
+                    onPressed: () => {
+                      _changeGridState(context),
                     },
-                    onLoading: () async {
-                      final result = await getListOfProducts();
-                      if (result) {
-                        _refreshController.loadComplete();
-                      } else {
-                        _refreshController.loadFailed();
-                      }
-                    },
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        final product = _products[index];
-                        return productInfoTile(product, index, isDCT);
-                      },
-                      itemCount: _products.length,
-                      controller: _scrollController,
-                      //  physics: BouncingScrollPhysics(),
-                    ),
                   ),
-                ),
-              ]),
+                ]),
+              ])),
+          SliverAppBar(
+              backgroundColor: Colors.indigo,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 46,
+              // collapsedHeight: 56,
+              primary: false,
+              floating: false,
+              pinned: true,
+              // brightness: Brightness.light,
+              elevation: 0.0,
+              flexibleSpace: Column(children: [
+                ProductChildCategoryWidget(
+                    onSelectedChildCategory: () =>
+                        _refreshBodyOnSelectedProductCategory()),
+              ])),
+          SliverFillRemaining(
+            child: SmartRefresher(
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus? mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("Потяните вверх, чтобы загрузить еще...",
+                        style: TextStyle(
+                            color: Colors.grey, fontStyle: FontStyle.italic));
+                  } else if (mode == LoadStatus.loading) {
+                    body = Container();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Окончание показа...");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("Показать еще.", // "release to load more"
+                        style: TextStyle(
+                            color: Colors.grey, fontStyle: FontStyle.italic));
+                  } else {
+                    body = Text("Вывод завершен.", // "No more Data"
+                        style: TextStyle(
+                            color: Colors.grey, fontStyle: FontStyle.italic));
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: _refreshController,
+              enablePullUp: true,
+              onRefresh: () async {
+                final result = await getListOfProducts(isRefresh: true);
+                if (result) {
+                  _refreshController.refreshCompleted();
+                  BlocProvider.of<SelectedProductsCubit>(context)
+                      .clearProductsSelected();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.green[200],
+                      content: Text('Список товаров обновлен!'),
+                    ),
+                  );
+                } else {
+                  _refreshController.refreshFailed();
+                }
+              },
+              onLoading: () async {
+                final result = await getListOfProducts();
+                if (result) {
+                  _refreshController.loadComplete();
+                } else {
+                  _refreshController.loadFailed();
+                }
+              },
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  final productInfo = _products[index];
+                  // return productInfoTile_unused(product, index, isDCT);
+                  return ProductCardGestureDetectorForCatalogScreen(
+                      refreshBodyOnSelectedProductCategory:
+                          _refreshBodyOnSelectedProductCategory,
+                      productInfo: productInfo,
+                      isDCT: isDCT,
+                      isGridView: isGridView,
+                      index: index);
+                },
+                itemCount: _products.length,
+                controller: _scrollController,
+                //  physics: BouncingScrollPhysics(),
+              ),
+            ),
+          ),
+        ]),
         floatingActionButton: SpeedDial(
             animatedIcon: AnimatedIcons.menu_close,
             shape: CircleBorder(),
@@ -1168,30 +1052,11 @@ class _CatalogScreenState extends State<CatalogScreen>
   }
 }
 
-//  : ListView.builder(
-//                     itemBuilder: (context, index) {
-//                       final product = _products[index];
-//                       return productInfoTile(product, index);
-//                       // return ListTile(
-//                       //   title: Text(document.number),
-//                       //   subtitle: Text(document.date),
-//                       //   trailing: Text(
-//                       //     document.editedDate,
-//                       //     style: TextStyle(color: Colors.green),
-//                       //   ),
-//                       // );
-//                     },
-//                     //  separatorBuilder: (context, index) => Divider(),
-//                     itemCount: _products.length,
-//                     controller: _scrollController,
-//                   ),
-
 class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(40);
-  //Function(List<Product>) onSelectedProductsAppBar;
+
   final Function() onSelectedProductsAppBar;
 
-  //const AppBarSearchWidget({Key? key, required this.appBarSearchTitle})
   AppBarSearchWidget(
       {Key? key,
       required this.appBarSearchTitle,
@@ -1201,8 +1066,6 @@ class AppBarSearchWidget extends StatefulWidget implements PreferredSizeWidget {
   final String appBarSearchTitle;
   @override
   _AppBarSearchWidgetState createState() => _AppBarSearchWidgetState();
-
-  //final title = "";
 }
 
 class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
@@ -1233,9 +1096,9 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 child: Container(
                   child:
                       BlocBuilder<SelectedProductsCubit, SelectedProductsState>(
-                    buildWhen: (previous, current) =>
-                        previous.selectedProducts.length !=
-                        current.selectedProducts.length,
+                    // buildWhen: (previous, current) =>
+                    //     previous.selectedProducts.length !=
+                    //     current.selectedProducts.length,
                     builder: (context, state) {
                       return
                           // Text(
@@ -1252,7 +1115,8 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                           //color: Colors.grey),
                           children: <TextSpan>[
                             TextSpan(
-                                text: selectedProducts2.length.toString(),
+                                //text: selectedProducts2.length.toString(),
+                                text: state.selectedProducts.length.toString(),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
@@ -1321,103 +1185,6 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 //  Icon(Icons.document_scanner_outlined, size: 11),
                 Text(
                   " +   В СПИСОК!  ",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: isDCT ? 10 : 10),
-                ),
-              ])),
-        ))
-      ],
-    );
-  }
-}
-
-class AppBarSearchWidget2_unused extends StatelessWidget
-    implements PreferredSizeWidget {
-  Size get preferredSize => const Size.fromHeight(40);
-
-  const AppBarSearchWidget2_unused({Key? key}) : super(key: key);
-
-  void _addNewGoodsFromSearch2(BuildContext context) {
-    // print('go to items 1');
-    // print(selectedProducts);
-    //widget.onSelectedProductsAppBar(selectedProducts);
-    // onSelectedProductsSearch();
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDCT = MediaQuery.of(context).size.height < 600;
-    return AppBar(
-      //automaticallyImplyLeading: false,
-      // toolbarHeight: isDCT ? 45 : null,
-      title: Container(
-        //padding: const EdgeInsets.only(right: 0),
-        child: Row(children: [
-          // Align(
-          //     alignment: Alignment.topLeft,
-          SizedBox(
-              width: 100,
-              child: Container(
-                child:
-                    BlocBuilder<SelectedProductsCubit, SelectedProductsState>(
-                  builder: (context, state) {
-                    return Text(
-                        //padding: const EdgeInsets.
-                        'Выбрано: ${selectedProducts2.length}',
-                        style: TextStyle(fontSize: isDCT ? 12 : 13));
-                  },
-                ),
-              )),
-        ]),
-        //SizedBox(width: 10)
-      ),
-
-      centerTitle: true,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      flexibleSpace: (Container(
-          //height: 200,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-        //colors: [Colors.purple, Colors.blue, Color(0xFF3b5999)],
-        colors: [Colors.indigo, Colors.blue, Color(0xFF3b5999)],
-        begin: Alignment.bottomRight,
-        end: Alignment.topLeft,
-      )))),
-      actions: <Widget>[
-        //addNewGoodromSearchButton( addGoodsTitle)
-        SizedBox(
-            child: Container(
-          margin: isDCT
-              ? EdgeInsets.only(top: 6, bottom: 6, left: 10, right: 10)
-              : EdgeInsets.all(6),
-          padding: EdgeInsets.only(left: 10, right: 10),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
-                begin: Alignment.bottomRight,
-                //end: Alignment.topLeft,
-              ),
-              borderRadius: BorderRadius.circular(isDCT ? 8 : 8),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withOpacity(.3),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: Offset(0, 1))
-              ]),
-          child: GestureDetector(
-              onTapDown: (TapDownDetails) {
-                _addNewGoodsFromSearch2(context);
-              },
-              child: Row(children: [
-                // Icon(Icons.list, size: 14),
-                //  Icon(Icons.document_scanner_outlined, size: 11),
-                Text(
-                  " +  В СПИСОК ",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,

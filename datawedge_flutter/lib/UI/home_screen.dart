@@ -277,7 +277,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   addGoodItemsFromSelected() {
     print('go to items 3');
-    print(selectedProducts2);
+//print('current_state: ${context.read<SelectedProductsState>()}');
+
+    // print(selectedProducts2);
     if (selectedProducts2.length != 0) {
       bool noItem = true;
       //addButtonTitle = "  +  В СПИСОК (1)";
@@ -304,6 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
       tabIndex = 2;
       _goodsCount = goodsList.length;
     });
+
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
     ;
