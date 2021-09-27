@@ -71,7 +71,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   height: 300,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage("images/background_qr.jpg"),
+                          image: AssetImage("assets/images/background_qr.jpg"),
                           //image: AssetImage("images/background.jpg"),
                           fit: BoxFit.fill)),
                   child: Container(

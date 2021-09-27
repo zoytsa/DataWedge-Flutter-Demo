@@ -579,7 +579,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //Other account avatars
               otherAccountsPictures: <Widget>[
                 new Container(
-                  child: Text("assests/images/bag_1.png"),
+                  child: Text("assets/images/bag_1.png"),
                 )
               ],
             ),
@@ -1315,7 +1315,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ]),
             child: Row(children: [
               ImageIcon(
-                AssetImage("images/icon_zebra.png"),
+                AssetImage("assets/images/icon_zebra.png"),
                 color: Colors.white,
               ),
               Text(
