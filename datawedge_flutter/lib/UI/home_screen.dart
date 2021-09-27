@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/extra_widgets.dart';
 import 'package:datawedgeflutter/model/Product.dart';
@@ -276,22 +277,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   addGoodItemsFromSelected() {
     print('go to items 3');
-    // selectedProducts = newSelectedProducts;
-    if (selectedProducts.length != 0) {
+    print(selectedProducts2);
+    if (selectedProducts2.length != 0) {
       bool noItem = true;
       //addButtonTitle = "  +  В СПИСОК (1)";
-      for (Product itemOfSelectedProducts in selectedProducts) {
+      for (ProductInfo itemOfSelectedProducts2 in selectedProducts2) {
         noItem = true;
         for (GoodItem item in goodsList) {
-          if (item.name == itemOfSelectedProducts.title) {
+          if (item.name == itemOfSelectedProducts2.title) {
             item.quantity++;
             noItem = false;
-            //  addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
+
             break;
           }
         }
         if (noItem == true) {
-          GoodItem newItem = GoodItem.fromProduct(itemOfSelectedProducts);
+          GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
           goodsList.add(newItem);
         }
       }
@@ -1116,7 +1117,8 @@ class _MyHomePageState extends State<MyHomePage> {
       BuildContext context, _goodsHeader, _profileHeaderIcon) {
     return AppBar(
       // automaticallyImplyLeading: false,
-      toolbarHeight: isDCT ? 85 : 90,
+      backgroundColor: Colors.indigo,
+      toolbarHeight: isDCT ? 39 : 39,
       title: Text(
         selectedUser.name == ""
             ? "Connector F."

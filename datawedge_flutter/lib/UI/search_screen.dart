@@ -597,6 +597,27 @@ class _CatalogScreenState extends State<CatalogScreen>
                                 color: productInfo.isSelected
                                     ? Colors.yellow[400]
                                     : Colors.green)),
+                        TextSpan(text: "     Остаток: "),
+                        TextSpan(
+                            text: productInfo.stock_quantity.toString(),
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: productInfo.isSelected
+                                    ? Colors.yellow[400]
+                                    : productInfo.stock_quantity > 0
+                                        ? Colors.green
+                                        : null)),
+                        if (productInfo.selected_quantity > 0)
+                          TextSpan(text: "     В списке: "),
+                        TextSpan(
+                            text: productInfo.selected_quantity.toString(),
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: productInfo.isSelected
+                                    ? Colors.yellow[400]
+                                    : Colors.green)),
                       ],
                     ),
                   ),
@@ -954,13 +975,14 @@ class _CatalogScreenState extends State<CatalogScreen>
               )
             : CustomScrollView(slivers: [
                 SliverAppBar(
+                    backgroundColor: Colors.indigo,
                     automaticallyImplyLeading: false,
                     toolbarHeight: 48, //59 с кол. товаров,  //80 с поиском,
                     // collapsedHeight: 56,
                     primary: false,
                     floating: false,
                     // pinned: true,
-                    brightness: Brightness.light,
+                    // brightness: Brightness.light,
                     elevation: 0.0,
                     flexibleSpace: Column(children: [
                       //    addEnterSearchField2(context), // ВРЕМЕННО!!!
@@ -1014,13 +1036,14 @@ class _CatalogScreenState extends State<CatalogScreen>
                       ]),
                     ])),
                 SliverAppBar(
+                    backgroundColor: Colors.indigo,
                     automaticallyImplyLeading: false,
                     toolbarHeight: 46,
                     // collapsedHeight: 56,
                     primary: false,
                     floating: false,
                     pinned: true,
-                    brightness: Brightness.light,
+                    // brightness: Brightness.light,
                     elevation: 0.0,
                     flexibleSpace: Column(children: [
                       ProductChildCategoryWidget(
@@ -1188,8 +1211,8 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
   }
 
   void _addNewGoodsFromSearch() {
-    // print('go to items 1');
-    // print(selectedProducts);
+    print('go to items 11111');
+    print(selectedProducts);
     //widget.onSelectedProductsAppBar(selectedProducts);
     widget.onSelectedProductsAppBar();
     Navigator.pop(context);
@@ -1297,7 +1320,7 @@ class _AppBarSearchWidgetState extends State<AppBarSearchWidget> {
                 // Icon(Icons.list, size: 14),
                 //  Icon(Icons.document_scanner_outlined, size: 11),
                 Text(
-                  " +   В СПИСОК  ",
+                  " +   В СПИСОК!  ",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,

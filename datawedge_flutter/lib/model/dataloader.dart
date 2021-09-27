@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:datawedgeflutter/UI/home_screen.dart';
 import 'package:datawedgeflutter/UI/login_signup_screen.dart';
 import 'package:datawedgeflutter/model/Product.dart';
+import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
@@ -275,7 +276,14 @@ class GoodItem {
     pricein = "";
     producer = "";
   }
-
+  GoodItem.fromProductInfo(ProductInfo product) {
+    name = product.title;
+    id = product.id;
+    quantity = 0;
+    barcode = product.barcode;
+    pricein = "";
+    producer = "";
+  }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
