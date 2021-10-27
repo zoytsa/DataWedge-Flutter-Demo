@@ -14,13 +14,15 @@ class ProductCardWidget extends StatefulWidget {
   final bool isGridView;
   final ProductInfo productInfo;
   final VoidCallback refreshBodyOnSelectedProductCategory;
+  final bool showBottomField;
   const ProductCardWidget(
       {Key? key,
       required this.index,
       required this.isDCT,
       required this.isGridView,
       required this.productInfo,
-      required this.refreshBodyOnSelectedProductCategory})
+      required this.refreshBodyOnSelectedProductCategory,
+      required this.showBottomField})
       : super(key: key);
 
   @override
@@ -32,7 +34,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     setState(() {});
   }
 
-  void setStateProductCardWidgetOnSelection() {
+  void _setStateProductCardWidgetOnSelection() {
     setState(() {
       widget.productInfo.isSelected = !widget.productInfo.isSelected;
 
@@ -55,12 +57,15 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                   setStateProductCardWidget: _setStateProductCardWidget,
                   isDCT: widget.isDCT,
                   productInfo: widget.productInfo,
-                  index: widget.index)
+                  index: widget.index,
+                  showBottomField: widget.showBottomField,
+                )
               : ProductCardGridWithPhotoWidget(
                   setStateProductCardWidget: _setStateProductCardWidget,
                   isDCT: widget.isDCT,
                   productInfo: widget.productInfo,
-                  index: widget.index)
+                  index: widget.index,
+                  showBottomField: widget.showBottomField)
           : ProductCardListViewWidget(
               // list
               isDCT: widget.isDCT,
@@ -274,12 +279,14 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
   final bool isDCT;
   final ProductInfo productInfo;
   final int index;
+  final bool showBottomField;
   const ProductCardGridWithPhotoWidget(
       {Key? key,
       required this.setStateProductCardWidget,
       required this.isDCT,
       required this.productInfo,
-      required this.index})
+      required this.index,
+      required this.showBottomField})
       : super(key: key);
 
   @override
@@ -396,9 +403,128 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                         ? Colors.yellow[100]
                         : Colors.black)),
           ),
-        )
+        ),
+        showBottomField
+            ? SizedBox(
+                // height: 20,
+                child: Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.orange, Colors.red],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTap: () {
+                            _removeQuantity(index);
+                          },
+                          child: Text(
+                            " -   УМЕНЬШИТЬ  ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue, Colors.lightBlue],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTapDown: (TapDownDetails) {
+                            _addQuantity(index);
+                          },
+                          child: Text(
+                            goodsItems[index].quantity.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.green, Colors.lightGreen],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTap: () {
+                            _addQuantity(index);
+                          },
+                          child: Text(
+                            " +   УВЕЛИЧИТЬ  ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    SizedBox(),
+                  ],
+                )),
+              )
+            : SizedBox()
       ],
     );
+  }
+
+  void _addQuantity(int index) {
+    ++goodsItems[index].quantity;
+    setStateProductCardWidget();
+  }
+
+  void _removeQuantity(int index) {
+    --goodsItems[index].quantity;
+    setStateProductCardWidget();
   }
 }
 
@@ -407,12 +533,14 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
   final bool isDCT;
   final ProductInfo productInfo;
   final int index;
+  final bool showBottomField;
   const ProductCardGridNoPhotoWidget(
       {Key? key,
       required this.setStateProductCardWidget,
       required this.isDCT,
       required this.productInfo,
-      required this.index})
+      required this.index,
+      required this.showBottomField})
       : super(key: key);
 
   @override
@@ -502,8 +630,127 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                 setStateOnPopUpItemSelected: setStateProductCardWidget),
           ),
         ),
+        showBottomField
+            ? SizedBox(
+                // height: 20,
+                child: Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.orange, Colors.red],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTapDown: (TapDownDetails) {
+                            _removeQuantity(index);
+                          },
+                          child: Text(
+                            " -   УМЕНЬШИТЬ  ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue, Colors.lightBlue],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTapDown: (TapDownDetails) {
+                            _addQuantity(index);
+                          },
+                          child: Text(
+                            goodsItems[index].quantity.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    Container(
+                      margin: isDCT
+                          ? EdgeInsets.only(
+                              top: 6, bottom: 6, left: 10, right: 10)
+                          : EdgeInsets.all(6),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 6, bottom: 6),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.green, Colors.lightGreen],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      child: GestureDetector(
+                          onTapDown: (TapDownDetails) {
+                            _addQuantity(index);
+                          },
+                          child: Text(
+                            " +   УВЕЛИЧИТЬ  ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: isDCT ? 10 : 10),
+                          )),
+                    ),
+                    SizedBox(),
+                  ],
+                )),
+              )
+            : SizedBox()
       ],
     );
+  }
+
+  void _addQuantity(int index) {
+    ++goodsItems[index].quantity;
+    setStateProductCardWidget();
+  }
+
+  void _removeQuantity(int index) {
+    --goodsItems[index].quantity;
+    setStateProductCardWidget();
   }
 }
 
@@ -823,7 +1070,7 @@ class ProductCardGestureDetectorForCatalogScreen extends StatelessWidget {
       },
       onDoubleTap: () {
         _keyProductCardWidget.currentState!
-            .setStateProductCardWidgetOnSelection();
+            ._setStateProductCardWidgetOnSelection();
         // setState(() {
         //   productInfo.isSelected = !productInfo.isSelected;
 
@@ -838,24 +1085,26 @@ class ProductCardGestureDetectorForCatalogScreen extends StatelessWidget {
         //);
       },
       child: ProductCardWidget(
-          key: _keyProductCardWidget,
-          index: index,
-          isDCT: isDCT,
-          isGridView: isGridView,
-          productInfo: productInfo,
-          refreshBodyOnSelectedProductCategory:
-              refreshBodyOnSelectedProductCategory),
+        key: _keyProductCardWidget,
+        index: index,
+        isDCT: isDCT,
+        isGridView: isGridView,
+        productInfo: productInfo,
+        refreshBodyOnSelectedProductCategory:
+            refreshBodyOnSelectedProductCategory,
+        showBottomField: false,
+      ),
     );
   }
 }
 
-class ProductCardGestureDetectorForGoodsItemsScreen extends StatelessWidget {
+class ProductCardForGoodsItemsScreen extends StatelessWidget {
   final int index;
   final bool isDCT;
   final bool isGridView;
   final ProductInfo productInfo;
   final VoidCallback refreshBodyOnSelectedProductCategory;
-  const ProductCardGestureDetectorForGoodsItemsScreen(
+  const ProductCardForGoodsItemsScreen(
       {Key? key,
       required this.refreshBodyOnSelectedProductCategory,
       required this.productInfo,
@@ -868,15 +1117,15 @@ class ProductCardGestureDetectorForGoodsItemsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<_ProductCardWidgetState> _keyProductCardWidget =
         GlobalKey();
-    return GestureDetector(
-      child: ProductCardWidget(
-          key: _keyProductCardWidget,
-          index: index,
-          isDCT: isDCT,
-          isGridView: isGridView,
-          productInfo: productInfo,
-          refreshBodyOnSelectedProductCategory:
-              refreshBodyOnSelectedProductCategory),
+    return ProductCardWidget(
+      key: _keyProductCardWidget,
+      index: index,
+      isDCT: isDCT,
+      isGridView: isGridView,
+      productInfo: productInfo,
+      refreshBodyOnSelectedProductCategory:
+          refreshBodyOnSelectedProductCategory,
+      showBottomField: true,
     );
   }
 }

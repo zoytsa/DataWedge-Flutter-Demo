@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //   GoodItem newItem = GoodItem(goodInfo);
     //   goodsList.add(newItem);
     // }
-    _goodsCount = goodsList.length;
+    _goodsCount = goodsItems.length;
     setState(() {
       //addButtonTitle = addButtonTitle;
     });
@@ -269,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
         GoodItem newItem = GoodItem(goodInfo);
         goodsList.add(newItem);
       }
-      _goodsCount = goodsList.length;
+      _goodsCount = goodsItems.length;
       setState(() {
         //addButtonTitle = addButtonTitle;
       });
@@ -284,19 +284,36 @@ class _MyHomePageState extends State<MyHomePage> {
     if (selectedProducts2.length != 0) {
       bool noItem = true;
       //addButtonTitle = "  +  В СПИСОК (1)";
-      for (ProductInfo itemOfSelectedProducts2 in selectedProducts2) {
-        noItem = true;
-        for (GoodItem item in goodsList) {
-          if (item.name == itemOfSelectedProducts2.title) {
-            item.quantity++;
-            noItem = false;
+      // for (ProductInfo itemOfSelectedProducts2 in selectedProducts2) {
+      //   noItem = true;
+      //   for (GoodItem item in goodsList) {
+      //     if (item.name == itemOfSelectedProducts2.title) {
+      //       item.quantity++;
+      //       noItem = false;
 
+      //       break;
+      //     }
+      //   }
+      //   if (noItem == true) {
+      //     GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
+      //     goodsList.add(newItem);
+      //   }
+      // }
+
+      for (ProductInfo lineSelectedProducts in selectedProducts2) {
+        noItem = true;
+        for (ProductInfo lineGoodsItems in goodsItems) {
+          if (lineGoodsItems.title == lineSelectedProducts.title) {
+            lineGoodsItems.quantity++;
+            noItem = false;
             break;
           }
         }
         if (noItem == true) {
-          GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
-          goodsList.add(newItem);
+          //GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
+          lineSelectedProducts.isSelected = false;
+          lineSelectedProducts.quantity = 1;
+          goodsItems.add(lineSelectedProducts);
         }
       }
     }
@@ -305,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // _tabController!.animateTo(1);
     setState(() {
       tabIndex = 2;
-      _goodsCount = goodsList.length;
+      _goodsCount = goodsItems.length;
     });
 
     // var _tabController = DefaultTabController.of(context);

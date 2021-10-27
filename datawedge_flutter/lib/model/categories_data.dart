@@ -357,6 +357,7 @@ class ProductInfo {
   bool isSelected = false;
   num stock_quantity = 0;
   num selected_quantity = 0;
+  num quantity = 0;
 
   ProductInfo(
       {required this.id,
@@ -398,6 +399,7 @@ class ProductInfo {
     productInfo['parent0_title'] = this.parent0_Title;
     productInfo['category0_title'] = this.category0_title;
     productInfo['stock_quantity'] = this.stock_quantity;
+    productInfo['quantity'] = this.quantity;
 
     return productInfo;
   }

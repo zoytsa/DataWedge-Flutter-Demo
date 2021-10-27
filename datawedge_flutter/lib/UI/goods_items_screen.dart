@@ -20,7 +20,7 @@ class GoodsItemsPage extends StatefulWidget {
 }
 
 class _GoodsItemsPageState extends State<GoodsItemsPage> {
-  List<ProductInfo> _GoodsItems = selectedProducts2; // =[]
+  List<ProductInfo> _GoodsItems = goodsItems; // =[]
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _GoodsItemsPageState extends State<GoodsItemsPage> {
       body: ListView.builder(
         itemBuilder: (context, index) {
           final goodItem = _GoodsItems[index];
-          return ProductCardGestureDetectorForGoodsItemsScreen(
+          return ProductCardForGoodsItemsScreen(
             index: index,
             isDCT: false,
             isGridView: true,
