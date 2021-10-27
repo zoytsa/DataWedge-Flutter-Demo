@@ -13,6 +13,7 @@ ProductCategory? selectedProductCategory;
 ProductChildCategory? selectedProductChildCategory;
 int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
+List<ProductInfo> goodsItems = [];
 
 // view
 const kTextColor = Color(0xFF535353);
