@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datawedgeflutter/UI/goods_items_screen.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
@@ -339,10 +340,11 @@ class _MyHomePageState extends State<MyHomePage> {
               body: TabBarView(children: [
                 mainScanPage(context),
 
-                goodItemsPage(context, goodsList, currentDocument),
+                // goodItemsPage(context, goodsList, currentDocument),
+                GoodsItemsPage(),
                 DocumentsPage(),
                 //addResultDataList(context, _resultDataList),
-                profilePage(
+                ProfilePage(
                     vcbUsingZebraOnSelected: () {
                       print("vcb rules");
                     },

@@ -218,12 +218,12 @@ List<DropdownMenuItem<Profile>> buildDropdownMenuItemsProfile(List profiles) {
   return items;
 }
 
-class profilePage extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   var vcbUsingZebra = usingZebra;
   final VoidCallback? vcbUsingZebraOnSelected;
   final Function(bool) vcbUsinZebraOnChanged;
 
-  profilePage(
+  ProfilePage(
       {Key? key,
       required this.vcbUsingZebra,
       this.vcbUsingZebraOnSelected,
@@ -231,10 +231,10 @@ class profilePage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _profilePageState createState() => _profilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _profilePageState extends State<profilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     // var my_vcbUsingZebraOnSelected = widget.vcbUsingZebraOnSelected!();

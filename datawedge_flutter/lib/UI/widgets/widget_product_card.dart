@@ -848,3 +848,35 @@ class ProductCardGestureDetectorForCatalogScreen extends StatelessWidget {
     );
   }
 }
+
+class ProductCardGestureDetectorForGoodsItemsScreen extends StatelessWidget {
+  final int index;
+  final bool isDCT;
+  final bool isGridView;
+  final ProductInfo productInfo;
+  final VoidCallback refreshBodyOnSelectedProductCategory;
+  const ProductCardGestureDetectorForGoodsItemsScreen(
+      {Key? key,
+      required this.refreshBodyOnSelectedProductCategory,
+      required this.productInfo,
+      required this.isDCT,
+      required this.isGridView,
+      required this.index})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final GlobalKey<_ProductCardWidgetState> _keyProductCardWidget =
+        GlobalKey();
+    return GestureDetector(
+      child: ProductCardWidget(
+          key: _keyProductCardWidget,
+          index: index,
+          isDCT: isDCT,
+          isGridView: isGridView,
+          productInfo: productInfo,
+          refreshBodyOnSelectedProductCategory:
+              refreshBodyOnSelectedProductCategory),
+    );
+  }
+}
