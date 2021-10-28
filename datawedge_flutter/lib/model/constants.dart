@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:datawedgeflutter/model/documents_data.dart';
 import 'package:flutter/material.dart';
 import 'Product.dart';
 import 'categories_data.dart';
@@ -14,6 +15,7 @@ ProductChildCategory? selectedProductChildCategory;
 int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
 List<ProductInfo> goodsItems = [];
+DocumentInfo? currentDocument;
 
 // view
 const kTextColor = Color(0xFF535353);

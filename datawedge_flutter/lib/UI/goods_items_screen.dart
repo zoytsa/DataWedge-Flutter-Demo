@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/UI/widgets/widget_product_card.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
@@ -25,23 +26,183 @@ class _GoodsItemsPageState extends State<GoodsItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        body: CustomScrollView(slivers: [
+      SliverAppBar(
+          backgroundColor: Colors.indigo,
+          automaticallyImplyLeading: false,
+          toolbarHeight: 46,
+          // collapsedHeight: 56,
+          primary: false,
+          floating: false,
+          //  pinned: true,
+          // brightness: Brightness.light,
+          elevation: 0.0,
+          flexibleSpace: DocumentNumberTitle(
+            currentDocument: currentDocument,
+          )),
+      SliverAppBar(
+          backgroundColor: Colors.indigo,
+          automaticallyImplyLeading: false,
+          toolbarHeight: 46,
+          // collapsedHeight: 56,
+          primary: false,
+          floating: false,
+          pinned: true,
+          // brightness: Brightness.light,
+          elevation: 0.0,
+          flexibleSpace: DocumentTotalsTitle()),
+
+      SliverList(
+        delegate: new SliverChildListDelegate(_buildList()),
+      ), //
+
       // appBar: AppBar(
       //   title: Text("Документы..."),
       // ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          final goodItem = _GoodsItems[index];
-          return ProductCardForGoodsItemsScreen(
-            index: index,
-            isDCT: false,
-            isGridView: true,
-            productInfo: goodItem,
-            refreshBodyOnSelectedProductCategory: () {},
-          );
-        },
-        //  separatorBuilder: (context, index) => Divider(),
-        itemCount: _GoodsItems.length,
-      ),
+      // body: ListView.builder(
+      //   itemBuilder: (context, index) {
+      //     final goodItem = _GoodsItems[index];
+      //     return ProductCardForGoodsItemsScreen(
+      //       index: index,
+      //       isDCT: false,
+      //       isGridView: true,
+      //       productInfo: goodItem,
+      //       refreshBodyOnSelectedProductCategory: () {},
+      //     );
+      //   },
+      //   //  separatorBuilder: (context, index) => Divider(),
+      //   itemCount: _GoodsItems.length,
+      // ),
+    ]));
+  }
+
+  List<Widget> _buildList() {
+    List<Widget> listItems = [];
+    for (int index = 0; index < _GoodsItems.length; index++) {
+      final goodItem = _GoodsItems[index];
+      listItems.add(ProductCardForGoodsItemsScreen(
+        index: index,
+        isDCT: false,
+        isGridView: true,
+        productInfo: goodItem,
+        refreshBodyOnSelectedProductCategory: () {},
+      ));
+    }
+    return listItems;
+  }
+}
+
+class DocumentNumberTitle extends StatelessWidget {
+  final currentDocument;
+  const DocumentNumberTitle({Key? key, this.currentDocument}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var _textNumber = '  -  ';
+    if (currentDocument != null) {
+      _textNumber = currentDocument.number;
+    }
+    var _textDate = '  -  ';
+    if (currentDocument != null) {
+      _textDate = currentDocument.date;
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                  'Номер документа: ' + _textNumber + '  Дата: ' + _textDate,
+                  style: TextStyle(
+                      color: kTextLightColor, fontStyle: FontStyle.italic)),
+            ),
+            InkWellWidget(
+              color: Colors.blue.withOpacity(0.6),
+              onTap: () {},
+              builder: (isTapped) {
+                final color = isTapped ? Colors.white : Colors.grey;
+
+                return Container(
+                  // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(Icons.refresh, color: color),
+                      const SizedBox(width: 8),
+                      Text(
+                        '  ',
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ]),
+    );
+  }
+}
+
+class DocumentTotalsTitle extends StatelessWidget {
+  final currentDocument;
+  const DocumentTotalsTitle({Key? key, this.currentDocument}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // var _textNumber = '< - >';
+    // if (currentDocument != null) {
+    //   _textNumber = currentDocument.number;
+    // }
+    // var _textDate = '< - >';
+    // if (currentDocument != null) {
+    //   _textDate = currentDocument.date;
+    // }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                  'Всего товаров: ' +
+                      goodsItems.length.toString() +
+                      ', на сумму: 0.0 сом.',
+                  style: TextStyle(color: kTextLightColor)),
+            ),
+            InkWellWidget(
+              color: Colors.blue.withOpacity(0.6),
+              onTap: () {},
+              builder: (isTapped) {
+                final color = isTapped ? Colors.white : Colors.lightGreen;
+
+                return Container(
+                  // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(Icons.save, color: color),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Записать  ',
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ]),
     );
   }
 }

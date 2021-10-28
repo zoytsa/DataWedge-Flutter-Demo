@@ -412,101 +412,113 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.orange, Colors.red],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTap: () {
-                            _removeQuantity(index);
-                          },
-                          child: Text(
-                            " -   УМЕНЬШИТЬ  ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _removeQuantity(index, false);
+                      },
+                      onLongPress: () {
+                        _removeQuantity(index, true);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.orange, Colors.red],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          " -   УМЕНЬШИТЬ  ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 10 : 10),
+                        ),
+                      ),
                     ),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.blue, Colors.lightBlue],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTapDown: (TapDownDetails) {
-                            _addQuantity(index);
-                          },
-                          child: Text(
-                            goodsItems[index].quantity.toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _changeQuantity(index, context);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.blue, Colors.lightBlue],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          goodsItems[index].quantity.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 12 : 13),
+                        ),
+                      ),
                     ),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.green, Colors.lightGreen],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTap: () {
-                            _addQuantity(index);
-                          },
-                          child: Text(
-                            " +   УВЕЛИЧИТЬ  ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _addQuantity(index, false);
+                      },
+                      onLongPress: () {
+                        _addQuantity(index, true);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.green, Colors.lightGreen],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          " +   УВЕЛИЧИТЬ  ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 10 : 10),
+                        ),
+                      ),
                     ),
                     SizedBox(),
                   ],
@@ -517,14 +529,77 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
     );
   }
 
-  void _addQuantity(int index) {
-    ++goodsItems[index].quantity;
+  void _addQuantity(int index, bool longPress) {
+    longPress
+        ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
+        : ++goodsItems[index].quantity;
     setStateProductCardWidget();
   }
 
-  void _removeQuantity(int index) {
-    --goodsItems[index].quantity;
+  void _removeQuantity(int index, bool longPress) {
+    goodsItems[index].quantity > 0
+        ? longPress
+            ? goodsItems[index].quantity =
+                (goodsItems[index].quantity - 10).floor()
+            : --goodsItems[index].quantity
+        : goodsItems[index].quantity = 0;
+
     setStateProductCardWidget();
+  }
+
+  void _changeQuantity(int index, context) {
+    var alert = AlertDialog(
+      title: Text("Введите количество товара"),
+      content: TextField(
+        style: TextStyle(decoration: TextDecoration.none),
+        maxLines: 1,
+        //maxLengthEnforced: false,
+        autofocus: true,
+        enabled: true,
+        keyboardType: TextInputType.number,
+        onSubmitted: (String text) {
+          double? number_input = double.tryParse(text);
+          // Do something with your number like pass it to the next material page route
+          if (number_input != null) {
+            goodsItems[index].quantity = number_input;
+          }
+        },
+        // controller: _controller,
+        decoration: new InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent),
+          border: new UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          prefixIcon: new Icon(
+            Icons.confirmation_number,
+            size: 18.0,
+          ),
+        ),
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return alert;
+      },
+    );
+    //  print(number_input);
   }
 }
 
@@ -638,101 +713,113 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.orange, Colors.red],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTapDown: (TapDownDetails) {
-                            _removeQuantity(index);
-                          },
-                          child: Text(
-                            " -   УМЕНЬШИТЬ  ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _removeQuantity(index, false);
+                      },
+                      onLongPress: () {
+                        _removeQuantity(index, true);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.orange, Colors.red],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          " -   УМЕНЬШИТЬ  ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 10 : 10),
+                        ),
+                      ),
                     ),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.blue, Colors.lightBlue],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTapDown: (TapDownDetails) {
-                            _addQuantity(index);
-                          },
-                          child: Text(
-                            goodsItems[index].quantity.toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _changeQuantity(index, context);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.blue, Colors.lightBlue],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          goodsItems[index].quantity.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 12 : 13),
+                        ),
+                      ),
                     ),
-                    Container(
-                      margin: isDCT
-                          ? EdgeInsets.only(
-                              top: 6, bottom: 6, left: 10, right: 10)
-                          : EdgeInsets.all(6),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 6, bottom: 6),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.green, Colors.lightGreen],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 12 : 12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: Offset(0, 1))
-                          ]),
-                      child: GestureDetector(
-                          onTapDown: (TapDownDetails) {
-                            _addQuantity(index);
-                          },
-                          child: Text(
-                            " +   УВЕЛИЧИТЬ  ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: isDCT ? 10 : 10),
-                          )),
+                    GestureDetector(
+                      onTap: () {
+                        _addQuantity(index, false);
+                      },
+                      onLongPress: () {
+                        _addQuantity(index, true);
+                      },
+                      child: Container(
+                        margin: isDCT
+                            ? EdgeInsets.only(
+                                top: 6, bottom: 6, left: 10, right: 10)
+                            : EdgeInsets.all(6),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, top: 7, bottom: 7),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.green, Colors.lightGreen],
+                              begin: Alignment.bottomRight,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isDCT ? 12 : 12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: Text(
+                          " +   УВЕЛИЧИТЬ  ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: isDCT ? 10 : 10),
+                        ),
+                      ),
                     ),
                     SizedBox(),
                   ],
@@ -743,14 +830,75 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
     );
   }
 
-  void _addQuantity(int index) {
-    ++goodsItems[index].quantity;
+  void _addQuantity(int index, bool longPress) {
+    longPress
+        ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
+        : ++goodsItems[index].quantity;
     setStateProductCardWidget();
   }
 
-  void _removeQuantity(int index) {
-    --goodsItems[index].quantity;
+  void _removeQuantity(int index, bool longPress) {
+    goodsItems[index].quantity > 0
+        ? longPress
+            ? goodsItems[index].quantity =
+                (goodsItems[index].quantity - 10).floor()
+            : --goodsItems[index].quantity
+        : goodsItems[index].quantity = 0;
+
     setStateProductCardWidget();
+  }
+
+  void _changeQuantity(int index, context) {
+    var alert = AlertDialog(
+      title: Text("Введите количество товара"),
+      content: TextField(
+        style: TextStyle(decoration: TextDecoration.none),
+        maxLines: 1,
+        //maxLengthEnforced: false,
+        autofocus: true,
+        enabled: true,
+        keyboardType: TextInputType.number,
+        onSubmitted: (String text) {
+          double? number_input = double.tryParse(text);
+          // Do something with your number like pass it to the next material page route
+          goodsItems[index].quantity = number_input!;
+        },
+        // controller: _controller,
+        decoration: new InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent),
+          border: new UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromRGBO(40, 40, 40, 1.0),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          prefixIcon: new Icon(
+            Icons.confirmation_number,
+            size: 18.0,
+          ),
+        ),
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return alert;
+      },
+    );
+    //  print(number_input);
   }
 }
 
