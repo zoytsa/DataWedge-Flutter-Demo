@@ -8,6 +8,7 @@ import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/UI/profile_screen.dart';
 import 'package:datawedgeflutter/UI/search_screen.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
 import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 import 'package:datawedgeflutter/UI/show_html_page2.dart';
 import 'package:datawedgeflutter/UI/show_report_screen.dart';
@@ -280,25 +281,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print('go to items 3');
 //print('current_state: ${context.read<SelectedProductsState>()}');
 
-    // print(selectedProducts2);
     if (selectedProducts2.length != 0) {
       bool noItem = true;
-      //addButtonTitle = "  +  В СПИСОК (1)";
-      // for (ProductInfo itemOfSelectedProducts2 in selectedProducts2) {
-      //   noItem = true;
-      //   for (GoodItem item in goodsList) {
-      //     if (item.name == itemOfSelectedProducts2.title) {
-      //       item.quantity++;
-      //       noItem = false;
-
-      //       break;
-      //     }
-      //   }
-      //   if (noItem == true) {
-      //     GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
-      //     goodsList.add(newItem);
-      //   }
-      // }
 
       for (ProductInfo lineSelectedProducts in selectedProducts2) {
         noItem = true;
@@ -313,6 +297,32 @@ class _MyHomePageState extends State<MyHomePage> {
           //GoodItem newItem = GoodItem.fromProductInfo(itemOfSelectedProducts2);
           lineSelectedProducts.isSelected = false;
           lineSelectedProducts.quantity = 1;
+          String _tek = lineSelectedProducts.price_sell;
+          //   String str = "a12.334tyz.78x";
+//str = _tek.replaceAll("[^\\d.]", "");
+          // var z = _tek.replaceFirst(RegExp('/[^0-9.]/g'), '');
+          // z = _tek.replaceFirst(RegExp('[^\\d.]'), '');
+          // print(z); //1 199,00
+          // final _letter = ' ';
+          // final _newLetter = '';
+          // _tek = _tek.replaceAll(_letter, _newLetter);
+          //  print('1 true price is ${_tek}');
+          if (_tek.length > 10) {
+            _tek = _tek.replaceFirst(RegExp('[^\\d.]'), '');
+          }
+          if (_tek.length > 6) {
+            _tek = _tek.replaceFirst(RegExp('[^\\d.]'), '');
+          }
+
+          //print('1+ true price is ${_tek}');
+          final _letter2 = ',';
+          final _newLetter2 = '.';
+          _tek = _tek.replaceAll(_letter2, _newLetter2);
+          // print('2 true price is ${_tek}');
+          var _price = double.tryParse(_tek);
+          if (_price != null) {
+            lineSelectedProducts.priceSellNum = _price;
+          }
           goodsItems.add(lineSelectedProducts);
         }
       }
@@ -327,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
-    ;
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
   }
 
 // *** WIDGETS: MAIN SCAN *** //
@@ -358,7 +368,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainScanPage(context),
 
                 // goodItemsPage(context, goodsList, currentDocument),
-                GoodsItemsPage(),
+                GoodsItemsPage(
+                    onProductSelection: () => addGoodItemsFromSelected()),
                 DocumentsPage(),
                 //addResultDataList(context, _resultDataList),
                 ProfilePage(

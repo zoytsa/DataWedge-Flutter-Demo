@@ -16,6 +16,7 @@ int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
 List<ProductInfo> goodsItems = [];
 DocumentInfo? currentDocument;
+bool callBloc = false;
 
 // view
 const kTextColor = Color(0xFF535353);

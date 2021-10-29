@@ -358,6 +358,7 @@ class ProductInfo {
   num stock_quantity = 0;
   num selected_quantity = 0;
   num quantity = 0;
+  num priceSellNum = 0;
 
   ProductInfo(
       {required this.id,

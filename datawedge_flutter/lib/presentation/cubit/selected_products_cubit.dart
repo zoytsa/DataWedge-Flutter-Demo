@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
-//import 'package:flutter/widgets.dart';
-//import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
 
 part 'selected_products_state.dart';

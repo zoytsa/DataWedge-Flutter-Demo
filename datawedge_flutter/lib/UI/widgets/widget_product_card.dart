@@ -3,6 +3,7 @@ import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/palette.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -291,6 +292,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('index built ${index}');
     return Column(
       children: [
         Container(
@@ -351,9 +353,11 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                 ],
               ),
             ),
-            trailing: PopupMenuWidget(
-                productInfo: productInfo,
-                setStateOnPopUpItemSelected: setStateProductCardWidget),
+            trailing: showBottomField
+                ? null
+                : PopupMenuWidget(
+                    productInfo: productInfo,
+                    setStateOnPopUpItemSelected: setStateProductCardWidget),
           ),
         ),
         Container(
@@ -414,10 +418,10 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                     SizedBox(),
                     GestureDetector(
                       onTap: () {
-                        _removeQuantity(index, false);
+                        _removeQuantity(index, false, context);
                       },
                       onLongPress: () {
-                        _removeQuantity(index, true);
+                        _removeQuantity(index, true, context);
                       },
                       child: Container(
                         margin: isDCT
@@ -425,27 +429,30 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.orange, Colors.red],
-                              begin: Alignment.bottomRight,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(.3),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.orange.withOpacity(0.75),
+                              Colors.red.withOpacity(0.75)
+                            ],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //       color: Colors.black.withOpacity(.3),
+                          //       spreadRadius: 1,
+                          //       blurRadius: 2,
+                          //       offset: Offset(0, 1))
+                          // ]
+                        ),
                         child: Text(
-                          " -   УМЕНЬШИТЬ  ",
+                          " - ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              fontSize: isDCT ? 10 : 10),
+                              fontSize: isDCT ? 13 : 13),
                         ),
                       ),
                     ),
@@ -459,19 +466,19 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.blue, Colors.lightBlue],
                               begin: Alignment.bottomRight,
                             ),
                             borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
+                                BorderRadius.circular(isDCT ? 13 : 13),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.black.withOpacity(.3),
                                   spreadRadius: 1,
-                                  blurRadius: 2,
+                                  blurRadius: 1,
                                   offset: Offset(0, 1))
                             ]),
                         child: Text(
@@ -485,10 +492,10 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        _addQuantity(index, false);
+                        _addQuantity(index, false, context);
                       },
                       onLongPress: () {
-                        _addQuantity(index, true);
+                        _addQuantity(index, true, context);
                       },
                       child: Container(
                         margin: isDCT
@@ -496,27 +503,30 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.green, Colors.lightGreen],
-                              begin: Alignment.bottomRight,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(.3),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.green.withOpacity(0.75),
+                              Colors.lightGreen.withOpacity(0.75)
+                            ],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //       color: Colors.black.withOpacity(.3),
+                          //       spreadRadius: 1,
+                          //       blurRadius: 2,
+                          //       offset: Offset(0, 1))
+                          // ]
+                        ),
                         child: Text(
-                          " +   УВЕЛИЧИТЬ  ",
+                          " + ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              fontSize: isDCT ? 10 : 10),
+                              fontSize: isDCT ? 13 : 13),
                         ),
                       ),
                     ),
@@ -529,21 +539,22 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
     );
   }
 
-  void _addQuantity(int index, bool longPress) {
+  void _addQuantity(int index, bool longPress, BuildContext context) {
     longPress
         ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
         : ++goodsItems[index].quantity;
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
-  void _removeQuantity(int index, bool longPress) {
+  void _removeQuantity(int index, bool longPress, BuildContext context) {
     goodsItems[index].quantity > 0
         ? longPress
             ? goodsItems[index].quantity =
                 (goodsItems[index].quantity - 10).floor()
             : --goodsItems[index].quantity
         : goodsItems[index].quantity = 0;
-
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
@@ -562,6 +573,8 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
           // Do something with your number like pass it to the next material page route
           if (number_input != null) {
             goodsItems[index].quantity = number_input;
+            callBloc = true;
+            //  BlocProvider.of<GoodsItemsCubit>(context).updateSum();
           }
         },
         // controller: _controller,
@@ -586,8 +599,8 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10.0),
           ),
           prefixIcon: new Icon(
-            Icons.confirmation_number,
-            size: 18.0,
+            Icons.add_task_sharp,
+            size: 22.0,
           ),
         ),
       ),
@@ -599,7 +612,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
         return alert;
       },
     );
-    //  print(number_input);
+    // print('number_input');
   }
 }
 
@@ -700,9 +713,11 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
               ),
             ),
 
-            trailing: PopupMenuWidget(
-                productInfo: productInfo,
-                setStateOnPopUpItemSelected: setStateProductCardWidget),
+            trailing: showBottomField
+                ? null
+                : PopupMenuWidget(
+                    productInfo: productInfo,
+                    setStateOnPopUpItemSelected: setStateProductCardWidget),
           ),
         ),
         showBottomField
@@ -715,10 +730,10 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                     SizedBox(),
                     GestureDetector(
                       onTap: () {
-                        _removeQuantity(index, false);
+                        _removeQuantity(index, false, context);
                       },
                       onLongPress: () {
-                        _removeQuantity(index, true);
+                        _removeQuantity(index, true, context);
                       },
                       child: Container(
                         margin: isDCT
@@ -726,27 +741,30 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.orange, Colors.red],
-                              begin: Alignment.bottomRight,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(.3),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.orange.withOpacity(0.75),
+                              Colors.red.withOpacity(0.75)
+                            ],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //       color: Colors.black.withOpacity(.3),
+                          //       spreadRadius: 1,
+                          //       blurRadius: 2,
+                          //       offset: Offset(0, 1))
+                          // ]
+                        ),
                         child: Text(
-                          " -   УМЕНЬШИТЬ  ",
+                          " - ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              fontSize: isDCT ? 10 : 10),
+                              fontSize: isDCT ? 13 : 13),
                         ),
                       ),
                     ),
@@ -760,7 +778,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.blue, Colors.lightBlue],
@@ -786,10 +804,10 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        _addQuantity(index, false);
+                        _addQuantity(index, false, context);
                       },
                       onLongPress: () {
-                        _addQuantity(index, true);
+                        _addQuantity(index, true, context);
                       },
                       child: Container(
                         margin: isDCT
@@ -797,27 +815,30 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                                 top: 6, bottom: 6, left: 10, right: 10)
                             : EdgeInsets.all(6),
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 7, bottom: 7),
+                            left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.green, Colors.lightGreen],
-                              begin: Alignment.bottomRight,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(.3),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.green.withOpacity(0.75),
+                              Colors.lightGreen.withOpacity(0.75)
+                            ],
+                            begin: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //       color: Colors.black.withOpacity(.3),
+                          //       spreadRadius: 1,
+                          //       blurRadius: 2,
+                          //       offset: Offset(0, 1))
+                          // ]
+                        ),
                         child: Text(
-                          " +   УВЕЛИЧИТЬ  ",
+                          " + ",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontSize: isDCT ? 10 : 10),
+                              fontSize: isDCT ? 13 : 13),
                         ),
                       ),
                     ),
@@ -830,21 +851,22 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
     );
   }
 
-  void _addQuantity(int index, bool longPress) {
+  void _addQuantity(int index, bool longPress, BuildContext context) {
     longPress
         ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
         : ++goodsItems[index].quantity;
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
-  void _removeQuantity(int index, bool longPress) {
+  void _removeQuantity(int index, bool longPress, BuildContext context) {
     goodsItems[index].quantity > 0
         ? longPress
             ? goodsItems[index].quantity =
                 (goodsItems[index].quantity - 10).floor()
             : --goodsItems[index].quantity
         : goodsItems[index].quantity = 0;
-
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
@@ -861,7 +883,10 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
         onSubmitted: (String text) {
           double? number_input = double.tryParse(text);
           // Do something with your number like pass it to the next material page route
-          goodsItems[index].quantity = number_input!;
+          if (number_input != null) {
+            goodsItems[index].quantity = number_input;
+            callBloc = true;
+          }
         },
         // controller: _controller,
         decoration: new InputDecoration(
