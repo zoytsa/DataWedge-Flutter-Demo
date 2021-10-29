@@ -482,7 +482,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                                   offset: Offset(0, 1))
                             ]),
                         child: Text(
-                          goodsItems[index].quantity.toString(),
+                          kGoodsItems[index].quantity.toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -541,19 +541,20 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
 
   void _addQuantity(int index, bool longPress, BuildContext context) {
     longPress
-        ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
-        : ++goodsItems[index].quantity;
+        ? kGoodsItems[index].quantity =
+            (kGoodsItems[index].quantity + 10).ceil()
+        : ++kGoodsItems[index].quantity;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
   void _removeQuantity(int index, bool longPress, BuildContext context) {
-    goodsItems[index].quantity > 0
+    kGoodsItems[index].quantity > 0
         ? longPress
-            ? goodsItems[index].quantity =
-                (goodsItems[index].quantity - 10).floor()
-            : --goodsItems[index].quantity
-        : goodsItems[index].quantity = 0;
+            ? kGoodsItems[index].quantity =
+                (kGoodsItems[index].quantity - 10).floor()
+            : --kGoodsItems[index].quantity
+        : kGoodsItems[index].quantity = 0;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
@@ -572,7 +573,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
           double? number_input = double.tryParse(text);
           // Do something with your number like pass it to the next material page route
           if (number_input != null) {
-            goodsItems[index].quantity = number_input;
+            kGoodsItems[index].quantity = number_input;
             callBloc = true;
             //  BlocProvider.of<GoodsItemsCubit>(context).updateSum();
           }
@@ -794,7 +795,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                                   offset: Offset(0, 1))
                             ]),
                         child: Text(
-                          goodsItems[index].quantity.toString(),
+                          kGoodsItems[index].quantity.toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -853,19 +854,20 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
 
   void _addQuantity(int index, bool longPress, BuildContext context) {
     longPress
-        ? goodsItems[index].quantity = (goodsItems[index].quantity + 10).ceil()
-        : ++goodsItems[index].quantity;
+        ? kGoodsItems[index].quantity =
+            (kGoodsItems[index].quantity + 10).ceil()
+        : ++kGoodsItems[index].quantity;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
   void _removeQuantity(int index, bool longPress, BuildContext context) {
-    goodsItems[index].quantity > 0
+    kGoodsItems[index].quantity > 0
         ? longPress
-            ? goodsItems[index].quantity =
-                (goodsItems[index].quantity - 10).floor()
-            : --goodsItems[index].quantity
-        : goodsItems[index].quantity = 0;
+            ? kGoodsItems[index].quantity =
+                (kGoodsItems[index].quantity - 10).floor()
+            : --kGoodsItems[index].quantity
+        : kGoodsItems[index].quantity = 0;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
@@ -884,7 +886,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
           double? number_input = double.tryParse(text);
           // Do something with your number like pass it to the next material page route
           if (number_input != null) {
-            goodsItems[index].quantity = number_input;
+            kGoodsItems[index].quantity = number_input;
             callBloc = true;
           }
         },

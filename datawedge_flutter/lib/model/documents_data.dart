@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'package:datawedgeflutter/model/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:datawedgeflutter/model/Product.dart';
+import 'package:datawedgeflutter/model/categories_data.dart';
 
 ListOfDocuments listOfDocumentsFromJson(String str) =>
     ListOfDocuments.fromJson(json.decode(str));
@@ -121,5 +125,85 @@ class DocumentInfo {
     documentInfo['number'] = this.number;
     documentInfo['date'] = this.date;
     return documentInfo;
+  }
+}
+
+class DocumentPricePrint {
+  String project = "DCT";
+  List<ProductInfo> goodsItems = [];
+  String id = '';
+  String createdDate = '';
+  String editedDate = '';
+  int operationId = 2;
+  int productsCount = 0;
+  String number = '';
+  String date = '';
+
+  DocumentPricePrint(goodsItems) {
+    this.project = project;
+    this.goodsItems = goodsItems;
+    this.id = id;
+    this.createdDate = createdDate;
+    this.editedDate = editedDate;
+    this.operationId = operationId;
+    this.productsCount = productsCount;
+    this.number = number;
+    this.date = date;
+  }
+
+  DocumentPricePrint.fromJson(Map<String, dynamic> json) {
+    project = json['project'];
+    id = json['id'];
+    createdDate = json['created_date'];
+    editedDate = json['edited_date'];
+    operationId = json['operation_id'];
+    productsCount = json['products_count'];
+    number = json['number'];
+    date = json['date'];
+    if (json['goodsItems'] != null) {
+      goodsItems = [];
+      json['goodsItems'].forEach((v) {
+        goodsItems.add(ProductInfo.fromJson(v));
+      });
+    }
+    //print(goodsItems.length);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['project'] = this.project;
+    data['id'] = this.id;
+    data['created_date'] = this.createdDate;
+    data['edited_date'] = this.editedDate;
+    data['operation_id'] = this.operationId;
+    data['products_count'] = this.productsCount;
+    data['number'] = this.number;
+    data['date'] = this.date;
+    data['goodsItems'] = this.goodsItems.map((v) => v.toJson()).toList();
+
+    return data;
+  }
+}
+
+Future<DocumentPricePrint?> createDocumentPricePrint(List goodsItems) async {
+  DocumentPricePrint newDocPricePrint = DocumentPricePrint(goodsItems);
+  var myData = newDocPricePrint.toJson();
+  var body = json.encode(myData);
+
+  final Uri uri = Uri.parse(
+      "http://212.112.116.229:7788/weblink/hs/api/documents_price_print");
+  final response = await http.post(
+    uri,
+    headers: kDctHeaders,
+    body: body,
+  );
+
+  if (response.statusCode == 200) {
+    var _data = jsonDecode(utf8.decode(response.bodyBytes));
+    return DocumentPricePrint.fromJson(_data);
+  } else {
+    print(response.body);
+    //throw Exception(response.toString());
+    return null;
   }
 }

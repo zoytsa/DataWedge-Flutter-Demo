@@ -233,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //   GoodItem newItem = GoodItem(goodInfo);
     //   goodsList.add(newItem);
     // }
-    _goodsCount = goodsItems.length;
+    _goodsCount = kGoodsItems.length;
     setState(() {
       //addButtonTitle = addButtonTitle;
     });
@@ -270,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
         GoodItem newItem = GoodItem(goodInfo);
         goodsList.add(newItem);
       }
-      _goodsCount = goodsItems.length;
+      _goodsCount = kGoodsItems.length;
       setState(() {
         //addButtonTitle = addButtonTitle;
       });
@@ -286,7 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       for (ProductInfo lineSelectedProducts in selectedProducts2) {
         noItem = true;
-        for (ProductInfo lineGoodsItems in goodsItems) {
+        for (ProductInfo lineGoodsItems in kGoodsItems) {
           if (lineGoodsItems.title == lineSelectedProducts.title) {
             lineGoodsItems.quantity++;
             noItem = false;
@@ -323,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (_price != null) {
             lineSelectedProducts.priceSellNum = _price;
           }
-          goodsItems.add(lineSelectedProducts);
+          kGoodsItems.add(lineSelectedProducts);
         }
       }
     }
@@ -332,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // _tabController!.animateTo(1);
     setState(() {
       tabIndex = 2;
-      _goodsCount = goodsItems.length;
+      _goodsCount = kGoodsItems.length;
     });
 
     // var _tabController = DefaultTabController.of(context);

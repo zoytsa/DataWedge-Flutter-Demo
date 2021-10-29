@@ -4,6 +4,7 @@ import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/UI/widgets/widget_product_card.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
+import 'package:datawedgeflutter/model/documents_data.dart';
 import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class GoodsItemsPage extends StatefulWidget {
 }
 
 class _GoodsItemsPageState extends State<GoodsItemsPage> {
-  List<ProductInfo> _GoodsItems = goodsItems; // =[]
+  List<ProductInfo> _GoodsItems = kGoodsItems; // =[]
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +259,7 @@ class DocumentTotalsTitle extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                       children: <TextSpan>[
                         TextSpan(
-                            text: goodsItems.length.toString(),
+                            text: kGoodsItems.length.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white)),
@@ -280,7 +281,18 @@ class DocumentTotalsTitle extends StatelessWidget {
             ),
             InkWellWidget(
               color: Colors.blue.withOpacity(0.6),
-              onTap: () {},
+              // onTap: () {},
+
+              onTap: () async {
+                print('start');
+                // saveDocumentGoodItems(goodItems);
+                var currentDocumentInfo2 =
+                    await createDocumentPricePrint(kGoodsItems);
+                // currentDocument = currentDocumentInfo;
+                //setState(() {});
+                //saveData();
+              },
+
               builder: (isTapped) {
                 final color = isTapped ? Colors.white : Colors.lightGreen;
 

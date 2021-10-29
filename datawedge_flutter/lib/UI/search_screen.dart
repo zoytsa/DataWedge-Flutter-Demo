@@ -76,7 +76,7 @@ class _CatalogScreenState extends State<CatalogScreen>
           "http://212.112.116.229:7788/weblink/hs/api/products?last_element_id=$_lastElementId&category_id=$_category_id&category_level=$_category_level&size=50");
     }
 
-    final response = await http.get(uri, headers: dct_headers);
+    final response = await http.get(uri, headers: kDctHeaders);
 
     if (response.statusCode == 200) {
       final result = listOfProductsFromJsonBytes(response.bodyBytes);
@@ -105,7 +105,7 @@ class _CatalogScreenState extends State<CatalogScreen>
     final Uri uri = Uri.parse(
         "http://212.112.116.229:7788/weblink/hs/api/categories?with_children=$with_children&use_cache=0");
 
-    await http.get(uri, headers: dct_headers).then((response) {
+    await http.get(uri, headers: kDctHeaders).then((response) {
       if (response.statusCode == 200) {
         //  var json = jsonDecode(utf8.decode(response.bodyBytes));
         final result = listOfProductCategoriesFromJsonBytes(response.bodyBytes);

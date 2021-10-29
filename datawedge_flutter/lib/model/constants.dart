@@ -14,7 +14,7 @@ ProductCategory? selectedProductCategory;
 ProductChildCategory? selectedProductChildCategory;
 int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
-List<ProductInfo> goodsItems = [];
+List<ProductInfo> kGoodsItems = [];
 DocumentInfo? currentDocument;
 bool callBloc = false;
 
@@ -42,7 +42,7 @@ const dct_username = 'weblink';
 const dct_password = 'weblinK312!';
 final String dct_basicAuth =
     'Basic ' + base64Encode(utf8.encode('$dct_username:$dct_password'));
-final Map<String, String> dct_headers = {
+final Map<String, String> kDctHeaders = {
   'Content-Type': 'application/json; charset=UTF-8',
   'authorization': dct_basicAuth
 };

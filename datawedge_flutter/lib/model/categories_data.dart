@@ -250,7 +250,7 @@ Future<bool> loadListOfProductCategories_unused() async {
   final Uri uri = Uri.parse(
       "http://212.112.116.229:7788/weblink/hs/api/categories?with_children=$with_children&use_cache=0");
 
-  final response = await http.get(uri, headers: dct_headers);
+  final response = await http.get(uri, headers: kDctHeaders);
 
   if (response.statusCode == 200) {
 //  var json = jsonDecode(utf8.decode(response.bodyBytes));

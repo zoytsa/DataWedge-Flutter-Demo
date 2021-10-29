@@ -419,7 +419,7 @@ Future<Good> loadGoods(String barcode) async {
   var response = await http.get(
       Uri.parse(
           "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode),
-      headers: dct_headers);
+      headers: kDctHeaders);
 
   var json = jsonDecode(utf8.decode(response.bodyBytes));
   var jsonGood = json["data"];
@@ -452,7 +452,7 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
   final response = await http.post(
     Uri.parse(
         'http://212.112.116.229:7788/weblink/hs/dct-goods/post_goods_doc'),
-    headers: dct_headers,
+    headers: kDctHeaders,
     body: body,
   );
 
@@ -704,7 +704,7 @@ Future<Profile?> saveProfileOnDCT(BuildContext context) async {
   final response = await http.post(
     Uri.parse(
         'http://212.112.116.229:7788/weblink/hs/dct-profile/post_profile'),
-    headers: dct_headers,
+    headers: kDctHeaders,
     body: body,
   );
 
@@ -824,7 +824,7 @@ Future<DataHTML> loadHTML(String title) async {
           // "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode));
           // "http://212.112.116.229:7788/weblink/hs/dct-html/html_example"));
           "http://212.112.116.229:7788/weblink/hs/dct-html/get_html/" + title),
-      headers: dct_headers);
+      headers: kDctHeaders);
 
   var json = jsonDecode(utf8.decode(response.bodyBytes));
   print(title);
@@ -861,7 +861,7 @@ Future<DataHTML?> loadReport() async {
 
   final response = await http.post(
     Uri.parse('http://212.112.116.229:7788/weblink/hs/dct-report/report/0'),
-    headers: dct_headers,
+    headers: kDctHeaders,
     body: body,
   );
 
