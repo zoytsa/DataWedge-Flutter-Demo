@@ -478,12 +478,12 @@ class _CatalogScreenState extends State<CatalogScreen>
                   _refreshController.refreshCompleted();
                   BlocProvider.of<SelectedProductsCubit>(context)
                       .clearProductsSelected();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.green[200],
-                      content: Text('Список товаров обновлен!'),
-                    ),
-                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     backgroundColor: Colors.green[200],
+                  //     content: Text('Список товаров обновлен!'),
+                  //   ),
+                  // );
                 } else {
                   _refreshController.refreshFailed();
                 }
@@ -515,51 +515,68 @@ class _CatalogScreenState extends State<CatalogScreen>
             ),
           ),
         ]),
-        floatingActionButton: SpeedDial(
-            animatedIcon: AnimatedIcons.menu_close,
-            shape: CircleBorder(),
-            //  childPadding: const EdgeInsets.symmetric(vertical: 5),
-            overlayOpacity: 0,
-            //childrenButtonSize: 60,
-            spacing: 6,
-            animationSpeed: 200, // openCloseDial: isDialOpen,
-            childPadding: EdgeInsets.all(5),
-            spaceBetweenChildren: 4,
-            //  icon: Icons.share,
-            backgroundColor: Colors.indigo[400],
-            children: [
-              SpeedDialChild(
-                  //child: Icon(Icons.arrow_downward_sharp,
-                  child: Icon(Icons.keyboard_arrow_down_outlined,
-                      color: Colors.indigo[400]),
-                  // label: 'Social Network',
-                  backgroundColor: Colors.white,
-                  onTap: () {
-                    if (_scrollController.hasClients) {
-                      _scrollController
-                          .jumpTo(_scrollController.position.maxScrollExtent);
-                    }
-                  }
-                  //  foregroundColor: Colors.white70,
-                  // onTap: () {/* Do someting */},
-                  ),
-              SpeedDialChild(
-                  child: Icon(Icons.keyboard_arrow_up_outlined,
-                      color: Colors.indigo[400]),
-                  // label: 'Social Network',
-                  backgroundColor: Colors.white,
-                  onTap: () {
-                    if (_scrollController.hasClients) {
-                      _scrollController
-                          .jumpTo(_scrollController.position.minScrollExtent);
-                    }
-                  }),
-              // SpeedDialChild(
-              //   child: Icon(Icons.chat),
-              //   label: 'Message',
-              //   backgroundColor: Colors.amberAccent,
-              //   onTap: () {/* Do something */},
-              // ),
-            ]));
+        floatingActionButton: Stack(children: [
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FloatingActionButton(
+              backgroundColor: Colors.green.withOpacity(0.75),
+              foregroundColor: Colors.white,
+              onPressed: () {
+                onSelectedProductsSearch();
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.add),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SpeedDial(
+                animatedIcon: AnimatedIcons.menu_close,
+                shape: CircleBorder(),
+                //  childPadding: const EdgeInsets.symmetric(vertical: 5),
+                overlayOpacity: 0,
+                //childrenButtonSize: 60,
+                spacing: 6,
+                animationSpeed: 200, // openCloseDial: isDialOpen,
+                childPadding: EdgeInsets.all(5),
+                spaceBetweenChildren: 4,
+                //  icon: Icons.share,
+                backgroundColor: Colors.indigo[400],
+                children: [
+                  SpeedDialChild(
+                      //child: Icon(Icons.arrow_downward_sharp,
+                      child: Icon(Icons.keyboard_arrow_down_outlined,
+                          color: Colors.indigo[400]),
+                      // label: 'Social Network',
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.jumpTo(
+                              _scrollController.position.maxScrollExtent);
+                        }
+                      }
+                      //  foregroundColor: Colors.white70,
+                      // onTap: () {/* Do someting */},
+                      ),
+                  SpeedDialChild(
+                      child: Icon(Icons.keyboard_arrow_up_outlined,
+                          color: Colors.indigo[400]),
+                      // label: 'Social Network',
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.jumpTo(
+                              _scrollController.position.minScrollExtent);
+                        }
+                      }),
+                  // SpeedDialChild(
+                  //   child: Icon(Icons.chat),
+                  //   label: 'Message',
+                  //   backgroundColor: Colors.amberAccent,
+                  //   onTap: () {/* Do something */},
+                  // ),
+                ]),
+          ),
+        ]));
   }
 }
