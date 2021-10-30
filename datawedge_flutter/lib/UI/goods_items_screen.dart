@@ -40,24 +40,19 @@ class _GoodsItemsPageState extends State<GoodsItemsPage> {
     return Scaffold(
         body: CustomScrollView(slivers: [
       SliverAppBar(
-          backgroundColor: Colors.indigo,
-          automaticallyImplyLeading: false,
-          toolbarHeight: kGoodsItems.length != 0 ? 64 : 10,
-          // collapsedHeight: 56,
-          primary: false,
-          floating: false,
-          //  pinned: true,
-          // brightness: Brightness.light,
-          elevation: 0.0,
-          flexibleSpace: kGoodsItems.length != 0
-              ? BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
-                  builder: (context, state) {
-                    return DocumentNumberTitle(
-                      currentDocument: kCurrentDocument,
-                    );
-                  },
-                )
-              : null),
+        backgroundColor: Colors.indigo,
+        automaticallyImplyLeading: false,
+        toolbarHeight: kGoodsItems.length != 0 ? 64 : 10,
+        // collapsedHeight: 56,
+        primary: false,
+        floating: false,
+        //  pinned: true,
+        // brightness: Brightness.light,
+        elevation: 0.0,
+        flexibleSpace: DocumentNumberTitle(
+          currentDocument: kCurrentDocument,
+        ),
+      ),
       SliverAppBar(
           backgroundColor: Colors.indigo,
           automaticallyImplyLeading: false,
@@ -189,6 +184,44 @@ class DocumentNumberTitle extends StatelessWidget {
     if (currentDocument != null) {
       _textDate = currentDocument.date;
     }
+    print(_textNumber);
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Text('Номер: ' + _textNumber + '  Дата: ' + _textDate,
+            style:
+                TextStyle(color: kTextLightColor, fontStyle: FontStyle.italic)),
+      ),
+      InkWellWidget(
+        color: Colors.blue.withOpacity(0.6),
+        onTap: () {},
+        onLongPress: () {},
+        builder: (isTapped) {
+          final color =
+              kCurrentDocument == null ? Colors.grey[500] : Colors.blue[400];
+
+          return Container(
+            // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Row(
+              children: [
+                Icon(Icons.refresh, color: color),
+                const SizedBox(width: 8),
+                Text(
+                  ' Перечитать ',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ]);
+
+    return SizedBox();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Expanded(
