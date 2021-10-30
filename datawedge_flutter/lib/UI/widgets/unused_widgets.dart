@@ -310,7 +310,9 @@ Widget productInfoTile_unused(
           HeroDialogRoute(
             builder: (context) => Center(
               child: PopupImageCard(
-                  image_url: productInfo.image_url, title: productInfo.title),
+                  id: productInfo.id,
+                  image_url: productInfo.image_url,
+                  title: productInfo.title),
             ),
           ),
         );
@@ -685,7 +687,9 @@ void actionPopUpItemSelected(
         HeroDialogRoute(
           builder: (context) => Center(
             child: PopupImageCard(
-                image_url: productInfo.image_url, title: productInfo.title),
+                id: productInfo.id,
+                image_url: productInfo.image_url,
+                title: productInfo.title),
           ),
         ),
       );

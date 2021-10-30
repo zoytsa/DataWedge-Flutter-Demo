@@ -153,15 +153,16 @@ class CustomRectTween extends RectTween {
 /// Activated from [_TodoCard].
 /// {@endtemplate}
 class PopupImageCard extends StatelessWidget {
-  const PopupImageCard({Key? key, this.image_url, this.title})
+  const PopupImageCard({Key? key, this.image_url, this.title, required this.id})
       : super(key: key);
   final String? image_url;
   final String? title;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: image_url!,
+      tag: id,
       createRectTween: (begin, end) {
         return CustomRectTween(begin: begin, end: end);
       },

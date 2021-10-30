@@ -1121,7 +1121,9 @@ void _actionPopUpItemSelected(
         HeroDialogRoute(
           builder: (context) => Center(
             child: PopupImageCard(
-                image_url: productInfo.image_url, title: productInfo.title),
+                id: productInfo.id,
+                image_url: productInfo.image_url,
+                title: productInfo.title),
           ),
         ),
       );
@@ -1206,7 +1208,9 @@ class ProductCardGestureDetectorForCatalogScreen extends StatelessWidget {
             HeroDialogRoute(
               builder: (context) => Center(
                 child: PopupImageCard(
-                    image_url: productInfo.image_url, title: productInfo.title),
+                    id: productInfo.id,
+                    image_url: productInfo.image_url,
+                    title: productInfo.title),
               ),
             ),
           );
@@ -1235,15 +1239,18 @@ class ProductCardGestureDetectorForCatalogScreen extends StatelessWidget {
         //
         //);
       },
-      child: ProductCardWidget(
-        key: _keyProductCardWidget,
-        index: index,
-        isDCT: isDCT,
-        isGridView: isGridView,
-        productInfo: productInfo,
-        refreshBodyOnSelectedProductCategory:
-            refreshBodyOnSelectedProductCategory,
-        showBottomField: false,
+      child: Hero(
+        tag: productInfo.id,
+        child: ProductCardWidget(
+          key: _keyProductCardWidget,
+          index: index,
+          isDCT: isDCT,
+          isGridView: isGridView,
+          productInfo: productInfo,
+          refreshBodyOnSelectedProductCategory:
+              refreshBodyOnSelectedProductCategory,
+          showBottomField: false,
+        ),
       ),
     );
   }

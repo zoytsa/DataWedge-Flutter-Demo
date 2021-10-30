@@ -77,7 +77,9 @@ class ProductDeatailsPage extends StatelessWidget {
                   ? Stack(
                       fit: StackFit.expand,
                       children: [
-                        _getBackGroundImage(context),
+                        Hero(
+                            tag: product.id,
+                            child: _getBackGroundImage(context)),
                         // Image.network(
                         //   product.image_url,
                         //   fit: BoxFit.cover,
