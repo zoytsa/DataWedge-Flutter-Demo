@@ -15,8 +15,10 @@ ProductChildCategory? selectedProductChildCategory;
 int selectedProductChildCategoryIndex = 0;
 List<ProductInfo> selectedProducts2 = [];
 List<ProductInfo> kGoodsItems = [];
-DocumentInfo? currentDocument;
-bool callBloc = false;
+var kCurrentDocument;
+bool callBloc =
+    false; //TO-DO: enetering digits quantity manually without multy-rebuild in goods-items-screen
+bool kCurrentDocumentIsSaved = false;
 
 // view
 const kTextColor = Color(0xFF535353);

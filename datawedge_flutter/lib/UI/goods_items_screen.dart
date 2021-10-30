@@ -42,16 +42,22 @@ class _GoodsItemsPageState extends State<GoodsItemsPage> {
       SliverAppBar(
           backgroundColor: Colors.indigo,
           automaticallyImplyLeading: false,
-          toolbarHeight: 46,
+          toolbarHeight: kGoodsItems.length != 0 ? 64 : 10,
           // collapsedHeight: 56,
           primary: false,
           floating: false,
           //  pinned: true,
           // brightness: Brightness.light,
           elevation: 0.0,
-          flexibleSpace: DocumentNumberTitle(
-            currentDocument: currentDocument,
-          )),
+          flexibleSpace: kGoodsItems.length != 0
+              ? BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
+                  builder: (context, state) {
+                    return DocumentNumberTitle(
+                      currentDocument: kCurrentDocument,
+                    );
+                  },
+                )
+              : null),
       SliverAppBar(
           backgroundColor: Colors.indigo,
           automaticallyImplyLeading: false,
@@ -62,7 +68,11 @@ class _GoodsItemsPageState extends State<GoodsItemsPage> {
           pinned: true,
           // brightness: Brightness.light,
           elevation: 0.0,
-          flexibleSpace: DocumentTotalsTitle()),
+          flexibleSpace: DocumentTotalsTitle(
+            setStateGoodsItemsScreen: () {
+              setState(() {});
+            },
+          )),
 
       SliverList(
         delegate: new SliverChildListDelegate(_buildList()),
@@ -131,6 +141,7 @@ class AddGoodsItemViaSearchWidget extends StatelessWidget {
                     ),
               ))
         },
+        onLongPress: () => {},
         builder: (isTapped) {
           final color = isTapped ? Colors.white : Colors.white;
 
@@ -180,50 +191,57 @@ class DocumentNumberTitle extends StatelessWidget {
     }
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                  'Номер документа: ' + _textNumber + '  Дата: ' + _textDate,
-                  style: TextStyle(
-                      color: kTextLightColor, fontStyle: FontStyle.italic)),
-            ),
-            InkWellWidget(
-              color: Colors.blue.withOpacity(0.6),
-              onTap: () {},
-              builder: (isTapped) {
-                final color = isTapped ? Colors.white : Colors.grey;
+      child: Expanded(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text('Номер: ' + _textNumber + '  Дата: ' + _textDate,
+                    style: TextStyle(
+                        color: kTextLightColor, fontStyle: FontStyle.italic)),
+              ),
+              InkWellWidget(
+                color: Colors.blue.withOpacity(0.6),
+                onTap: () {},
+                onLongPress: () {},
+                builder: (isTapped) {
+                  final color = kCurrentDocument == null
+                      ? Colors.grey[500]
+                      : Colors.blue[400];
 
-                return Container(
-                  // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Row(
-                    children: [
-                      Icon(Icons.refresh, color: color),
-                      const SizedBox(width: 8),
-                      Text(
-                        '  ',
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
+                  return Container(
+                    // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.refresh, color: color),
+                        const SizedBox(width: 8),
+                        Text(
+                          ' Перечитать ',
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ]),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ]),
+      ),
     );
   }
 }
 
 class DocumentTotalsTitle extends StatelessWidget {
   final currentDocument;
-  const DocumentTotalsTitle({Key? key, this.currentDocument}) : super(key: key);
+  final VoidCallback setStateGoodsItemsScreen;
+  const DocumentTotalsTitle(
+      {Key? key, this.currentDocument, required this.setStateGoodsItemsScreen})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -282,19 +300,26 @@ class DocumentTotalsTitle extends StatelessWidget {
             InkWellWidget(
               color: Colors.blue.withOpacity(0.6),
               // onTap: () {},
-
+              onLongPress: () {},
               onTap: () async {
-                print('start');
+                //print('start');
                 // saveDocumentGoodItems(goodItems);
-                var currentDocumentInfo2 =
-                    await createDocumentPricePrint(kGoodsItems);
-                // currentDocument = currentDocumentInfo;
-                //setState(() {});
-                //saveData();
+                var currentDocumentInfo2 = await createDocumentPricePrint(
+                    kGoodsItems, kCurrentDocument);
+                BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+                kCurrentDocument = currentDocumentInfo2;
+                if (kCurrentDocumentIsSaved != true &&
+                    kCurrentDocument != null) {
+                  kCurrentDocumentIsSaved = true;
+                  setStateGoodsItemsScreen();
+                }
+                if (kCurrentDocument == null) {
+                  kCurrentDocumentIsSaved = false;
+                }
               },
 
               builder: (isTapped) {
-                final color = isTapped ? Colors.white : Colors.lightGreen;
+                final color = isTapped ? Colors.white : Colors.green[300];
 
                 return Container(
                   // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),

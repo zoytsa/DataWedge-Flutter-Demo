@@ -138,17 +138,21 @@ class DocumentPricePrint {
   int productsCount = 0;
   String number = '';
   String date = '';
+  String doc_ref = '';
 
-  DocumentPricePrint(goodsItems) {
+  DocumentPricePrint(_goodsItems, _currentDoc) {
     this.project = project;
-    this.goodsItems = goodsItems;
-    this.id = id;
+    this.goodsItems = _goodsItems;
+    //this.id = id;
     this.createdDate = createdDate;
     this.editedDate = editedDate;
     this.operationId = operationId;
     this.productsCount = productsCount;
-    this.number = number;
-    this.date = date;
+    if (_currentDoc != null) {
+      this.id = _currentDoc.id;
+      this.number = _currentDoc.number;
+      this.date = _currentDoc.date;
+    }
   }
 
   DocumentPricePrint.fromJson(Map<String, dynamic> json) {
@@ -160,8 +164,10 @@ class DocumentPricePrint {
     productsCount = json['products_count'];
     number = json['number'];
     date = json['date'];
-    if (json['goodsItems'] != null) {
+    doc_ref = json['doc_ref'];
+    if (json['goodsItems'] != null && json['goodsItems'] != '') {
       goodsItems = [];
+      print(json['goodsItems']);
       json['goodsItems'].forEach((v) {
         goodsItems.add(ProductInfo.fromJson(v));
       });
@@ -185,8 +191,10 @@ class DocumentPricePrint {
   }
 }
 
-Future<DocumentPricePrint?> createDocumentPricePrint(List goodsItems) async {
-  DocumentPricePrint newDocPricePrint = DocumentPricePrint(goodsItems);
+Future<DocumentPricePrint?> createDocumentPricePrint(
+    List goodsItems, currentDoc) async {
+  DocumentPricePrint newDocPricePrint =
+      DocumentPricePrint(goodsItems, currentDoc);
   var myData = newDocPricePrint.toJson();
   var body = json.encode(myData);
 

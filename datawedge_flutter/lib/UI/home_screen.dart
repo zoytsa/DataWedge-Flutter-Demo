@@ -325,8 +325,13 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           kGoodsItems.add(lineSelectedProducts);
         }
+        lineSelectedProducts.sumSellNum =
+            lineSelectedProducts.quantity * lineSelectedProducts.priceSellNum;
       }
     }
+
+    kCurrentDocumentIsSaved = true;
+    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
 
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
@@ -337,7 +342,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
   }
 
 // *** WIDGETS: MAIN SCAN *** //

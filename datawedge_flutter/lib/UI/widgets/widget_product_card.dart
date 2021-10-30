@@ -204,11 +204,20 @@ class ProductCardGridWidget extends StatelessWidget {
                                     ? Colors.yellow[400]
                                     : Colors.black87)),
                         TextSpan(
-                            text:
-                                '     Цена: ${productInfo.price_sell}', //productInfo.inner_extra_code,
+                            text: '     KGS ${productInfo.price_sell}',
                             style: TextStyle(
                                 fontSize: 13,
                                 //  fontWeight: FontWeight.bold,
+                                color: productInfo.isSelected
+                                    ? Colors.yellow[400]
+                                    : Colors.black87)),
+                        TextSpan(
+                            text: productInfo.sumSellNum != 0
+                                ? '     Сумма: ${productInfo.sumSellNum.toStringAsFixed(2)}'
+                                : '',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
                                 color: productInfo.isSelected
                                     ? Colors.yellow[400]
                                     : Colors.black87)),
@@ -262,7 +271,7 @@ class ProductCardGridWidget extends StatelessWidget {
                         ? Colors.yellow[100]
                         : Colors.black),
               ),
-              subtitle: Text('Цена: ${productInfo.price_sell}',
+              subtitle: Text('KGS ${productInfo.price_sell}',
                   style: TextStyle(
                       fontSize: 13,
                       color: productInfo.isSelected
@@ -361,98 +370,104 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
           ),
         ),
         Container(
+          padding: const EdgeInsets.all(0.0),
+          margin: EdgeInsets.all(isDCT ? 0 : 0.0),
           decoration: new BoxDecoration(
               color: productInfo.isSelected
                   ? Palette.lightBlue.withOpacity(0.6)
                   : null),
           child: ListTile(
-            leading: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: FadeInImage.memoryNetwork(
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 100.0,
-                    height: 50.0,
-                    child: Image.asset('assets/icons/no-photo.png'),
-                  );
-                },
-                placeholder: kTransparentImage,
-                image: productInfo.image_url,
-                fit: BoxFit.fitHeight,
-                width: 100.0,
-                height: 50.0,
+              leading: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: FadeInImage.memoryNetwork(
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 100.0,
+                      height: 50.0,
+                      child: Image.asset('assets/icons/no-photo.png'),
+                    );
+                  },
+                  placeholder: kTransparentImage,
+                  image: productInfo.image_url,
+                  fit: BoxFit.fitHeight,
+                  width: 100.0,
+                  height: 50.0,
+                ),
               ),
-            ),
-            // :
+              // :
 
-            // Image.asset(
-            //     'assets/icons/no-photo.png',
-            //     width: 100,
-            //     height: 40,
-            //     //   fit: BoxFit.fitHeight,
-            //   ),
+              // Image.asset(
+              //     'assets/icons/no-photo.png',
+              //     width: 100,
+              //     height: 40,
+              //     //   fit: BoxFit.fitHeight,
+              //   ),
 
-            title: Text(
-              '${productInfo.barcode}',
-              style: TextStyle(
-                  fontSize: 13,
-                  color: productInfo.isSelected
-                      ? Colors.yellow[100]
-                      : Colors.black),
-            ),
-            subtitle: Text('Цена: ${productInfo.price_sell}',
+              title: Text(
+                '${productInfo.barcode}',
                 style: TextStyle(
                     fontSize: 13,
                     color: productInfo.isSelected
                         ? Colors.yellow[100]
-                        : Colors.black)),
-          ),
+                        : Colors.black),
+              ),
+              subtitle:
+
+                  // Text('Цена: ${productInfo.price_sell}',
+                  //     style: TextStyle(
+                  //         fontSize: 13,
+                  //         color: productInfo.isSelected
+                  //             ? Colors.yellow[100]
+                  //             : Colors.black)),
+
+                  RichText(
+                text: TextSpan(
+                    text: 'KGS ${productInfo.price_sell}',
+                    style: TextStyle(
+                        fontSize: 13,
+                        //  fontWeight: FontWeight.bold,
+                        color: productInfo.isSelected
+                            ? Colors.yellow[400]
+                            : Colors.black87),
+                    children: [
+                      TextSpan(
+                          text: productInfo.sumSellNum != 0
+                              ? '   Сумма: ${productInfo.sumSellNum.toStringAsFixed(2)}'
+                              : '',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: productInfo.isSelected
+                                  ? Colors.yellow[400]
+                                  : Colors.black87)),
+                    ]),
+              )),
         ),
         showBottomField
             ? SizedBox(
-                // height: 20,
                 child: Container(
                     child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(),
-                    GestureDetector(
+                    InkWell(
+                      highlightColor: Colors.blue.withOpacity(0.2),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(7),
                       onTap: () {
                         _removeQuantity(index, false, context);
                       },
                       onLongPress: () {
                         _removeQuantity(index, true, context);
                       },
-                      child: Container(
-                        margin: isDCT
-                            ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                      child: Padding(
                         padding: EdgeInsets.only(
-                            left: 20, right: 20, top: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.orange.withOpacity(0.75),
-                              Colors.red.withOpacity(0.75)
-                            ],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //       color: Colors.black.withOpacity(.3),
-                          //       spreadRadius: 1,
-                          //       blurRadius: 2,
-                          //       offset: Offset(0, 1))
-                          // ]
-                        ),
-                        child: Text(
-                          " - ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontSize: isDCT ? 13 : 13),
+                            left: 18, right: 18, bottom: 3, top: 3),
+                        child: Icon(
+                          Icons.remove,
+                          size: 30,
+                          //color: Colors.grey[800],
+                          color: Colors.red[600],
                         ),
                       ),
                     ),
@@ -463,8 +478,8 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                       child: Container(
                         margin: isDCT
                             ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                                top: 0, bottom: 0, left: 0, right: 0)
+                            : EdgeInsets.all(0),
                         padding: EdgeInsets.only(
                             left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
@@ -472,13 +487,12 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                               colors: [Colors.blue, Colors.lightBlue],
                               begin: Alignment.bottomRight,
                             ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 13 : 13),
+                            borderRadius: BorderRadius.circular(isDCT ? 7 : 7),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.black.withOpacity(.3),
                                   spreadRadius: 1,
-                                  blurRadius: 1,
+                                  blurRadius: 2,
                                   offset: Offset(0, 1))
                             ]),
                         child: Text(
@@ -490,47 +504,27 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(7),
+                      highlightColor: Colors.blue.withOpacity(0.2),
+                      splashColor: Colors.blue.withOpacity(0.2),
                       onTap: () {
                         _addQuantity(index, false, context);
                       },
                       onLongPress: () {
                         _addQuantity(index, true, context);
                       },
-                      child: Container(
-                        margin: isDCT
-                            ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                      child: Padding(
                         padding: EdgeInsets.only(
-                            left: 20, right: 20, top: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.green.withOpacity(0.75),
-                              Colors.lightGreen.withOpacity(0.75)
-                            ],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //       color: Colors.black.withOpacity(.3),
-                          //       spreadRadius: 1,
-                          //       blurRadius: 2,
-                          //       offset: Offset(0, 1))
-                          // ]
-                        ),
-                        child: Text(
-                          " + ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontSize: isDCT ? 13 : 13),
+                            left: 18, right: 18, bottom: 3, top: 3),
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
+                          //color: Colors.grey[800],
+                          color: Colors.green[600],
                         ),
                       ),
                     ),
-                    SizedBox(),
                   ],
                 )),
               )
@@ -544,17 +538,22 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
         ? kGoodsItems[index].quantity =
             (kGoodsItems[index].quantity + 10).ceil()
         : ++kGoodsItems[index].quantity;
+    kGoodsItems[index].sumSellNum =
+        kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
   void _removeQuantity(int index, bool longPress, BuildContext context) {
-    kGoodsItems[index].quantity > 0
-        ? longPress
-            ? kGoodsItems[index].quantity =
-                (kGoodsItems[index].quantity - 10).floor()
-            : --kGoodsItems[index].quantity
-        : kGoodsItems[index].quantity = 0;
+    longPress
+        ? kGoodsItems[index].quantity =
+            (kGoodsItems[index].quantity - 10).floor()
+        : --kGoodsItems[index].quantity;
+    if (kGoodsItems[index].quantity < 0) {
+      kGoodsItems[index].quantity = 0;
+    }
+    kGoodsItems[index].sumSellNum =
+        kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
@@ -574,6 +573,8 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
           // Do something with your number like pass it to the next material page route
           if (number_input != null) {
             kGoodsItems[index].quantity = number_input;
+            kGoodsItems[index].sumSellNum =
+                kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
             callBloc = true;
             //  BlocProvider.of<GoodsItemsCubit>(context).updateSum();
           }
@@ -702,11 +703,20 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                               ? Colors.yellow[400]
                               : Colors.black87)),
                   TextSpan(
-                      text:
-                          '     Цена: ${productInfo.price_sell}', //productInfo.inner_extra_code,
+                      text: '     KGS ${productInfo.price_sell}',
                       style: TextStyle(
                           fontSize: 13,
                           //  fontWeight: FontWeight.bold,
+                          color: productInfo.isSelected
+                              ? Colors.yellow[400]
+                              : Colors.black87)),
+                  TextSpan(
+                      text: productInfo.sumSellNum != 0
+                          ? '     Сумма: ${productInfo.sumSellNum.toStringAsFixed(2)}'
+                          : '',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
                           color: productInfo.isSelected
                               ? Colors.yellow[400]
                               : Colors.black87)),
@@ -723,49 +733,29 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
         ),
         showBottomField
             ? SizedBox(
-                // height: 20,
                 child: Container(
                     child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(),
-                    GestureDetector(
+                    InkWell(
+                      highlightColor: Colors.blue.withOpacity(0.2),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(7),
                       onTap: () {
                         _removeQuantity(index, false, context);
                       },
                       onLongPress: () {
                         _removeQuantity(index, true, context);
                       },
-                      child: Container(
-                        margin: isDCT
-                            ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                      child: Padding(
                         padding: EdgeInsets.only(
-                            left: 20, right: 20, top: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.orange.withOpacity(0.75),
-                              Colors.red.withOpacity(0.75)
-                            ],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //       color: Colors.black.withOpacity(.3),
-                          //       spreadRadius: 1,
-                          //       blurRadius: 2,
-                          //       offset: Offset(0, 1))
-                          // ]
-                        ),
-                        child: Text(
-                          " - ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontSize: isDCT ? 13 : 13),
+                            left: 18, right: 18, bottom: 3, top: 3),
+                        child: Icon(
+                          Icons.remove,
+                          size: 30,
+                          //color: Colors.grey[800],
+                          color: Colors.red[600],
                         ),
                       ),
                     ),
@@ -776,8 +766,8 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                       child: Container(
                         margin: isDCT
                             ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                                top: 0, bottom: 0, left: 0, right: 0)
+                            : EdgeInsets.all(0),
                         padding: EdgeInsets.only(
                             left: 20, right: 20, top: 7, bottom: 7),
                         decoration: BoxDecoration(
@@ -785,8 +775,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                               colors: [Colors.blue, Colors.lightBlue],
                               begin: Alignment.bottomRight,
                             ),
-                            borderRadius:
-                                BorderRadius.circular(isDCT ? 12 : 12),
+                            borderRadius: BorderRadius.circular(isDCT ? 7 : 7),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.black.withOpacity(.3),
@@ -803,47 +792,27 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(7),
+                      highlightColor: Colors.blue.withOpacity(0.2),
+                      splashColor: Colors.blue.withOpacity(0.2),
                       onTap: () {
                         _addQuantity(index, false, context);
                       },
                       onLongPress: () {
                         _addQuantity(index, true, context);
                       },
-                      child: Container(
-                        margin: isDCT
-                            ? EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10)
-                            : EdgeInsets.all(6),
+                      child: Padding(
                         padding: EdgeInsets.only(
-                            left: 20, right: 20, top: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.green.withOpacity(0.75),
-                              Colors.lightGreen.withOpacity(0.75)
-                            ],
-                            begin: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(isDCT ? 13 : 13),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //       color: Colors.black.withOpacity(.3),
-                          //       spreadRadius: 1,
-                          //       blurRadius: 2,
-                          //       offset: Offset(0, 1))
-                          // ]
-                        ),
-                        child: Text(
-                          " + ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: isDCT ? 13 : 13),
+                            left: 18, right: 18, bottom: 3, top: 3),
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
+                          //color: Colors.grey[800],
+                          color: Colors.green[600],
                         ),
                       ),
                     ),
-                    SizedBox(),
                   ],
                 )),
               )
@@ -857,17 +826,22 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
         ? kGoodsItems[index].quantity =
             (kGoodsItems[index].quantity + 10).ceil()
         : ++kGoodsItems[index].quantity;
+    kGoodsItems[index].sumSellNum =
+        kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
   void _removeQuantity(int index, bool longPress, BuildContext context) {
-    kGoodsItems[index].quantity > 0
-        ? longPress
-            ? kGoodsItems[index].quantity =
-                (kGoodsItems[index].quantity - 10).floor()
-            : --kGoodsItems[index].quantity
-        : kGoodsItems[index].quantity = 0;
+    longPress
+        ? kGoodsItems[index].quantity =
+            (kGoodsItems[index].quantity - 10).floor()
+        : --kGoodsItems[index].quantity;
+    if (kGoodsItems[index].quantity < 0) {
+      kGoodsItems[index].quantity = 0;
+    }
+    kGoodsItems[index].sumSellNum =
+        kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
     BlocProvider.of<GoodsItemsCubit>(context).updateSum();
     setStateProductCardWidget();
   }
@@ -887,6 +861,8 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
           // Do something with your number like pass it to the next material page route
           if (number_input != null) {
             kGoodsItems[index].quantity = number_input;
+            kGoodsItems[index].sumSellNum =
+                kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
             callBloc = true;
           }
         },

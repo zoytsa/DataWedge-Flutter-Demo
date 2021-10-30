@@ -359,6 +359,7 @@ class ProductInfo {
   num selected_quantity = 0;
   num quantity = 0;
   num priceSellNum = 0;
+  num sumSellNum = 0;
 
   ProductInfo(
       {required this.id,
@@ -386,6 +387,9 @@ class ProductInfo {
     parent0_Title = json['parent0_title'];
     category0_title = json['category0_title'];
     stock_quantity = json['stock_quantity'];
+    //quantity = json['quantity'];
+    //sumSellNum = json['sum'];
+    //priceSellNum = json['price_out'];
   }
 
   Map<String, dynamic> toJson() {
@@ -401,6 +405,8 @@ class ProductInfo {
     productInfo['category0_title'] = this.category0_title;
     productInfo['stock_quantity'] = this.stock_quantity;
     productInfo['quantity'] = this.quantity;
+    productInfo['sum'] = this.sumSellNum;
+    productInfo['price_out'] = this.priceSellNum;
 
     return productInfo;
   }

@@ -208,10 +208,12 @@ class InkWellWidget extends StatefulWidget {
   final BorderRadius? borderRadius;
   final ShapeBorder? customBorder;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   const InkWellWidget({
     required this.builder,
     required this.onTap,
+    required this.onLongPress,
     this.color,
     this.borderRadius,
     this.customBorder,
@@ -236,10 +238,271 @@ class _InkWellWidgetState extends State<InkWellWidget> {
         highlightColor: color,
         borderRadius: widget.borderRadius,
         onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
         child: widget.builder(isTapped),
         onHighlightChanged: (isTapped) =>
             setState(() => this.isTapped = isTapped),
         customBorder: widget.customBorder,
+      ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  var icon;
+  var red = false;
+
+  MyButton({
+    Key? key,
+    this.icon,
+    required this.red,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(4),
+      child: Container(
+        padding: EdgeInsets.only(left: 13, right: 13, bottom: 2, top: 2),
+        child: Icon(
+          icon,
+          size: 25,
+          //color: Colors.grey[800],
+          color: red ? Colors.red[600] : Colors.green[600],
+        ),
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(23),
+            color: Colors.grey[300],
+            boxShadow: [
+              BoxShadow(
+                  color: Palette.kGrey500,
+                  offset: Offset(2.0, 2.0),
+                  blurRadius: 5.0,
+                  spreadRadius: 1.0),
+              BoxShadow(
+                  color: Colors.white,
+                  offset: Offset(-2.0, -2.0),
+                  blurRadius: 5.0,
+                  spreadRadius: 1.0),
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Palette.kGrey200,
+                  Palette.kGrey300,
+                  Palette.kGrey400,
+                  Palette.kGrey500,
+                ],
+                stops: [
+                  0.1,
+                  0.3,
+                  0.8,
+                  1
+                ])),
+      ),
+    );
+  }
+}
+
+class MyButtonRed extends StatelessWidget {
+  var icon;
+
+  MyButtonRed({
+    Key? key,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(4),
+      child: Container(
+        padding: EdgeInsets.only(left: 13, right: 13, bottom: 2, top: 2),
+        child: Icon(
+          icon,
+          size: 25,
+          color: Colors.white,
+        ),
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(23),
+            color: Palette.kRed300,
+            boxShadow: [
+              BoxShadow(
+                  color: Palette.kRed600,
+                  offset: Offset(3.0, 3.0),
+                  blurRadius: 10.0,
+                  spreadRadius: 1.0),
+              BoxShadow(
+                  color: Colors.white,
+                  offset: Offset(-3.0, -3.0),
+                  blurRadius: 15.0,
+                  spreadRadius: 1.0),
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Palette.kRed200,
+                  Palette.kRed300,
+                  Palette.kRed400,
+                  Palette.kRed500,
+                ],
+                stops: [
+                  0.1,
+                  0.3,
+                  0.8,
+                  1
+                ])),
+      ),
+    );
+  }
+}
+
+class ButtonTapped extends StatelessWidget {
+  var icon;
+
+  ButtonTapped({
+    Key? key,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(4),
+      child: Container(
+        padding: EdgeInsets.all(5),
+        child: Container(
+          padding: EdgeInsets.only(left: 13, right: 13, bottom: 2, top: 2),
+          child: Icon(
+            icon,
+            size: 25,
+            color: Palette.kGrey700,
+          ),
+          decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(23),
+              color: Palette.kGrey300,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.white,
+                    offset: Offset(4.0, 4.0),
+                    blurRadius: 10.0,
+                    spreadRadius: 1.0),
+                BoxShadow(
+                    color: Palette.kGrey600,
+                    offset: Offset(-4.0, -4.0),
+                    blurRadius: 10.0,
+                    spreadRadius: 1.0),
+              ],
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Palette.kGrey700,
+                    Palette.kGrey600,
+                    Palette.kGrey500,
+                    Palette.kGrey200,
+                  ],
+                  stops: [
+                    0,
+                    0.1,
+                    0.3,
+                    1
+                  ])),
+        ),
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(23),
+            color: Colors.grey[300],
+            boxShadow: [
+              BoxShadow(
+                  color: Palette.kGrey600,
+                  offset: Offset(4.0, 4.0),
+                  blurRadius: 10.0,
+                  spreadRadius: 1.0),
+              BoxShadow(
+                  color: Colors.white,
+                  offset: Offset(-4.0, -4.0),
+                  blurRadius: 10.0,
+                  spreadRadius: 1.0),
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Palette.kGrey200,
+                  Palette.kGrey300,
+                  Palette.kGrey400,
+                  Palette.kGrey500,
+                ],
+                stops: [
+                  0.1,
+                  0.3,
+                  0.8,
+                  1
+                ])),
+      ),
+    );
+  }
+}
+
+class TransparentButton extends StatelessWidget {
+  var icon;
+  var red = false;
+
+  TransparentButton({
+    Key? key,
+    this.icon,
+    required this.red,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(0),
+      child: Container(
+        padding: EdgeInsets.only(left: 18, right: 18, bottom: 3, top: 3),
+        child: Icon(
+          icon,
+          size: 30,
+          //color: Colors.grey[800],
+          color: red ? Colors.red[600] : Colors.green[600],
+        ),
+        // decoration: BoxDecoration(
+        //     shape: BoxShape.rectangle,
+        //     borderRadius: BorderRadius.circular(23),
+        //     color: Colors.grey[300],
+        //     boxShadow: [
+        //       BoxShadow(
+        //           color: Palette.kGrey500,
+        //           offset: Offset(2.0, 2.0),
+        //           blurRadius: 5.0,
+        //           spreadRadius: 1.0),
+        //       BoxShadow(
+        //           color: Colors.white,
+        //           offset: Offset(-2.0, -2.0),
+        //           blurRadius: 5.0,
+        //           spreadRadius: 1.0),
+        //     ],
+        //     gradient: LinearGradient(
+        //         begin: Alignment.topLeft,
+        //         end: Alignment.bottomRight,
+        //         colors: [
+        //           Palette.kGrey200,
+        //           Palette.kGrey300,
+        //           Palette.kGrey400,
+        //           Palette.kGrey500,
+        //         ],
+        //         stops: [
+        //           0.1,
+        //           0.3,
+        //           0.8,
+        //           1
+        //         ])),
       ),
     );
   }
