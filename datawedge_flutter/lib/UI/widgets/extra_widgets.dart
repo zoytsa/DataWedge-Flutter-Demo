@@ -166,33 +166,38 @@ class PopupImageCard extends StatelessWidget {
       createRectTween: (begin, end) {
         return CustomRectTween(begin: begin, end: end);
       },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Material(
-          borderRadius: BorderRadius.circular(16),
-          color: Palette.facebookColor.withOpacity(0.7),
-          child: SizedBox(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(title!,
-                        style: TextStyle(fontSize: 15, color: Colors.white)),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.circular(8),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Material(
+            borderRadius: BorderRadius.circular(16),
+            color: Palette.facebookColor.withOpacity(0.7),
+            child: SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(title!,
+                          style: TextStyle(fontSize: 15, color: Colors.white)),
+                      const SizedBox(
+                        height: 4,
                       ),
-                      child: Image.network(image_url!,
-                          width: 320, height: 320, fit: BoxFit.scaleDown),
-                    ),
-                  ],
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.network(image_url!,
+                            width: 320, height: 320, fit: BoxFit.scaleDown),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

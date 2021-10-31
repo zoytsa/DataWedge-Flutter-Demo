@@ -453,7 +453,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   //  setState(() {
                                   debugPrint('User selected ');
                                   // onChangeDropdownItem(valueSelectedByUser as Market);
-                                  selectedDocumentType =
+                                  kSelectedDocumentType =
                                       valueSelectedByUser as DocumentType;
                                   saveSettingsHive(context);
                                   saveProfileOnDCT(context);

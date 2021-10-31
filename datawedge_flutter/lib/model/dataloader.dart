@@ -40,7 +40,7 @@ class User {
       User(2, 'Петров', markets[0], Icons.agriculture_rounded),
       User(3, 'Сидоров', markets[0],
           Icons.airline_seat_legroom_reduced_outlined),
-      User(4, 'Улановский', markets[0], Icons.airline_seat_recline_extra_sharp),
+      User(4, 'Трамп', markets[0], Icons.airline_seat_recline_extra_sharp),
       User(5, 'Путин', markets[0], Icons.airline_seat_recline_extra_sharp),
     ];
   }
@@ -57,11 +57,12 @@ class Market {
     return <Market>[
       Market(
           0, '<маркет не выбран>', FormatMarket.gipermarket, Icons.unfold_more),
-      Market(1, 'Ф01', FormatMarket.gipermarket, Icons.account_balance_sharp),
-      Market(2, 'Ф02', FormatMarket.express, Icons.account_balance_wallet),
-      Market(3, 'Ф03', FormatMarket.supermarket, Icons.flip_to_front_outlined),
-      Market(4, 'Ф04', FormatMarket.supermarket, Icons.flip_to_front_outlined),
-      Market(5, 'Ф05', FormatMarket.gipermarket, Icons.account_balance_sharp),
+      Market(1, 'Льва Толстого', FormatMarket.gipermarket,
+          Icons.account_balance_sharp),
+      Market(2, 'Көк-Жар', FormatMarket.express, Icons.account_balance_wallet),
+      Market(3, 'Ош', FormatMarket.supermarket, Icons.flip_to_front_outlined),
+      //Market(4, 'Ф04', FormatMarket.supermarket, Icons.flip_to_front_outlined),
+      //Market(5, 'Ф05', FormatMarket.gipermarket, Icons.account_balance_sharp),
     ];
   }
 }
@@ -77,17 +78,28 @@ class DocumentType {
   static List<DocumentType> getDocumentTypes() {
     return [
       DocumentType(
-          0,
+          2,
           'Печать ценников',
           Icons.sell_outlined,
           ImageIcon(AssetImage("assets/icons/icon_price_tag.png"),
               color: Colors.black)),
       DocumentType(1, 'Заказ поставщику', Icons.menu_book_outlined, null),
-      DocumentType(2, 'Поступление товаров', Icons.add_box_outlined, null),
-      DocumentType(3, 'Заказ внутренний', Icons.airport_shuttle, null),
+      //    DocumentType(3, 'Поступление товаров', Icons.add_box_outlined, null),
+      DocumentType(3, 'Заказ покупателя', Icons.airport_shuttle, null),
       DocumentType(
           4, 'Инвентаризация', Icons.account_balance_wallet_outlined, null),
     ];
+  }
+
+  static DocumentType getDocumentTypesByID(int _id) {
+    switch (_id) {
+      case 1:
+        return documentTypes[1];
+      case 2:
+        return documentTypes[0];
+      default:
+        return documentTypes[_id - 1];
+    }
   }
 }
 
@@ -104,7 +116,7 @@ class ProfileRole {
       ProfileRole(1, 'root', Icons.airline_seat_recline_extra_sharp),
       ProfileRole(
           2, 'administrator', Icons.airline_seat_legroom_reduced_outlined),
-      ProfileRole(3, 'Управляющий', Icons.headset_mic_rounded),
+      ProfileRole(3, 'Менеджер', Icons.headset_mic_rounded),
       ProfileRole(4, 'Руководитель', Icons.manage_accounts_outlined),
       ProfileRole(5, 'Персонал', Icons.pregnant_woman_rounded), // preblwole
     ];
@@ -186,11 +198,11 @@ class Profile {
   static List<Profile> getAvailableProfiles() {
     return <Profile>[
       Profile(0, 0, 0, 5, 0, "<0>", 0),
-      Profile(1, 1, 1, 0, 1, "<1>", 1),
-      Profile(2, 2, 2, 2, 2, "<2>", 2),
-      Profile(3, 3, 3, 3, 3, "<3>", 3),
-      Profile(4, 4, 4, 4, 4, "<4>", 4),
-      Profile(5, 5, 5, 5, 5, "<5>", 5),
+      Profile(1, 1, 1, 0, 0, "<1>", 1),
+      Profile(2, 2, 2, 2, 0, "<2>", 2),
+      Profile(3, 3, 3, 3, 0, "<3>", 3),
+      Profile(4, 4, 4, 4, 0, "<4>", 4),
+      Profile(5, 5, 5, 5, 0, "<5>", 5),
     ];
   }
 
@@ -467,7 +479,7 @@ Future<DocumentOrder?> createDocumentOrder(List goodItems) async {
 saveSettingsHive(BuildContext context) {
   print('selectedUser.id: ${selectedUser.id}');
   print('selectedMarket.id: ${selectedMarket.id}');
-  print('selectedDocumentType.id: ${selectedDocumentType.id}');
+  print('selectedDocumentType.id: ${kSelectedDocumentType.id}');
   print('selectedProfile.profileID: ${selectedProfile.profileID}');
 
   bool noNeedToSave = true;
@@ -490,9 +502,9 @@ saveSettingsHive(BuildContext context) {
 
   Settings? documentTypeSettings = box.get("documentTypeID");
   if (documentTypeSettings != null) {
-    if (selectedDocumentType.id != documentTypeSettings.value) {
-      documentTypeSettings.value = selectedDocumentType.id;
-      documentTypeSettings.name = selectedDocumentType.name;
+    if (kSelectedDocumentType.id != documentTypeSettings.value) {
+      documentTypeSettings.value = kSelectedDocumentType.id;
+      documentTypeSettings.name = kSelectedDocumentType.name;
       documentTypeSettings.save();
       noNeedToSave = false;
     }
@@ -500,7 +512,7 @@ saveSettingsHive(BuildContext context) {
 
   if (documentTypeSettings == null) {
     Settings documentTypeID =
-        Settings(selectedDocumentType.name, selectedDocumentType.id);
+        Settings(kSelectedDocumentType.name, kSelectedDocumentType.id);
     noNeedToSave = false;
     box.put("documentTypeID", documentTypeID);
   }
@@ -594,7 +606,7 @@ saveSettingsHive(BuildContext context) {
     BlocProvider.of<ProfileCubit>(context).updateProfileState(
         selectedUser,
         selectedMarket,
-        selectedDocumentType,
+        kSelectedDocumentType,
         selectedProfile,
         usingZebra,
         isAuthorized);

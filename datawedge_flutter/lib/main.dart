@@ -63,9 +63,10 @@ class MyApp extends StatelessWidget {
 
       Settings? documentTypeIDSettings = box.get("documentTypeID");
       if (documentTypeIDSettings != null) {
-        selectedDocumentType = documentTypes[documentTypeIDSettings.value];
+        kSelectedDocumentType =
+            DocumentType.getDocumentTypesByID(documentTypeIDSettings.value);
       } else {
-        selectedDocumentType = documentTypes[0];
+        kSelectedDocumentType = documentTypes[0];
       }
 
       Settings? marketIDSettings = box.get("marketID");
@@ -96,7 +97,7 @@ class MyApp extends StatelessWidget {
       BlocProvider.of<ProfileCubit>(context).updateProfileState(
           selectedUser,
           selectedMarket,
-          selectedDocumentType,
+          kSelectedDocumentType,
           selectedProfile,
           usingZebra,
           isAuthorized);

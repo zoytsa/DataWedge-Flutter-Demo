@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:datawedgeflutter/model/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:datawedgeflutter/model/Product.dart';
+//import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
+
+ListOfDocuments listOfDocumentsFromJsonBytes(bodyBytes) =>
+    ListOfDocuments.fromJson(jsonDecode(utf8.decode(bodyBytes)));
 
 ListOfDocuments listOfDocumentsFromJson(String str) =>
     ListOfDocuments.fromJson(json.decode(str));
@@ -20,7 +23,7 @@ class ListOfDocuments {
   String sessionId = '';
   String filter = '';
   int size = 25;
-  String useCache = 'false';
+  int useCache = 0;
   List<DocumentInfo> data = [];
   int totalElements = 0;
   int totalPages = 0;
@@ -56,6 +59,7 @@ class ListOfDocuments {
     totalPages = json['total_pages'];
     useCache = json['use_cache'];
     maxElementId = json['max_element_id'];
+    //comment = json['comment'];
 
     if (json['data'] != null) {
       data = [];
@@ -80,6 +84,7 @@ class ListOfDocuments {
     DocumentInfo['total_elements'] = this.totalElements;
     DocumentInfo['total_pages'] = this.totalPages;
     DocumentInfo['max_element_id'] = this.maxElementId;
+
     if (this.data != null) {
       DocumentInfo['DocumentInfo'] = this.data.map((v) => v.toJson()).toList();
     }
@@ -95,6 +100,7 @@ class DocumentInfo {
   int productsCount = 0;
   String number = '';
   String date = '';
+  String comment = "";
 
   DocumentInfo(
       {required this.id,
@@ -103,7 +109,8 @@ class DocumentInfo {
       required this.operationId,
       required this.productsCount,
       required this.number,
-      required this.date});
+      required this.date,
+      required this.comment});
 
   DocumentInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -113,6 +120,7 @@ class DocumentInfo {
     productsCount = json['products_count'];
     number = json['number'];
     date = json['date'];
+    comment = json['comment'];
   }
 
   Map<String, dynamic> toJson() {
@@ -124,6 +132,7 @@ class DocumentInfo {
     documentInfo['products_count'] = this.productsCount;
     documentInfo['number'] = this.number;
     documentInfo['date'] = this.date;
+    documentInfo['comment'] = this.comment;
     return documentInfo;
   }
 }

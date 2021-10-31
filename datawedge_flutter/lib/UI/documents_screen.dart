@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/documents_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -36,6 +37,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
   //final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   Future<bool> getListOfDocuments({bool isRefresh = false}) async {
+    var _operationId = kSelectedDocumentType.id;
     if (isRefresh) {
       _currentPage = 1;
       _lastElementId = "";
@@ -48,12 +50,12 @@ class _DocumentsPageState extends State<DocumentsPage> {
     }
 
     final Uri uri = Uri.parse(
-        "http://212.112.116.229:7788/weblink/hs/api/documents/1?last_element_id=$_lastElementId&size=50");
+        "http://212.112.116.229:7788/weblink/hs/api/documents/$_operationId?last_element_id=$_lastElementId&size=50");
 
     final response = await http.get(uri, headers: _dct_headers);
 
     if (response.statusCode == 200) {
-      final result = listOfDocumentsFromJson(response.body);
+      final result = listOfDocumentsFromJsonBytes(response.bodyBytes);
 
       if (isRefresh) {
         _documents = result.data;
@@ -90,7 +92,8 @@ class _DocumentsPageState extends State<DocumentsPage> {
             } else if (mode == LoadStatus.loading) {
               body = Container();
             } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
+              body = Text(
+                  "Загрузка завершена..."); // на самом деле Ошибка загрузки!Попробуйте еще раз!
             } else if (mode == LoadStatus.canLoading) {
               body = Text("Загрузить еще.", // "release to load more"
                   style: TextStyle(
@@ -198,36 +201,35 @@ class _DocumentsPageState extends State<DocumentsPage> {
           ListTile(
             title: Text('${index + 1}) Номер: ${document.number}'),
             subtitle: Text('Дата: ${document.date}'),
-            trailing: PopupMenuButton(
-              icon: Icon(Icons.more_vert, color: Colors.indigo),
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    value: 'open',
-                    child: Text('Открыть'),
-                  ),
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Редактировать'),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Удалить'),
-                  )
-                ];
-              },
-              onSelected: (String value) =>
-                  actionPopUpItemSelected(value, document.number),
-            ),
+            // trailing: PopupMenuButton(
+            //   icon: Icon(Icons.more_vert, color: Colors.indigo),
+            //   itemBuilder: (context) {
+            //     return [
+            //       PopupMenuItem(
+            //         value: 'open',
+            //         child: Text('Открыть'),
+            //       ),
+            //       PopupMenuItem(
+            //         value: 'edit',
+            //         child: Text('Редактировать'),
+            //       ),
+            //       PopupMenuItem(
+            //         value: 'delete',
+            //         child: Text('Удалить'),
+            //       )
+            //     ];
+            //   },
+            //   onSelected: (String value) =>
+            //       actionPopUpItemSelected(value, document.number),
+            // ),
           ),
           // Divider(
           //   height: 1.0,
           // ),
           ListTile(
             leading: Icon(Icons.description, color: Colors.indigo[400]),
-            title: Text(document.operationId.toString() +
-                ' Товар 1: Кока-кола 1 л, 5 ед.'),
-            subtitle: Text('Товар 17: Кока-кола 1 л, 5 ед.'),
+            title: Text('Товаров: ' + document.productsCount.toString()),
+            subtitle: Text(document.comment + ' ... '),
           )
         ],
       ),

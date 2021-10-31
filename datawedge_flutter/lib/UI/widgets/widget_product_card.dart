@@ -377,23 +377,59 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
                   ? Palette.lightBlue.withOpacity(0.6)
                   : null),
           child: ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: FadeInImage.memoryNetwork(
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 100.0,
-                      height: 50.0,
-                      child: Image.asset('assets/icons/no-photo.png'),
-                    );
-                  },
-                  placeholder: kTransparentImage,
-                  image: productInfo.image_url,
-                  fit: BoxFit.fitHeight,
-                  width: 100.0,
-                  height: 50.0,
-                ),
-              ),
+              leading: showBottomField
+                  ? GestureDetector(
+                      onTap: () {
+                        if (productInfo.image_url != '') {
+                          Navigator.of(context).push(
+                            HeroDialogRoute(
+                              builder: (context) => Center(
+                                child: PopupImageCard(
+                                    id: productInfo.id,
+                                    image_url: productInfo.image_url,
+                                    title: productInfo.title),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Hero(
+                        tag: productInfo.id,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: FadeInImage.memoryNetwork(
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 100.0,
+                                height: 50.0,
+                                child: Image.asset('assets/icons/no-photo.png'),
+                              );
+                            },
+                            placeholder: kTransparentImage,
+                            image: productInfo.image_url,
+                            fit: BoxFit.fitHeight,
+                            width: 100.0,
+                            height: 50.0,
+                          ),
+                        ),
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: FadeInImage.memoryNetwork(
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 100.0,
+                            height: 50.0,
+                            child: Image.asset('assets/icons/no-photo.png'),
+                          );
+                        },
+                        placeholder: kTransparentImage,
+                        image: productInfo.image_url,
+                        fit: BoxFit.fitHeight,
+                        width: 100.0,
+                        height: 50.0,
+                      ),
+                    ),
               // :
 
               // Image.asset(

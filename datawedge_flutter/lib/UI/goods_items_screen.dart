@@ -189,49 +189,49 @@ class DocumentNumberTitle extends StatelessWidget {
     if (currentDocument != null) {
       _textDate = currentDocument.date;
     }
+//    return Text('data');
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Expanded(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text('Номер: ' + _textNumber + '  Дата: ' + _textDate,
-                    style: TextStyle(
-                        color: kTextLightColor, fontStyle: FontStyle.italic)),
-              ),
-              InkWellWidget(
-                color: Colors.blue.withOpacity(0.6),
-                onTap: () {},
-                onLongPress: () {},
-                builder: (isTapped) {
-                  final color = kCurrentDocument == null
-                      ? Colors.grey[500]
-                      : Colors.blue[400];
+      child: Column(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text('Номер: ' + _textNumber + '  Дата: ' + _textDate,
+                  style: TextStyle(
+                      color: kTextLightColor, fontStyle: FontStyle.italic)),
+            ),
+            InkWellWidget(
+              color: Colors.blue.withOpacity(0.6),
+              onTap: () {},
+              onLongPress: () {},
+              builder: (isTapped) {
+                final color = kCurrentDocument == null
+                    ? Colors.grey[500]
+                    : Colors.blue[400];
 
-                  return Container(
-                    // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Row(
-                      children: [
-                        Icon(Icons.refresh, color: color),
-                        const SizedBox(width: 8),
-                        Text(
-                          ' Перечитать ',
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
+                return Container(
+                  // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(Icons.refresh, color: color),
+                      const SizedBox(width: 8),
+                      Text(
+                        ' Перечитать ',
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ]),
-      ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ]),
     );
   }
 }

@@ -52,7 +52,7 @@ final Map<String, String> kDctHeaders = {
 // profile
 var selectedUser = users[0];
 var selectedMarket = markets[0];
-var selectedDocumentType = documentTypes[0];
+var kSelectedDocumentType = documentTypes[0];
 var selectedProfile = profiles[0];
 var usingZebra = false;
 var isAuthorized = false;

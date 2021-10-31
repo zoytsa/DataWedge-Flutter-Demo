@@ -100,9 +100,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Settings? documentTypeIDSettings = box.get("documentTypeID");
     if (documentTypeIDSettings != null) {
-      selectedDocumentType = documentTypes[documentTypeIDSettings.value];
+      //kSelectedDocumentType = documentTypes[documentTypeIDSettings.value];
+      kSelectedDocumentType =
+          DocumentType.getDocumentTypesByID(documentTypeIDSettings.value);
     } else {
-      selectedDocumentType = documentTypes[0];
+      kSelectedDocumentType = documentTypes[0];
     }
 
     Settings? marketIDSettings = box.get("marketID");
@@ -942,7 +944,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   size: 15),
               onPressed: () {
                 // setState(() {
-                selectedDocumentType = docType;
+                kSelectedDocumentType = docType;
                 saveSettingsHive(context);
                 saveProfileOnDCT(context);
                 // });
