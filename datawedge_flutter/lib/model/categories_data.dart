@@ -383,12 +383,37 @@ class ProductInfo {
     image_url = json['image_url'];
     inner_extra_code = json['inner_extra_code'];
     barcode = json['barcode'];
+
+    var _num_str = json['price_sell_num'];
+    if (_num_str is String) {
+      String _tek = json['price_sell_num'];
+
+      if (_tek.length > 10) {
+        _tek = _tek.replaceFirst(RegExp('[^\\d.]'), '');
+      }
+      if (_tek.length > 6) {
+        _tek = _tek.replaceFirst(RegExp('[^\\d.]'), '');
+      }
+      final _letter2 = ',';
+      final _newLetter2 = '.';
+      _tek = _tek.replaceAll(_letter2, _newLetter2);
+      var _price = double.tryParse(_tek);
+      if (_price != null) {
+        priceSellNum = _price;
+      } else if (_num_str is int || _num_str is double) {
+        priceSellNum = json['price_sell_num'];
+      }
+    }
+
+    //priceSellNum = json['price_sell_num'];
+
     price_sell = json['price_sell'];
     parent0_Title = json['parent0_title'];
     category0_title = json['category0_title'];
     stock_quantity = json['stock_quantity'];
-    //quantity = json['quantity'];
-    //sumSellNum = json['sum'];
+
+    quantity = json['quantity'];
+    sumSellNum = json['sum'];
     //priceSellNum = json['price_out'];
   }
 

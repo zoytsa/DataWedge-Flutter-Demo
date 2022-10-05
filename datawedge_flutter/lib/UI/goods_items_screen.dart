@@ -6,6 +6,7 @@ import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/documents_data.dart';
 import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_title_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,79 +30,83 @@ class GoodsItemsPage extends StatefulWidget {
 }
 
 class _GoodsItemsPageState extends State<GoodsItemsPage> {
-  List<ProductInfo> _GoodsItems = kGoodsItems; // =[]
+  //List<ProductInfo> _GoodsItems = kGoodsItems; // =[]
 
   @override
   Widget build(BuildContext context) {
     if (callBloc) {
       callBloc = false;
-      BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+      BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
     }
-    return Scaffold(
-        body: CustomScrollView(slivers: [
-      SliverAppBar(
-          backgroundColor: Colors.indigo,
-          automaticallyImplyLeading: false,
-          toolbarHeight: kGoodsItems.length != 0 ? 64 : 10,
-          // collapsedHeight: 56,
-          primary: false,
-          floating: false,
-          //  pinned: true,
-          // brightness: Brightness.light,
-          elevation: 0.0,
-          flexibleSpace: kGoodsItems.length != 0
-              ? BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
-                  builder: (context, state) {
-                    return DocumentNumberTitle(
-                      currentDocument: kCurrentDocument,
-                    );
-                  },
-                )
-              : null),
-      SliverAppBar(
-          backgroundColor: Colors.indigo,
-          automaticallyImplyLeading: false,
-          toolbarHeight: 46,
-          // collapsedHeight: 56,
-          primary: false,
-          floating: false,
-          pinned: true,
-          // brightness: Brightness.light,
-          elevation: 0.0,
-          flexibleSpace: DocumentTotalsTitle(
-            setStateGoodsItemsScreen: () {
-              setState(() {});
-            },
-          )),
+    return BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
+      builder: (context, state) {
+        return Scaffold(
+            body: CustomScrollView(slivers: [
+          SliverAppBar(
+              backgroundColor: Colors.indigo,
+              automaticallyImplyLeading: false,
+              toolbarHeight: kGoodsItems.length != 0 ? 64 : 10,
+              // collapsedHeight: 56,
+              primary: false,
+              floating: false,
+              //  pinned: true,
+              // brightness: Brightness.light,
+              elevation: 0.0,
+              flexibleSpace: kGoodsItems.length != 0
+                  ? BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
+                      builder: (context, state) {
+                        return DocumentNumberTitle(
+                          currentDocument: kCurrentDocument,
+                        );
+                      },
+                    )
+                  : null),
+          SliverAppBar(
+              backgroundColor: Colors.indigo,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 46,
+              // collapsedHeight: 56,
+              primary: false,
+              floating: false,
+              pinned: true,
+              // brightness: Brightness.light,
+              elevation: 0.0,
+              flexibleSpace: DocumentTotalsTitle(
+                setStateGoodsItemsScreen: () {
+                  setState(() {});
+                },
+              )),
 
-      SliverList(
-        delegate: new SliverChildListDelegate(_buildList()),
-      ), //
+          SliverList(
+            delegate: new SliverChildListDelegate(_buildList()),
+          ), //
 
-      // appBar: AppBar(
-      //   title: Text("Документы..."),
-      // ),
-      // body: ListView.builder(
-      //   itemBuilder: (context, index) {
-      //     final goodItem = _GoodsItems[index];
-      //     return ProductCardForGoodsItemsScreen(
-      //       index: index,
-      //       isDCT: false,
-      //       isGridView: true,
-      //       productInfo: goodItem,
-      //       refreshBodyOnSelectedProductCategory: () {},
-      //     );
-      //   },
-      //   //  separatorBuilder: (context, index) => Divider(),
-      //   itemCount: _GoodsItems.length,
-      // ),
-    ]));
+          // appBar: AppBar(
+          //   title: Text("Документы..."),
+          // ),
+          // body: ListView.builder(
+          //   itemBuilder: (context, index) {
+          //     final goodItem = _GoodsItems[index];
+          //     return ProductCardForGoodsItemsScreen(
+          //       index: index,
+          //       isDCT: false,
+          //       isGridView: true,
+          //       productInfo: goodItem,
+          //       refreshBodyOnSelectedProductCategory: () {},
+          //     );
+          //   },
+          //   //  separatorBuilder: (context, index) => Divider(),
+          //   itemCount: _GoodsItems.length,
+          // ),
+        ]));
+      },
+    );
   }
 
   List<Widget> _buildList() {
     List<Widget> listItems = [];
-    for (int index = 0; index < _GoodsItems.length; index++) {
-      final goodItem = _GoodsItems[index];
+    for (int index = 0; index < kGoodsItems.length; index++) {
+      final goodItem = kGoodsItems[index];
       listItems.add(ProductCardForGoodsItemsScreen(
         index: index,
         isDCT: false,
@@ -261,7 +266,7 @@ class DocumentTotalsTitle extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: BlocBuilder<GoodsItemsCubit, GoodsItemsState>(
+              child: BlocBuilder<GoodsItemsTitleCubit, GoodsItemsTitleState>(
                 builder: (context, state) {
                   return
                       // Text(
@@ -305,17 +310,7 @@ class DocumentTotalsTitle extends StatelessWidget {
                 //print('start');
                 // saveDocumentGoodItems(goodItems);
                 var currentDocumentInfo2 = await createDocumentPricePrint(
-                    kGoodsItems, kCurrentDocument);
-                BlocProvider.of<GoodsItemsCubit>(context).updateSum();
-                kCurrentDocument = currentDocumentInfo2;
-                if (kCurrentDocumentIsSaved != true &&
-                    kCurrentDocument != null) {
-                  kCurrentDocumentIsSaved = true;
-                  setStateGoodsItemsScreen();
-                }
-                if (kCurrentDocument == null) {
-                  kCurrentDocumentIsSaved = false;
-                }
+                    kGoodsItems, kCurrentDocument, context);
               },
 
               builder: (isTapped) {

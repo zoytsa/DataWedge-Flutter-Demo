@@ -85,9 +85,8 @@ class DocumentType {
               color: Colors.black)),
       DocumentType(1, 'Заказ поставщику', Icons.menu_book_outlined, null),
       //    DocumentType(3, 'Поступление товаров', Icons.add_box_outlined, null),
-      DocumentType(3, 'Заказ покупателя', Icons.airport_shuttle, null),
-      DocumentType(
-          4, 'Инвентаризация', Icons.account_balance_wallet_outlined, null),
+      // DocumentType(3, 'Заказ покупателя', Icons.airport_shuttle, null),
+      //  DocumentType(4, 'Инвентаризация', Icons.account_balance_wallet_outlined, null),
     ];
   }
 
@@ -407,9 +406,11 @@ class Report {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userID'] = this.userID;
     data['profileID'] = this.profileID;
-    data['reportID'] = this.reportID;
+    data['reportID'] = 0;
+    //this.reportID;
     data['marketID'] = this.marketID;
-    data['title'] = this.title;
+    data['title'] = 'Все отчеты...';
+    //this.title;
     data['htmlContent'] = this.htmlContent;
     return data;
   }
@@ -418,7 +419,7 @@ class Report {
     return <Report>[
       Report(0, 'Все отчеты...'),
       Report(1, 'Состояние обмена'),
-      Report(2, "Список акций для ДДК"),
+      Report(2, "Список акций"),
       Report(3, "Остатки товара"),
       Report(4, "Анализ заказов"),
       Report(5, "Анализ цен"),
@@ -427,32 +428,24 @@ class Report {
   }
 }
 
-Future<Good> loadGoods(String barcode) async {
-  var response = await http.get(
-      Uri.parse(
-          "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode),
-      headers: kDctHeaders);
+Future<ProductInfo?> loadGoods(String barcode) async {
+  final Uri uri = Uri.parse(
+      "http://212.112.116.229:7788/weblink/hs/dct-goods/good/" + barcode);
 
-  var json = jsonDecode(utf8.decode(response.bodyBytes));
-  var jsonGood = json["data"];
-  Good results = Good();
-  try {
-    results.barcode = jsonGood[0]["barcode"];
-    results.name = jsonGood[0]["name"];
-    results.pricein = jsonGood[0]["pricein"];
-    results.priceout = jsonGood[0]["priceout"];
-    results.producer = jsonGood[0]["producer"];
-    results.indate = jsonGood[0]["indate"];
-    results.country = jsonGood[0]["country"];
-    results.trademark = jsonGood[0]["trademark"];
-    results.status = jsonGood[0]["status"];
-    results.weight = jsonGood[0]["weight"];
-    results.category = jsonGood[0]["category"];
-  } catch (error) {
-    results.producer = error.toString();
+  final response = await http.get(uri, headers: kDctHeaders);
+
+  if (response.statusCode == 200) {
+    var json4decode = utf8.decode(response.bodyBytes);
+    var json = jsonDecode(json4decode);
+    if (json4decode == '{}') {
+      return null;
+    }
+    var newPI = ProductInfo.fromJson(json);
+    kSelectedProductInfo = newPI;
+    return newPI;
+  } else {
+    return null;
   }
-
-  return results;
 }
 
 Future<DocumentOrder?> createDocumentOrder(List goodItems) async {

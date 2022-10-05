@@ -3,7 +3,7 @@ import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/constants.dart';
 import 'package:datawedgeflutter/model/palette.dart';
-import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_title_cubit.dart';
 import 'package:datawedgeflutter/presentation/cubit/selected_products_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -301,7 +301,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('index built ${index}');
+    //print('index built ${index}');
     return Column(
       children: [
         Container(
@@ -576,7 +576,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
         : ++kGoodsItems[index].quantity;
     kGoodsItems[index].sumSellNum =
         kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
@@ -590,7 +590,7 @@ class ProductCardGridWithPhotoWidget extends StatelessWidget {
     }
     kGoodsItems[index].sumSellNum =
         kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
@@ -864,7 +864,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
         : ++kGoodsItems[index].quantity;
     kGoodsItems[index].sumSellNum =
         kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 
@@ -878,7 +878,7 @@ class ProductCardGridNoPhotoWidget extends StatelessWidget {
     }
     kGoodsItems[index].sumSellNum =
         kGoodsItems[index].quantity * kGoodsItems[index].priceSellNum;
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
     setStateProductCardWidget();
   }
 

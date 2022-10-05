@@ -19,6 +19,9 @@ var kCurrentDocument;
 bool callBloc =
     false; //TO-DO: enetering digits quantity manually without multy-rebuild in goods-items-screen
 bool kCurrentDocumentIsSaved = false;
+var kDocumentEditiingID = '';
+bool kDocumentEditingModeOn = false;
+ProductInfo? kSelectedProductInfo;
 
 // view
 const kTextColor = Color(0xFF535353);

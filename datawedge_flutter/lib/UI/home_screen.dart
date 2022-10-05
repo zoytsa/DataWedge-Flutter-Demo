@@ -5,10 +5,11 @@ import 'package:datawedgeflutter/model/categories_data.dart';
 import 'package:datawedgeflutter/model/dataloader.dart';
 import 'package:datawedgeflutter/UI/widgets/extra_widgets.dart';
 import 'package:datawedgeflutter/model/Product.dart';
+import 'package:datawedgeflutter/model/fakedata.dart';
 import 'package:datawedgeflutter/model/palette.dart';
 import 'package:datawedgeflutter/UI/profile_screen.dart';
 import 'package:datawedgeflutter/UI/search_screen.dart';
-import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_title_cubit.dart';
 import 'package:datawedgeflutter/presentation/cubit/profile_cubit.dart';
 import 'package:datawedgeflutter/UI/show_html_page2.dart';
 import 'package:datawedgeflutter/UI/show_report_screen.dart';
@@ -17,6 +18,12 @@ import 'package:flutter/services.dart';
 import 'package:datawedgeflutter/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:datawedgeflutter/utilities/virtual_keyboard.dart';
+import 'package:flutter/services.dart';
+import 'package:vibration/vibration.dart';
+
+// import 'package:audioplayers/audioplayers.dart';
 
 import 'documents_screen.dart';
 import '../model/constants.dart';
@@ -50,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _scanTime = "Scan Time will be shown here";
   List<String> _resultDataList = [];
   Good goodInfo = Good();
+  bool goodInfoSuccess = false;
   final List<Tab> tabs = [];
   final List<Widget> children = [];
   int _goodsCount = 0;
@@ -59,6 +67,16 @@ class _MyHomePageState extends State<MyHomePage> {
   DocumentOrder? currentDocument = null;
   var tabIndex = 0;
   bool isDCT = false;
+  int curItem = 0;
+  final focusbarcode = FocusNode();
+  final txtBarcodeController = TextEditingController();
+  String vk_text = '';
+  bool shiftEnabled = false; // True if shift enabled.
+  bool isNumericMode = true; // is true will show the numeric keyboard.
+  bool isVirtualKeyboardOpen = false; // is true will show the numeric keyboard.
+  late FocusNode myFocusNode;
+  // final player = AudioCache();
+
   //  This example implementation is based on the sample implementation at
   //  https://github.com/flutter/flutter/blob/master/examples/platform_channel/lib/main.dart
   //  That sample implementation also includes how to return data from the method
@@ -80,6 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
     } on PlatformException {
       //  Error invoking Android method
     }
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is disposed
+    txtBarcodeController.dispose();
+    super.dispose();
+    myFocusNode.dispose();
   }
 
   @override
@@ -130,6 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       usingZebra = false;
     }
+
+    myFocusNode = FocusNode();
   }
 
   void _onEvent(event) {
@@ -178,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      print(barcodeScanRes);
+      // print(barcodeScanRes);
       //_loadData(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
@@ -191,7 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // setState(() {
     _scanBarcode = barcodeScanRes;
-    _barcodeString = "Barcode: " + barcodeScanRes;
+    //_barcodeString = "Barcode: " + barcodeScanRes;
+    _barcodeString = barcodeScanRes;
     _barcodeSymbology = "Symbology: " + "Photo Scan";
     String dateTime = DateTime.now().toLocal().toString();
     _scanTime = "At: " + dateTime; //"Now...";
@@ -202,33 +231,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onManualInputBarcode(text) {
     //setState(() {
-    _barcodeString = "Barcode: " + text;
+    // _barcodeString = "Barcode: " + text;
+    _barcodeString = text;
     _barcodeSymbology = "Symbology: manual input";
     String dateTime = DateTime.now().toLocal().toString();
     _scanTime = "At: " + dateTime;
     _resultDataList.clear();
 
-    if (goodInfo.name != "") {
-      _resultDataList.add(goodInfo.name);
-      _resultDataList.add("  Поставщик: " + goodInfo.producer);
-      _resultDataList.add("  Закупочная цена: " + goodInfo.pricein);
-      _resultDataList.add("  Розничная цена: " + goodInfo.priceout);
-      _resultDataList.add("  Страна: " + goodInfo.country);
-      _resultDataList.add("  Статус: " + goodInfo.status);
-      _resultDataList.add("  Торговая марка: " + goodInfo.trademark);
-      _resultDataList.add("  Категория: " + goodInfo.category);
-      _resultDataList.add("  Дата поставки: " + goodInfo.indate);
+    // if (goodInfo.name != "") {
+    if (kSelectedProductInfo != null) {
+      _resultDataList.add(kSelectedProductInfo!.title);
+      _resultDataList.add("  Добавлено: " + kSelectedProductInfo!.createdDate);
+      _resultDataList.add("  Обновлено: " + kSelectedProductInfo!.editedDate);
+      _resultDataList
+          .add("  Розничная цена: " + kSelectedProductInfo!.price_sell);
+      _resultDataList
+          .add("  Артикул: " + kSelectedProductInfo!.inner_extra_code);
+      _resultDataList
+          .add("  Остаток: " + kSelectedProductInfo!.stock_quantity.toString());
+      _resultDataList
+          .add("  Группа товаров: " + kSelectedProductInfo!.parent0_Title);
+      _resultDataList
+          .add("  Категория: " + kSelectedProductInfo!.category0_title);
+      //_resultDataList.add("  Дата поставки: " + kSelectedProductInfo!.);
 
       FocusManager.instance.primaryFocus?.unfocus();
     }
 
 //bool noItem = true;
     addButtonTitle = "  +  В СПИСОК (0)";
-    for (GoodItem item in goodsList) {
-      if (item.name == goodInfo.name) {
-        // noItem = false;
-        addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
-        break;
+    if (kSelectedProductInfo != null) {
+      for (ProductInfo item in kGoodsItems) {
+        if (item.title == kSelectedProductInfo!.title) {
+          // noItem = false;
+          addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
+          break;
+        }
       }
     }
     // if (noItem == true) {
@@ -246,7 +284,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _loadData(text) async {
     //text = "111";
     var receivedGoodInfo = await loadGoods(text);
-    goodInfo = receivedGoodInfo;
+    // var
+    var goodInfoSuccess2 = receivedGoodInfo;
     _onManualInputBarcode(text);
 
     // setState(() {
@@ -257,11 +296,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _addNewGood() {
-    if (goodInfo.name != "") {
+    if (kSelectedProductInfo != null) {
       bool noItem = true;
       addButtonTitle = "  +  В СПИСОК (1)";
-      for (GoodItem item in goodsList) {
-        if (item.name == goodInfo.name) {
+      for (ProductInfo item in kGoodsItems) {
+        if (item.title == kSelectedProductInfo!.title) {
           item.quantity++;
           noItem = false;
           addButtonTitle = "  +  В СПИСОК (" + item.quantity.toString() + ")";
@@ -269,8 +308,8 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
       if (noItem == true) {
-        GoodItem newItem = GoodItem(goodInfo);
-        goodsList.add(newItem);
+        //ProductInfo newItem = GoodItem(goodInfo);
+        kGoodsItems.add(kSelectedProductInfo!);
       }
       _goodsCount = kGoodsItems.length;
       setState(() {
@@ -333,7 +372,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     kCurrentDocumentIsSaved = true;
-    BlocProvider.of<GoodsItemsCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
 
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
@@ -344,6 +383,50 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // var _tabController = DefaultTabController.of(context);
     // _tabController!.animateTo(1);
+  }
+
+  /// Fired when the virtual keyboard key is pressed.
+  _onKeyPress(VirtualKeyboardKey key) {
+    // if (vk_text.length == 13) {
+    //   return;
+    // }
+
+    if (key.keyType == VirtualKeyboardKeyType.String) {
+      if (vk_text.length == 13) {
+        return;
+      } else {
+        vk_text = vk_text + (shiftEnabled ? key.capsText : key.text);
+      }
+    } else if (key.keyType == VirtualKeyboardKeyType.Action) {
+      switch (key.action) {
+        case VirtualKeyboardKeyAction.Backspace:
+          if (vk_text.length == 0) return;
+          vk_text = vk_text.substring(0, vk_text.length - 1);
+          break;
+        case VirtualKeyboardKeyAction.Return:
+          vk_text = vk_text + '\n';
+          break;
+        case VirtualKeyboardKeyAction.Space:
+          vk_text = vk_text + key.text;
+          break;
+        case VirtualKeyboardKeyAction.Shift:
+          shiftEnabled = !shiftEnabled;
+          break;
+        default:
+      }
+    }
+    txtBarcodeController.text = vk_text; //txtBarcodeController.value +
+    txtBarcodeController.selection = TextSelection.fromPosition(
+        TextPosition(offset: txtBarcodeController.text.length));
+    // Update the screen
+    setState(() {
+      if (vk_text.length == 13) {
+        _barcodeString = vk_text;
+        print('barcode');
+      } else {
+        _barcodeString = "";
+      }
+    });
   }
 
 // *** WIDGETS: MAIN SCAN *** //
@@ -357,11 +440,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _profileHeaderIcon = selectedProfile.getIcon();
     }
     String _goodsHeader = "Список";
-    if (_goodsCount != 0) {
-      _goodsHeader = "Список(" + _goodsCount.toString() + ")";
-    } else {}
+    // if (_goodsCount != 0) {
+    //   _goodsHeader = "Список(" + _goodsCount.toString() + ")";
+    // } else {}
     return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        //   onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: DefaultTabController(
             length: 4, //tabs.length,
             initialIndex: tabIndex,
@@ -370,46 +453,161 @@ class _MyHomePageState extends State<MyHomePage> {
               drawer: mainDrawer(context),
               appBar: myAppBar(context, _goodsHeader, _profileHeaderIcon),
 
-              body: TabBarView(children: [
-                mainScanPage(context),
+              body: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    mainScanPage(context),
 
-                // goodItemsPage(context, goodsList, currentDocument),
-                GoodsItemsPage(
-                    onProductSelection: () => addGoodItemsFromSelected()),
-                DocumentsPage(),
-                //addResultDataList(context, _resultDataList),
-                ProfilePage(
-                    vcbUsingZebraOnSelected: () {
-                      print("vcb rules");
-                    },
-                    vcbUsinZebraOnChanged: (bool val) {
-                      // setState(() {
-                      usingZebra = val;
-                      // });
-                    },
-                    vcbUsingZebra: usingZebra)
-              ]),
+                    // goodItemsPage(context, goodsList, currentDocument),
+                    GoodsItemsPage(
+                        onProductSelection: () => addGoodItemsFromSelected()),
+                    DocumentsPage(),
+                    //addResultDataList(context, _resultDataList),
+                    ProfilePage(
+                        vcbUsingZebraOnSelected: () {
+                          print("vcb rules");
+                        },
+                        vcbUsinZebraOnChanged: (bool val) {
+                          // setState(() {
+                          usingZebra = val;
+                          // });
+                        },
+                        vcbUsingZebra: usingZebra)
+                  ]),
 
               //body: mainScanPage(context),
             )));
   }
 
   Widget mainScanPage(BuildContext context) {
-    var heightDetails = MediaQuery.of(context).size.height - 258;
+    var heightDetails = MediaQuery.of(context).size.height - 342;
     Widget widget = Stack(children: [
       Align(
           alignment: Alignment.topCenter,
           child: SizedBox(height: 80, child: addTextHeaderBarcode(context))),
       Column(children: [
         SizedBox(height: isDCT ? 55 : 55),
-        SizedBox(height: 85, child: addEnterBarcodeField(context)),
+        SizedBox(height: 95, child: addEnterBarcodeField777(context)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 59,
+              width: 60,
+              color: Colors.grey.withOpacity(0.5),
+              child: Center(
+                child: Text(
+                  'шт.',
+                  style: TextStyle(fontSize: 30, color: Colors.white70),
+                ),
+              ),
+              // decoration: BoxDecoration(
+              //    color: Colors.blue.withOpacity(0.3),
+              //   border: Border.all(color: Colors.white70, width: 3),
+              //   borderRadius: BorderRadius.circular(15.0),
+              //  ),
+            ),
+            Container(
+              height: 59,
+              width: 200,
+              color: Colors.grey.withOpacity(0.3),
+              child: Center(
+                child: Text(
+                  '12.520',
+                  style: TextStyle(fontSize: 35, color: Colors.amber),
+                ),
+              ),
+            ),
+            GestureDetector(
+              child: Container(
+                height: 59,
+                width: 60,
+                color: Colors.grey.withOpacity(0.4),
+                child: Center(
+                  child: isVirtualKeyboardOpen
+                      ? Icon(
+                          Icons.check_box,
+                          color: Colors.greenAccent,
+                          size: 35,
+                        )
+                      : Icon(Icons.edit, color: Colors.white70),
+                ),
+              ),
+              onTap: () => {
+                //openVirtualKeyboard();
+                setState(() {
+                  isVirtualKeyboardOpen = !isVirtualKeyboardOpen;
+                })
+              },
+            ),
+          ],
+        ),
+        kSelectedProductInfo != null && kSelectedProductInfo!.image_url != ''
+            ? GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    HeroDialogRoute(
+                      builder: (context) => Center(
+                        child: PopupImageCard(
+                            id: kSelectedProductInfo!.id,
+                            image_url: kSelectedProductInfo!.image_url,
+                            title: kSelectedProductInfo!.title),
+                      ),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: kSelectedProductInfo!.id,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: FadeInImage.memoryNetwork(
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 200.0,
+                          height: 100.0,
+                          child: Image.asset('assets/icons/no-photo.png'),
+                        );
+                      },
+                      placeholder: kTransparentImage,
+                      image: kSelectedProductInfo!.image_url,
+                      fit: BoxFit.fitHeight,
+                      width: 200.0,
+                      height: 100.0,
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox(),
         SizedBox(
-            height: isDCT ? 270 : heightDetails, //550,
+            height: isDCT ? 200 : heightDetails, //550,
             //child: SizedBox(
             //   height: 600,
-            child: addResultDataList(context, _resultDataList))
+            // child: addResultDataList(context, _resultDataList)),
+            child: addResultDataList888(context, fakeList)),
       ]),
-
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: isVirtualKeyboardOpen
+            ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Container(
+                  color: Colors.indigo.withOpacity(0.1),
+                  child: VirtualKeyboard(
+                      withoutDecimalPoint: true,
+                      fontSize: 30,
+                      height: 280,
+                      textColor: Colors.white,
+                      type: isNumericMode
+                          ? VirtualKeyboardType.Numeric
+                          : VirtualKeyboardType.Alphanumeric,
+                      onKeyPress: _onKeyPress),
+                ),
+                SizedBox(
+                  height: 42,
+                )
+              ])
+            : null,
+      ),
+      //  Align(alignment: Alignment.bottomCenter, child: SizedBox(height: 25))
       // Align(
       //     alignment:
       //         isDCT ? Alignment(0, 0.22) : Alignment(0, 0.85), // pixel 2 5.2
@@ -420,37 +618,37 @@ class _MyHomePageState extends State<MyHomePage> {
       //         child: addResultDataList(context, _resultDataList))),
       // //SizedBox(height: 90),
 
-      BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) {
-          return Align(
-            alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
-            child: !state.usingZebra
-                ? //Row(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                //children: [
-                //   SizedBox(width: 40),
-                SizedBox(
-                    height: isDCT ? 60 : 70,
-                    // width: isDCT ? 180 : null,
-                    child: addPhotoScanButton(context, isDCT))
-                // ])
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                        SizedBox(
-                            height: isDCT ? 60 : 70,
-                            width: isDCT ? 200 : 220,
-                            child: addPhotoScanButton(context, isDCT)),
-                        state.usingZebra
-                            ? SizedBox(
-                                height: isDCT ? 60 : 70,
-                                child: addZebraScanButton(context, isDCT))
-                            : SizedBox(height: 60),
-                      ]),
-          );
-        },
-      )
+      // BlocBuilder<ProfileCubit, ProfileState>(
+      //   builder: (context, state) {
+      //     return Align(
+      //       alignment: isDCT ? Alignment(0, 0.92) : Alignment(0, 0.87),
+      //       child: !state.usingZebra
+      //           ? //Row(
+      //           // mainAxisAlignment: MainAxisAlignment.center,
+      //           // crossAxisAlignment: CrossAxisAlignment.center,
+      //           //children: [
+      //           //   SizedBox(width: 40),
+      //           SizedBox(
+      //               height: isDCT ? 60 : 70,
+      //               // width: isDCT ? 180 : null,
+      //               child: addPhotoScanButton(context, isDCT))
+      //           // ])
+      //           : Row(
+      //               mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //               children: [
+      //                   SizedBox(
+      //                       height: isDCT ? 60 : 70,
+      //                       width: isDCT ? 200 : 220,
+      //                       child: addPhotoScanButton(context, isDCT)),
+      //                   state.usingZebra
+      //                       ? SizedBox(
+      //                           height: isDCT ? 60 : 70,
+      //                           child: addZebraScanButton(context, isDCT))
+      //                       : SizedBox(height: 60),
+      //                 ]),
+      //     );
+      //   },
+      // )
     ]);
     return widget;
   }
@@ -1255,9 +1453,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     //padding: const EdgeInsets.only(bottom: 2),
                     child: Text('$_barcodeString',
                         style: TextStyle(
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: Palette.textColor1))),
-                addNewGoodButton(context, addButtonTitle)
+                addNewGoodButton777(context, addButtonTitle)
               ]))
         ]));
     return widget;
@@ -1306,6 +1505,63 @@ class _MyHomePageState extends State<MyHomePage> {
             //"  +  ADD  ",
             style: TextStyle(
                 fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+          ),
+        ]),
+      ),
+    );
+    return widget;
+  }
+
+  Widget addNewGoodButton777(BuildContext context, String addButtonTitle) {
+    Widget widget = GestureDetector(
+      onTapDown: (TapDownDetails) {
+        // _addNewGood();
+      },
+      onTapUp: (TapUpDetails) {
+        //  stopScan();
+      },
+      child: Container(
+        //margin: EdgeInsets.all(1.0),
+        padding: EdgeInsets.all(8.0),
+
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            // colors: [
+            //   Colors.green,
+            //   Colors.tealAccent,
+            //   Colors.green,
+            //   Colors.black54
+            // ],
+            // colors: [Colors.black87, Colors.green],
+            colors: [
+              Colors.amber.withOpacity(0.8),
+              Colors.amberAccent.withOpacity(0.8)
+            ],
+            begin: Alignment.bottomRight,
+            //end: Alignment.topLeft,
+          ),
+          borderRadius: BorderRadius.circular(15),
+          // boxShadow: [
+          //   BoxShadow(
+          //       color: Colors.black.withOpacity(.15),
+          //       spreadRadius: 1.5,
+          //       blurRadius: 3,
+          //       offset: Offset(0, 1))
+          // ]
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Icon(
+            Icons.info,
+            color: Colors.white,
+            size: 20,
+          ),
+          Text(
+            '  info '
+            // addButtonTitle
+            ,
+            //"  +  ADD  ",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
           ),
         ]),
       ),
@@ -1494,7 +1750,250 @@ class _MyHomePageState extends State<MyHomePage> {
     return widget;
   }
 
+  Widget addEnterBarcodeField777(BuildContext context) {
+    Widget widget = Container(
+      height: 200,
+      width: 280,
+      margin: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(5.0),
+      decoration: BoxDecoration(
+        //color: Colors.deepPurple[200],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Expanded(
+          child:
+              //     TextField(
+              //   cursorColor: Colors.pinkAccent,
+              //   maxLength: 13,
+              //   style: TextStyle(color: Colors.white),
+              //   keyboardType: TextInputType.number,
+              //   decoration: InputDecoration(
+              //     counterStyle: TextStyle(
+              //       color: Palette.textColor1,
+              //     ),
+              //     prefixIcon: Icon(
+              //       Icons.qr_code_sharp,
+              //       color: Palette.iconColor,
+              //     ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Palette.textColor1),
+              //       borderRadius: BorderRadius.all(Radius.circular(35.0)),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Palette.textColor1),
+              //       borderRadius: BorderRadius.all(Radius.circular(35.0)),
+              //     ),
+              //     contentPadding: EdgeInsets.all(10),
+              //     hintText: "Введите штрихкод",
+              //     hintStyle: TextStyle(fontSize: 14, color: Palette.textColor1),
+              //     suffixIcon: IconButton(
+              //       onPressed: () => _loadData(enteredBarcode),
+              //       icon: Icon(Icons.check, color: Palette.textColor1),
+              //     ),
+              //   ),
+              //   onChanged: (String str) {
+              //     {
+              //       try {
+              //         enteredBarcode = str;
+              //       } catch (e) {
+              //         enteredBarcode = "";
+              //       }
+              //     }
+              //     ;
+              //   },
+              //   onSubmitted: (text) {
+              //     _loadData(text);
+              //   },
+              // ),
+              TextFormField(
+            readOnly: false,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            cursorColor: Colors.grey,
+            maxLength: 13,
+            style: TextStyle(fontSize: 27, color: Colors.amber),
+            enabled: true,
+            autofocus: true,
+            autocorrect: false,
+            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.number,
+            focusNode: myFocusNode, // focusbarcode
+            onChanged: (val) {
+              // setState(() {
+              //   isVirtualKeyboardOpen = true;
+
+              // }
+              setState(() {
+                isVirtualKeyboardOpen = true;
+              });
+            },
+            onFieldSubmitted: (val) {
+              curItem++;
+              print(val + ':' + curItem.toString()); // the scan value
+              txtBarcodeController.clear();
+              //process the val
+              //txtBarcodeController.text = ""; // set to blank again
+              myFocusNode.requestFocus(); //set focus again, so u can
+              //  txtBarcodeController.text = ""; // set to blank again
+              //scan again
+              //`enter code here`
+              //SystemSound.play(SystemSoundType.click);
+              Vibration.vibrate(duration: 200);
+
+              //   player.play('click.wav');
+              setState(() {
+                isVirtualKeyboardOpen = false;
+                _barcodeString = val;
+              });
+            },
+            controller: txtBarcodeController,
+            decoration: InputDecoration(
+              counterStyle: TextStyle(
+                color: Palette.textColor1,
+              ),
+              prefixIcon: isVirtualKeyboardOpen
+                  ? null
+                  : IconButton(
+                      onPressed: () {
+                        scanBarcodeNormal(); //startScan();
+                      },
+                      // onPressed: () => {
+                      //       _barcodeString = txtBarcodeController.text,
+                      //       txtBarcodeController.clear(),
+                      //       vk_text = '',
+                      //       //   _loadData(enteredBarcode),
+                      //       setState(() {
+                      //         isVirtualKeyboardOpen = !isVirtualKeyboardOpen;
+                      //       })
+                      //     },
+                      icon: Icon(Icons.qr_code_sharp,
+                          color: Palette.iconColor, size: 30)),
+              // Icon(
+              //   Icons.qr_code_sharp,
+              //   color: Palette.iconColor,
+              // ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Palette.textColor1),
+                borderRadius: BorderRadius.all(Radius.circular(35.0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Palette.textColor1),
+                borderRadius: BorderRadius.all(Radius.circular(35.0)),
+              ),
+              contentPadding: EdgeInsets.all(10),
+              //hintText: "Введите штрихкод",
+              hintStyle: TextStyle(fontSize: 14, color: Palette.textColor1),
+              suffixIcon: IconButton(
+                onPressed: () => {
+                  _barcodeString = txtBarcodeController.text,
+                  txtBarcodeController.clear(),
+                  vk_text = '',
+                  isVirtualKeyboardOpen
+                      ? SystemChannels.textInput.invokeMethod('TextInput.hide')
+                      : vk_text = '',
+                  isVirtualKeyboardOpen
+                      ? Vibration.vibrate(duration: 100)
+                      : vk_text = '',
+                  //   _loadData(enteredBarcode),
+                  setState(() {
+                    isVirtualKeyboardOpen = !isVirtualKeyboardOpen;
+                  })
+                },
+                icon: isVirtualKeyboardOpen
+                    ? Icon(Icons.check, color: Colors.greenAccent, size: 30)
+                    : Icon(Icons.edit_outlined,
+                        color: Palette.textColor1, size: 30),
+              ),
+            ),
+          ),
+        )
+      ]),
+    );
+
+    return widget;
+  }
+
   Widget addResultDataList(BuildContext context, List dataList) {
+    // bool isFirst = true;
+    Widget widget = Column(children: [
+      Expanded(
+          // width: 200,
+          child: ListView(
+        children: <Widget>[
+          //  for (var i in dataList)
+          for (int i = 0; i < dataList.length; i++)
+            Card(
+              color: Colors.indigo[300],
+              elevation: i == 0 ? 8.0 : null,
+              margin: new EdgeInsets.only(left: 0.0),
+              child: Container(
+                //decoration:
+                // i == 0 ? BoxDecoration(color: Colors.blue[100]) : null,
+
+                decoration: i == 0
+                    ? BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.indigo,
+                            Colors.blue,
+                            Colors.indigo,
+                            Colors.indigo,
+                          ],
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topLeft,
+                        ),
+                        //  borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ])
+                    : BoxDecoration(
+                        // borderRadius: BorderRadius.circular(0),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.indigo,
+                            //   Colors.blue,
+                            Colors.indigo,
+                          ],
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topLeft,
+                        ),
+                        boxShadow: [
+                            BoxShadow(
+                                color: Palette.textColor1
+                                    .withOpacity(.4), //.white.withOpacity(.3),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+
+                child: Padding(
+                  padding: i == 0 ? EdgeInsets.all(12.0) : EdgeInsets.all(4.0),
+                  child: Text(
+                    dataList[i].toString(),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    maxLines: 1,
+                    textAlign: i == 0 ? TextAlign.center : null,
+                    style: i == 0
+                        ? const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)
+                        : const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            )
+        ],
+      ))
+    ]);
+
+    return widget;
+  }
+
+  Widget addResultDataList888(BuildContext context, List dataList) {
     // bool isFirst = true;
     Widget widget = Column(children: [
       Expanded(
@@ -1710,6 +2209,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return widget;
   }
+}
+
+openVirtualKeyboard() {
+  print('hello');
 }
 
 _loadAndShowHTML(BuildContext context) async {

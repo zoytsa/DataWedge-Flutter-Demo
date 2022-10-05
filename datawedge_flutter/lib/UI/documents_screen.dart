@@ -78,160 +78,207 @@ class _DocumentsPageState extends State<DocumentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Документы..."),
-      // ),
-      body: SmartRefresher(
-        footer: CustomFooter(
-          builder: (BuildContext context, LoadStatus? mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("Потяните вверх, чтобы загрузить еще...",
-                  style: TextStyle(
-                      color: Colors.grey, fontStyle: FontStyle.italic));
-            } else if (mode == LoadStatus.loading) {
-              body = Container();
-            } else if (mode == LoadStatus.failed) {
-              body = Text(
-                  "Загрузка завершена..."); // на самом деле Ошибка загрузки!Попробуйте еще раз!
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("Загрузить еще.", // "release to load more"
-                  style: TextStyle(
-                      color: Colors.grey, fontStyle: FontStyle.italic));
+        // appBar: AppBar(
+        //   title: Text("Документы..."),
+        // ),
+        body: SmartRefresher(
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus? mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = Text("Потяните вверх, чтобы загрузить еще...",
+                    style: TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic));
+              } else if (mode == LoadStatus.loading) {
+                body = Container();
+                style:
+                TextStyle(color: Colors.grey, fontStyle: FontStyle.italic);
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Загрузка завершена...",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle
+                            .italic)); // на самом деле Ошибка загрузки!Попробуйте еще раз!
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("Загрузить еще.", // "release to load more"
+                    style: TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic));
+              } else {
+                body = Text("Загрузка завершена.", // "No more Data"
+                    style: TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic));
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
+          ),
+          controller: _refreshController,
+          enablePullUp: true,
+          onRefresh: () async {
+            final result = await getListOfDocuments(isRefresh: true);
+            if (result) {
+              _refreshController.refreshCompleted();
             } else {
-              body = Text("Загрузка завершена.", // "No more Data"
-                  style: TextStyle(
-                      color: Colors.grey, fontStyle: FontStyle.italic));
+              _refreshController.refreshFailed();
             }
-            return Container(
-              height: 55.0,
-              child: Center(child: body),
-            );
           },
-        ),
-        controller: _refreshController,
-        enablePullUp: true,
-        onRefresh: () async {
-          final result = await getListOfDocuments(isRefresh: true);
-          if (result) {
-            _refreshController.refreshCompleted();
-          } else {
-            _refreshController.refreshFailed();
-          }
-        },
-        onLoading: () async {
-          final result = await getListOfDocuments();
-          if (result) {
-            _refreshController.loadComplete();
-          } else {
-            _refreshController.loadFailed();
-          }
-        },
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            final document = _documents[index];
-            return documentInfoListTile3(document, index);
-            // return ListTile(
-            //   title: Text(document.number),
-            //   subtitle: Text(document.date),
-            //   trailing: Text(
-            //     document.editedDate,
-            //     style: TextStyle(color: Colors.green),
-            //   ),
-            // );
+          onLoading: () async {
+            final result = await getListOfDocuments();
+            if (result) {
+              _refreshController.loadComplete();
+            } else {
+              _refreshController.loadFailed();
+            }
           },
-          //  separatorBuilder: (context, index) => Divider(),
-          itemCount: _documents.length,
-          controller: _scrollController,
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              final document = _documents[index];
+              return documentInfoListTile3(document, index);
+              // return ListTile(
+              //   title: Text(document.number),
+              //   subtitle: Text(document.date),
+              //   trailing: Text(
+              //     document.editedDate,
+              //     style: TextStyle(color: Colors.green),
+              //   ),
+              // );
+            },
+            //  separatorBuilder: (context, index) => Divider(),
+            itemCount: _documents.length,
+            controller: _scrollController,
+          ),
         ),
-      ),
-      floatingActionButton: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_close,
-          shape: CircleBorder(),
-          //  childPadding: const EdgeInsets.symmetric(vertical: 5),
-          overlayOpacity: 0,
-          //childrenButtonSize: 60,
-          spacing: 6,
-          animationSpeed: 200, // openCloseDial: isDialOpen,
-          childPadding: EdgeInsets.all(5),
-          spaceBetweenChildren: 4,
-          //  icon: Icons.share,
-          backgroundColor: Colors.indigo[400],
-          children: [
-            SpeedDialChild(
-                //child: Icon(Icons.arrow_downward_sharp,
-                child: Icon(Icons.keyboard_arrow_down_outlined,
-                    color: Colors.indigo[400]),
-                // label: 'Social Network',
-                backgroundColor: Colors.white,
-                onTap: () {
-                  if (_scrollController.hasClients) {
-                    _scrollController
-                        .jumpTo(_scrollController.position.maxScrollExtent);
-                  }
-                }
-                //  foregroundColor: Colors.white70,
-                // onTap: () {/* Do someting */},
-                ),
-            SpeedDialChild(
-                child: Icon(Icons.keyboard_arrow_up_outlined,
-                    color: Colors.indigo[400]),
-                // label: 'Social Network',
-                backgroundColor: Colors.white,
-                onTap: () {
-                  if (_scrollController.hasClients) {
-                    _scrollController
-                        .jumpTo(_scrollController.position.minScrollExtent);
-                  }
-                }),
-            // SpeedDialChild(
-            //   child: Icon(Icons.chat),
-            //   label: 'Message',
-            //   backgroundColor: Colors.amberAccent,
-            //   onTap: () {/* Do something */},
-            // ),
-          ]),
-    );
+        //  floatingActionButton:
+
+        floatingActionButton: Stack(children: [
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FloatingActionButton(
+              backgroundColor: Colors.blue.withOpacity(0.75),
+              foregroundColor: Colors.white,
+              onPressed: () {
+                kGoodsItems.clear();
+                kCurrentDocument = null;
+                kDocumentEditiingID = '';
+                kDocumentEditingModeOn = true;
+
+                DefaultTabController.of(context)!.animateTo(1);
+              },
+              child: Icon(Icons.add),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SpeedDial(
+                animatedIcon: AnimatedIcons.menu_close,
+                shape: CircleBorder(),
+                //  childPadding: const EdgeInsets.symmetric(vertical: 5),
+                overlayOpacity: 0,
+                //childrenButtonSize: 60,
+                spacing: 6,
+                animationSpeed: 200, // openCloseDial: isDialOpen,
+                childPadding: EdgeInsets.all(5),
+                spaceBetweenChildren: 4,
+                //  icon: Icons.share,
+                backgroundColor: Colors.indigo[400],
+                children: [
+                  SpeedDialChild(
+                      //child: Icon(Icons.arrow_downward_sharp,
+                      child: Icon(Icons.keyboard_arrow_down_outlined,
+                          color: Colors.indigo[400]),
+                      // label: 'Social Network',
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.jumpTo(
+                              _scrollController.position.maxScrollExtent);
+                        }
+                      }
+                      //  foregroundColor: Colors.white70,
+                      // onTap: () {/* Do someting */},
+                      ),
+                  SpeedDialChild(
+                      child: Icon(Icons.keyboard_arrow_up_outlined,
+                          color: Colors.indigo[400]),
+                      // label: 'Social Network',
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.jumpTo(
+                              _scrollController.position.minScrollExtent);
+                        }
+                      }),
+                  // SpeedDialChild(
+                  //   child: Icon(Icons.chat),
+                  //   label: 'Message',
+                  //   backgroundColor: Colors.amberAccent,
+                  //   onTap: () {/* Do something */},
+                  // ),
+                ]),
+          )
+        ]));
   }
 
   Widget documentInfoListTile3(DocumentInfo document, int index) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: Text('${index + 1}) Номер: ${document.number}'),
-            subtitle: Text('Дата: ${document.date}'),
-            // trailing: PopupMenuButton(
-            //   icon: Icon(Icons.more_vert, color: Colors.indigo),
-            //   itemBuilder: (context) {
-            //     return [
-            //       PopupMenuItem(
-            //         value: 'open',
-            //         child: Text('Открыть'),
-            //       ),
-            //       PopupMenuItem(
-            //         value: 'edit',
-            //         child: Text('Редактировать'),
-            //       ),
-            //       PopupMenuItem(
-            //         value: 'delete',
-            //         child: Text('Удалить'),
-            //       )
-            //     ];
-            //   },
-            //   onSelected: (String value) =>
-            //       actionPopUpItemSelected(value, document.number),
+    return GestureDetector(
+      onDoubleTap: () {
+        kDocumentEditiingID = '';
+        kDocumentEditingModeOn = false;
+        kGoodsItems.clear();
+        kCurrentDocument = null;
+        openDocument(document.id, context);
+      },
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              title: Text('${index + 1}) Номер: ${document.number}'),
+              subtitle: Text('Дата: ${document.date}'),
+              trailing: PopupMenuButton(
+                icon: Icon(Icons.more_vert, color: Colors.indigo),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      value: 'open',
+                      child: RichText(
+                          text: TextSpan(
+                              text: '✅ Открыть',
+                              style: TextStyle(color: Colors.black),
+                              children: <TextSpan>[
+                            TextSpan(
+                                text: '  Двойной клик',
+                                style: TextStyle(
+                                    color: Colors.lightBlueAccent,
+                                    fontStyle: FontStyle.italic))
+                          ])),
+                    ),
+
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Text('Редактировать'),
+                    ),
+                    // PopupMenuItem(
+                    //   value: 'delete',
+                    //   child: Text('Удалить'),
+                    // )
+                  ];
+                },
+                onSelected: (String value) => actionPopUpItemSelected(
+                    value, document.number, document.id),
+              ),
+            ),
+            // Divider(
+            //   height: 1.0,
             // ),
-          ),
-          // Divider(
-          //   height: 1.0,
-          // ),
-          ListTile(
-            leading: Icon(Icons.description, color: Colors.indigo[400]),
-            title: Text('Товаров: ' + document.productsCount.toString()),
-            subtitle: Text(document.comment + ' ... '),
-          )
-        ],
+            ListTile(
+              leading: Icon(Icons.description, color: Colors.indigo[400]),
+              title: Text('Товаров: ' + document.productsCount.toString()),
+              subtitle: Text(document.comment + ' ... '),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -248,25 +295,55 @@ class _DocumentsPageState extends State<DocumentsPage> {
     }
   }
 
-  void actionPopUpItemSelected(String value, String name) {
+  void actionPopUpItemSelected(String value, String name, String id) {
     //_scaffoldkey.currentState.hideCurrentSnackBar();
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     String message;
     if (value == 'edit') {
       message = 'You selected edit for $name';
-    } else if (value == 'delete') {
-      message = 'You selected delete for $name';
+      kDocumentEditiingID = id;
+      kDocumentEditingModeOn = true;
+      kGoodsItems.clear();
+      kCurrentDocument = null;
+      openDocument(id, context);
+    } else if (value == 'open') {
+      message = 'You selected open for $name';
+      kDocumentEditiingID = '';
+      kDocumentEditingModeOn = false;
+      kGoodsItems.clear();
+      kCurrentDocument = null;
+      openDocument(id, context);
     } else {
       message = 'Not implemented';
     }
+
     // final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.deepOrange[100],
-        content: Text(message),
-      ),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     backgroundColor: Colors.deepOrange[100],
+    //     content: Text(message),
+    //   ),
+    // );
     // _scaffoldkey.currentState.showSnackBar(snackBar);
+  }
+
+  void openDocument(id, context) {
+    var _operationId = kSelectedDocumentType.id;
+
+    final result = getDocumentPricePrint(id, context);
+
+    if (result != null) {
+      DefaultTabController.of(context)!.animateTo(1);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.deepOrange[100],
+          content: Text('Ошибка при открытии документа..'),
+        ),
+      );
+    }
+
+    // setState(() {});
   }
 }

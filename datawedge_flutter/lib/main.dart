@@ -4,6 +4,7 @@ import 'package:datawedgeflutter/UI/login_signup_screen.dart';
 //import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/settings.dart';
 import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_title_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -28,6 +29,9 @@ Future main() async {
       ),
       BlocProvider(
         create: (context) => SelectedProductsCubit(),
+      ),
+      BlocProvider(
+        create: (context) => GoodsItemsTitleCubit(),
       ),
       BlocProvider(
         create: (context) => GoodsItemsCubit(),

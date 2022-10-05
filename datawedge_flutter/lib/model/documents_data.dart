@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:datawedgeflutter/model/constants.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_cubit.dart';
+import 'package:datawedgeflutter/presentation/cubit/goods_items_title_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 //import 'package:datawedgeflutter/model/Product.dart';
 import 'package:datawedgeflutter/model/categories_data.dart';
@@ -201,14 +204,14 @@ class DocumentPricePrint {
 }
 
 Future<DocumentPricePrint?> createDocumentPricePrint(
-    List goodsItems, currentDoc) async {
+    List goodsItems, currentDoc, context) async {
   DocumentPricePrint newDocPricePrint =
       DocumentPricePrint(goodsItems, currentDoc);
   var myData = newDocPricePrint.toJson();
   var body = json.encode(myData);
 
   final Uri uri = Uri.parse(
-      "http://212.112.116.229:7788/weblink/hs/api/documents_price_print");
+      "http://212.112.116.229:7788/weblink/hs/api/documents_price_print/0");
   final response = await http.post(
     uri,
     headers: kDctHeaders,
@@ -217,7 +220,41 @@ Future<DocumentPricePrint?> createDocumentPricePrint(
 
   if (response.statusCode == 200) {
     var _data = jsonDecode(utf8.decode(response.bodyBytes));
-    return DocumentPricePrint.fromJson(_data);
+    var newDoc = DocumentPricePrint.fromJson(_data);
+    //BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
+    kCurrentDocument = newDoc;
+    if (kCurrentDocumentIsSaved != true && kCurrentDocument != null) {
+      kCurrentDocumentIsSaved = true;
+      //setStateGoodsItemsScreen();
+    }
+    if (kCurrentDocument == null) {
+      kCurrentDocumentIsSaved = false;
+    }
+    // BlocProvider.of<GoodsItemsTitleCubit>(context).updateSum();
+    BlocProvider.of<GoodsItemsCubit>(context).updateState();
+
+    return newDoc;
+  } else {
+    print(response.body);
+
+    //throw Exception(response.toString());
+    return null;
+  }
+}
+
+Future<DocumentPricePrint?> getDocumentPricePrint(id, context) async {
+  final Uri uri = Uri.parse(
+      "http://212.112.116.229:7788/weblink/hs/api/documents_price_print/$id");
+  final response = await http.get(uri, headers: kDctHeaders);
+
+  if (response.statusCode == 200) {
+    var _data = jsonDecode(utf8.decode(response.bodyBytes));
+    var newDoc = DocumentPricePrint.fromJson(_data);
+    kCurrentDocument = newDoc;
+    kGoodsItems = kCurrentDocument.goodsItems;
+    BlocProvider.of<GoodsItemsCubit>(context).updateState();
+    // callBloc = true;
+    return newDoc;
   } else {
     print(response.body);
     //throw Exception(response.toString());
